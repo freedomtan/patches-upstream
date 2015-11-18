@@ -1,4 +1,4 @@
-From 2542d26329ee33659d7e7164be8dfb74531ab256 Mon Sep 17 00:00:00 2001
+From 2100e44abe29624d5b7c07c1b3658deb4a99858d Mon Sep 17 00:00:00 2001
 From: Sascha Hauer <s.hauer@pengutronix.de>
 Date: Mon, 9 Nov 2015 11:13:33 +0100
 Subject: [PATCH 3/7] ARM64: dts: mt8173: Add thermal/auxadc device nodes
@@ -13,10 +13,10 @@ Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
  1 file changed, 17 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index f72148a..2358db3 100644
+index 5bab29f..ecda160 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -350,6 +350,11 @@
+@@ -351,6 +351,11 @@
  				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
  		};
  
@@ -28,9 +28,9 @@ index f72148a..2358db3 100644
  		uart0: serial@11002000 {
  			compatible = "mediatek,mt8173-uart",
  				     "mediatek,mt6577-uart";
-@@ -586,6 +591,18 @@
- 				      "wakeup_deb_p1",
- 				      "u3phya_ref";
+@@ -645,6 +650,18 @@
+ 				status = "okay";
+ 			};
  		};
 +
 +		thermal: thermal@1100b000 {

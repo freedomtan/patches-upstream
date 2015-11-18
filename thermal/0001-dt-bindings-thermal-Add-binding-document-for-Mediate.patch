@@ -1,4 +1,4 @@
-From 8b743a9333f780c7e8d44d31ff4711c861af3b77 Mon Sep 17 00:00:00 2001
+From 0d1cd2974f8327c1b4583dbfad6b3b0e9810a4b9 Mon Sep 17 00:00:00 2001
 From: Sascha Hauer <s.hauer@pengutronix.de>
 Date: Mon, 9 Nov 2015 11:13:31 +0100
 Subject: [PATCH 1/7] dt-bindings: thermal: Add binding document for Mediatek

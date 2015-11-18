@@ -1,4 +1,4 @@
-From 785d40862b669aef7179a1d17572537a814854d0 Mon Sep 17 00:00:00 2001
+From 7a56d975046d2e26ffca1661d53bb160d80ba7bf Mon Sep 17 00:00:00 2001
 From: Sascha Hauer <s.hauer@pengutronix.de>
 Date: Mon, 9 Nov 2015 11:13:32 +0100
 Subject: [PATCH 2/7] thermal: Add Mediatek thermal controller support
@@ -19,10 +19,10 @@ Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
  create mode 100644 drivers/thermal/mtk_thermal.c
 
 diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index 0390044..dadd1eb 100644
+index c463c89..49b8e4f 100644
 --- a/drivers/thermal/Kconfig
 +++ b/drivers/thermal/Kconfig
-@@ -348,6 +348,14 @@ config INTEL_PCH_THERMAL
+@@ -365,6 +365,14 @@ config INTEL_PCH_THERMAL
  	  Thermal reporting device will provide temperature reading,
  	  programmable trip points and other information.
  
@@ -35,13 +35,13 @@ index 0390044..dadd1eb 100644
 +	  controller present in Mediatek SoCs
 +
  menu "Texas Instruments thermal drivers"
+ depends on ARCH_HAS_BANDGAP || COMPILE_TEST
  source "drivers/thermal/ti-soc-thermal/Kconfig"
- endmenu
 diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
-index 26f1608..5f979e7 100644
+index cfae6a6..8e9cbc3 100644
 --- a/drivers/thermal/Makefile
 +++ b/drivers/thermal/Makefile
-@@ -45,3 +45,4 @@ obj-$(CONFIG_INTEL_PCH_THERMAL)	+= intel_pch_thermal.o
+@@ -48,3 +48,4 @@ obj-$(CONFIG_INTEL_PCH_THERMAL)	+= intel_pch_thermal.o
  obj-$(CONFIG_ST_THERMAL)	+= st/
  obj-$(CONFIG_TEGRA_SOCTHERM)	+= tegra_soctherm.o
  obj-$(CONFIG_HISI_THERMAL)     += hisi_thermal.o

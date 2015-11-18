@@ -1,4 +1,4 @@
-From e087169346aab98f414529d96ecfa5261a7ca543 Mon Sep 17 00:00:00 2001
+From 1231e968a4fb8feed1723eb4cc79e02c7e9cdabf Mon Sep 17 00:00:00 2001
 From: "Dawei.Chien" <dawei.chien@mediatek.com>
 Date: Mon, 22 Jun 2015 20:33:15 +0800
 Subject: [PATCH 5/7] WIP: thermal: add device tree for MTK thermal cooling
@@ -15,18 +15,18 @@ Change-Id: I51cec23caec00777b7603d5b7e12d2ce166efe47
  1 file changed, 82 insertions(+), 5 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 32ad1c4..a7a07e1 100644
+index a8cb405..08427d9 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 @@ -18,6 +18,7 @@
- #include <dt-bindings/reset-controller/mt8173-resets.h>
  #include <dt-bindings/power/mt8173-power.h>
+ #include <dt-bindings/reset-controller/mt8173-resets.h>
  #include "mt8173-pinfunc.h"
 +#include <dt-bindings/thermal/thermal.h>
  
  / {
  	compatible = "mediatek,mt8173";
-@@ -182,21 +183,97 @@
+@@ -189,21 +190,97 @@
  	};
  
          thermal-zones {
