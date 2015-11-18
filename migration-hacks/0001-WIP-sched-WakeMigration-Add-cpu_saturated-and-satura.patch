@@ -1,7 +1,7 @@
-From 791955fb1728c475f42740fca7c995d08305759b Mon Sep 17 00:00:00 2001
+From 8c8dcd62af776c6cb8e061dc7aaa594f9bdf00e7 Mon Sep 17 00:00:00 2001
 From: Kapileshwar Singh <kapileshwar.singh@arm.com>
 Date: Sun, 14 Jun 2015 19:57:18 +0100
-Subject: [PATCH 1/6] WIP: sched: WakeMigration: Add cpu_saturated and
+Subject: [PATCH 1/7] WIP: sched: WakeMigration: Add cpu_saturated and
  saturated cpu accounting
 
 INTRODUCTION
@@ -46,10 +46,10 @@ Signed-off-by: Kapileshwar Singh <kapileshwar.singh@arm.com>
  1 file changed, 39 insertions(+)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e5a2506..fe7d768 100644
+index 19febd6..5e8057e 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -6561,6 +6561,7 @@ struct sg_lb_stats {
+@@ -6554,6 +6554,7 @@ struct sg_lb_stats {
  	unsigned long load_per_task;
  	unsigned long group_capacity;
  	unsigned long group_util; /* Total utilization of the group */
@@ -57,7 +57,7 @@ index e5a2506..fe7d768 100644
  	unsigned int sum_nr_running; /* Nr tasks running in the group */
  	unsigned int idle_cpus;
  	unsigned int group_weight;
-@@ -6879,6 +6880,40 @@ group_type group_classify(struct sched_group *group,
+@@ -6872,6 +6873,40 @@ group_type group_classify(struct sched_group *group,
  }
  
  /**
@@ -98,7 +98,7 @@ index e5a2506..fe7d768 100644
   * update_sg_lb_stats - Update sched_group's statistics for load balancing.
   * @env: The load balancing environment.
   * @group: sched_group whose statistics are to be updated.
-@@ -6924,6 +6959,10 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+@@ -6917,6 +6952,10 @@ static inline void update_sg_lb_stats(struct lb_env *env,
  
  		if (cpu_overutilized(i))
  			*overutilized = true;

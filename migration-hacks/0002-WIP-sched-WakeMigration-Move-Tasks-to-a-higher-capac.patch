@@ -1,7 +1,7 @@
-From 39371afcd7d56fe48d71b2983b714ab855c2388e Mon Sep 17 00:00:00 2001
+From c945c36910d53ad830a0adb0be582d3f505420f0 Mon Sep 17 00:00:00 2001
 From: Kapileshwar Singh <kapileshwar.singh@arm.com>
 Date: Tue, 9 Jun 2015 19:01:59 +0100
-Subject: [PATCH 2/6] WIP: sched: WakeMigration: Move Tasks to a higher
+Subject: [PATCH 2/7] WIP: sched: WakeMigration: Move Tasks to a higher
  capacity group
 
 In the current scenario if there is a single task running on a CPU in a sched group
@@ -33,10 +33,10 @@ Signed-off-by: Kapileshwar Singh <kapileshwar.singh@arm.com>
  1 file changed, 31 insertions(+)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index fe7d768..e78e4c5 100644
+index 5e8057e..fc6420d 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -5466,6 +5466,22 @@ static int energy_aware_wake_cpu(struct task_struct *p, int target)
+@@ -5459,6 +5459,22 @@ static int energy_aware_wake_cpu(struct task_struct *p, int target)
  	return target_cpu;
  }
  
@@ -59,7 +59,7 @@ index fe7d768..e78e4c5 100644
  /*
   * select_task_rq_fair: Select target runqueue for the waking task in domains
   * that have the 'sd_flag' flag set. In practice, this is SD_BALANCE_WAKE,
-@@ -7112,6 +7128,21 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+@@ -7105,6 +7121,21 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
  			sgs->group_type = group_classify(sg, sgs);
  		}
  

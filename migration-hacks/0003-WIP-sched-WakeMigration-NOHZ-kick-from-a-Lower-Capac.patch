@@ -1,7 +1,7 @@
-From de31219d1a4db960de589d7ebc592534a1f44287 Mon Sep 17 00:00:00 2001
+From 0ed7aa8fca624823eab0c45b0c5e31df88e226d9 Mon Sep 17 00:00:00 2001
 From: Kapileshwar Singh <kapileshwar.singh@arm.com>
 Date: Mon, 15 Jun 2015 16:43:34 +0100
-Subject: [PATCH 3/6] WIP: sched: WakeMigration: NOHZ kick from a Lower
+Subject: [PATCH 3/7] WIP: sched: WakeMigration: NOHZ kick from a Lower
  Capacity CPU
 
 If a lower capacity CPU is overutilized due to a single task
@@ -15,10 +15,10 @@ Signed-off-by: Kapileshwar Singh <kapileshwar.singh@arm.com>
  1 file changed, 11 insertions(+)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e78e4c5..1b85ef6 100644
+index fc6420d..55b993295 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -8477,6 +8477,17 @@ static inline bool nohz_kick_needed(struct rq *rq)
+@@ -8470,6 +8470,17 @@ static inline bool nohz_kick_needed(struct rq *rq)
  	if (time_before(now, nohz.next_balance))
  		return false;
  

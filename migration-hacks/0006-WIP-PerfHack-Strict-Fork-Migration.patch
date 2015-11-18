@@ -1,7 +1,7 @@
-From 4e2fcffc27f028e268f5aa0a9a01dc8818063f89 Mon Sep 17 00:00:00 2001
+From 3d1339b8695a7cfcbf369b451f55d7696423498f Mon Sep 17 00:00:00 2001
 From: Kapileshwar Singh <kapileshwar.singh@arm.com>
 Date: Mon, 22 Jun 2015 15:30:40 +0100
-Subject: [PATCH 6/6] WIP: PerfHack: Strict Fork Migration
+Subject: [PATCH 6/7] WIP: PerfHack: Strict Fork Migration
 
 Fork Migration was introduced for the HMP scheduler to give
 tasks the initial boost at Fork Time. The Strict Fork
@@ -15,10 +15,10 @@ Signed-off-by: Kapileshwar Singh <kapileshwar.singh@arm.com>
  1 file changed, 2 insertions(+), 18 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 74a63d0..61ba64b 100644
+index a4188ba..db0d536 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -5487,18 +5487,6 @@ compare_group_capacity(struct sched_group *sg, struct sched_group *local)
+@@ -5480,18 +5480,6 @@ compare_group_capacity(struct sched_group *sg, struct sched_group *local)
  		 (local_total * sg->group_weight));
  }
  
@@ -37,7 +37,7 @@ index 74a63d0..61ba64b 100644
  /* This function returns the group with the CPUs having the
   * maximum capacity in the sched_domain. The group is only returned
   * if the number of tasks running in the group is less than or
-@@ -5522,8 +5510,7 @@ struct sched_group* highest_capacity_group(struct sched_domain *sd) {
+@@ -5515,8 +5503,7 @@ struct sched_group* highest_capacity_group(struct sched_domain *sd) {
  
  	do {
  		int capacity = group_max_capacity(sg);
@@ -47,7 +47,7 @@ index 74a63d0..61ba64b 100644
  			highest = sg;
  			highest_cap = capacity;
  		}
-@@ -5609,11 +5596,8 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
+@@ -5602,11 +5589,8 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
  		 * because >= group_weight tasks are running on the group
  		 * use find_idlest_group to select the target group
  		 */

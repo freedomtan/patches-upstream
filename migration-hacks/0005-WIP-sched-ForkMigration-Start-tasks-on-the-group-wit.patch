@@ -1,7 +1,7 @@
-From 0aab8ce9e853aaf20a1be35a37006947a08e37e4 Mon Sep 17 00:00:00 2001
+From 76aa3197386fb1dd2ed90be4d29f91f242afac0a Mon Sep 17 00:00:00 2001
 From: Kapileshwar Singh <kapileshwar.singh@arm.com>
 Date: Mon, 15 Jun 2015 16:44:58 +0100
-Subject: [PATCH 5/6] WIP: sched: ForkMigration: Start tasks on the group with
+Subject: [PATCH 5/7] WIP: sched: ForkMigration: Start tasks on the group with
  highest capacity CPUs
 
 This patch allows the task to start on the highest capacity sched_group in
@@ -19,10 +19,10 @@ Signed-off-by: Kapileshwar Singh <kapileshwar.singh@arm.com>
  1 file changed, 67 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 1b85ef6..74a63d0 100644
+index 55b993295..a4188ba 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -5466,6 +5466,11 @@ static int energy_aware_wake_cpu(struct task_struct *p, int target)
+@@ -5459,6 +5459,11 @@ static int energy_aware_wake_cpu(struct task_struct *p, int target)
  	return target_cpu;
  }
  
@@ -34,7 +34,7 @@ index 1b85ef6..74a63d0 100644
  static bool
  compare_group_capacity(struct sched_group *sg, struct sched_group *local)
  {
-@@ -5482,6 +5487,53 @@ compare_group_capacity(struct sched_group *sg, struct sched_group *local)
+@@ -5475,6 +5480,53 @@ compare_group_capacity(struct sched_group *sg, struct sched_group *local)
  		 (local_total * sg->group_weight));
  }
  
@@ -88,7 +88,7 @@ index 1b85ef6..74a63d0 100644
  /*
   * select_task_rq_fair: Select target runqueue for the waking task in domains
   * that have the 'sd_flag' flag set. In practice, this is SD_BALANCE_WAKE,
-@@ -5550,7 +5602,21 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
+@@ -5543,7 +5595,21 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
  			continue;
  		}
  
