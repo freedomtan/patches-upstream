@@ -1,0 +1,89 @@
+From 47f6b947603003596599f611d6d9fc4a05652e15 Mon Sep 17 00:00:00 2001
+From: Juri Lelli <juri.lelli@arm.com>
+Date: Thu, 25 Jun 2015 12:34:58 +0100
+Subject: [PATCH 38/49] sched/cpufreq_sched: use static key for cpu frequency
+ selection
+
+Introduce a static key to only affect scheduler hot paths when sched
+governor is enabled.
+
+cc: Ingo Molnar <mingo@redhat.com>
+cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Juri Lelli <juri.lelli@arm.com>
+---
+ kernel/sched/cpufreq_sched.c | 14 ++++++++++++++
+ kernel/sched/fair.c          |  1 +
+ kernel/sched/sched.h         |  6 ++++++
+ 3 files changed, 21 insertions(+)
+
+diff --git a/kernel/sched/cpufreq_sched.c b/kernel/sched/cpufreq_sched.c
+index 5020f24..2968f3a 100644
+--- a/kernel/sched/cpufreq_sched.c
++++ b/kernel/sched/cpufreq_sched.c
+@@ -203,6 +203,18 @@ out:
+ 	return;
+ }
+ 
++static inline void set_sched_energy_freq(void)
++{
++	if (!sched_energy_freq())
++		static_key_slow_inc(&__sched_energy_freq);
++}
++
++static inline void clear_sched_energy_freq(void)
++{
++	if (sched_energy_freq())
++		static_key_slow_dec(&__sched_energy_freq);
++}
++
+ static int cpufreq_sched_start(struct cpufreq_policy *policy)
+ {
+ 	struct gov_data *gd;
+@@ -243,6 +255,7 @@ static int cpufreq_sched_start(struct cpufreq_policy *policy)
+ 
+ 	policy->governor_data = gd;
+ 	gd->policy = policy;
++	set_sched_energy_freq();
+ 	return 0;
+ 
+ err:
+@@ -254,6 +267,7 @@ static int cpufreq_sched_stop(struct cpufreq_policy *policy)
+ {
+ 	struct gov_data *gd = policy->governor_data;
+ 
++	clear_sched_energy_freq();
+ 	if (cpufreq_driver_might_sleep()) {
+ 		kthread_stop(gd->task);
+ 	}
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 883b7bb..872f18d 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4127,6 +4127,7 @@ static inline void hrtick_update(struct rq *rq)
+ #endif
+ 
+ static bool cpu_overutilized(int cpu);
++struct static_key __sched_energy_freq __read_mostly = STATIC_KEY_INIT_FALSE;
+ 
+ /*
+  * The enqueue_task method is called before nr_running is
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 764d99e..4c4fa9f 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1449,6 +1449,12 @@ unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)
+ }
+ #endif
+ 
++extern struct static_key __sched_energy_freq;
++static inline bool sched_energy_freq(void)
++{
++	return static_key_false(&__sched_energy_freq);
++}
++
+ #ifdef CONFIG_CPU_FREQ_GOV_SCHED
+ void cpufreq_sched_set_cap(int cpu, unsigned long util);
+ #else
+-- 
+1.9.1
+

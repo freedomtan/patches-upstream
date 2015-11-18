@@ -1,0 +1,53 @@
+From b1499a967375fc347c3f66120b0f513b7e9108d0 Mon Sep 17 00:00:00 2001
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Date: Fri, 2 Oct 2015 11:57:51 +0100
+Subject: [PATCH 35/49] fix/sched: Lockup between max_cpu_capacity:lock and
+ logbuf_lock
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+In case of offline/online on multiple cpus at the same time with
+CONFIG_SCHED_DEBUG, the update of max cpu capacity in
+update_cpu_capacity() causes a lockup between max_cpu_capacity:lock
+and logbuf_lock.
+
+Fix this by issuing the printk after unlocking max_cpu_capacity:lock.
+
+ BUG: spinlock lockup suspected on CPU#0, ���u�����y      /0
+ lock: logbuf_lock+0x0/0x48, .magic: dead4ead, .owner: p�/-56,
+ .owner_cpu: -1
+ Unable to handle kernel NULL pointer dereference at virtual address
+ 00000408
+ pgd = ffffffc001a37000
+ [00000408] *pgd=00000009f5c26003, *pud=00000009f5c26003,
+ *pmd=00000009f5c27003, *pte=006000002c010707
+ Internal error: Oops: 96000006 [#3] PREEMPT SMP
+
+Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+---
+ kernel/sched/fair.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index cf69670..883b7bb 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6564,11 +6564,14 @@ static void update_cpu_capacity(struct sched_domain *sd, int cpu)
+ 		mcc->val = capacity;
+ 		mcc->cpu = cpu;
+ #ifdef CONFIG_SCHED_DEBUG
++		raw_spin_unlock_irqrestore(&mcc->lock, flags);
+ 		pr_info("CPU%d: update max cpu_capacity %lu\n", cpu, capacity);
++		goto skip_unlock;
+ #endif
+ 	}
+ 	raw_spin_unlock_irqrestore(&mcc->lock, flags);
+ 
++skip_unlock: __attribute__ ((unused));
+ 	capacity *= scale_rt_capacity(cpu);
+ 	capacity >>= SCHED_CAPACITY_SHIFT;
+ 
+-- 
+1.9.1
+

@@ -1,0 +1,41 @@
+From de31219d1a4db960de589d7ebc592534a1f44287 Mon Sep 17 00:00:00 2001
+From: Kapileshwar Singh <kapileshwar.singh@arm.com>
+Date: Mon, 15 Jun 2015 16:43:34 +0100
+Subject: [PATCH 3/6] WIP: sched: WakeMigration: NOHZ kick from a Lower
+ Capacity CPU
+
+If a lower capacity CPU is overutilized due to a single task
+running on it. It makes sense to wake up other CPUs for finding a
+better/higher capacity CPU which can service the task.
+
+Change-Id: Ifc745c30df034b765ae6a38cf5b16ac9e0093f14
+Signed-off-by: Kapileshwar Singh <kapileshwar.singh@arm.com>
+---
+ kernel/sched/fair.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index e78e4c5..1b85ef6 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -8477,6 +8477,17 @@ static inline bool nohz_kick_needed(struct rq *rq)
+ 	if (time_before(now, nohz.next_balance))
+ 		return false;
+ 
++	/* If the CPU is saturated (overutilized by a
++	 * single task and is not the highest capacity
++	 * CPU in the system. It is worth initiating a
++	 * a nohz kick, so that rebalance domains can
++	 * place this task on a higher capacity CPU
++	 */
++	if (energy_aware()
++	    && cpu_saturated(cpu)
++	    && capacity_orig_of(cpu) != SCHED_CAPACITY_SCALE)
++		return true;
++
+ 	if (rq->nr_running >= 2 &&
+ 	    (!energy_aware() || cpu_overutilized(cpu)))
+ 		return true;
+-- 
+1.9.1
+

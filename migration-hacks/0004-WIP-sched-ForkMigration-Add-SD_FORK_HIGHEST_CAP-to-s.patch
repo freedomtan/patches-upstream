@@ -1,0 +1,56 @@
+From fc631c436f2bdf2725c753e984db5f80ff6b561e Mon Sep 17 00:00:00 2001
+From: Kapileshwar Singh <kapileshwar.singh@arm.com>
+Date: Fri, 12 Jun 2015 22:21:14 +0100
+Subject: [PATCH 4/6] WIP: sched: ForkMigration: Add SD_FORK_HIGHEST_CAP to
+ sd_flags
+
+SD_FORK_HIHGEST_CAP flag conveys to the scheduler that, at fork
+time, it should try and select a CPU with highest possible capacity.
+
+This is done to guarantee that blocked load does not prevent
+a task from starting up on the cpu with the highest capacity.
+
+Consider a scenario where the CPU with highest capacity is
+has a high blocked load but is currently idle. This flag
+impacts the decision of selecting the qualifying sched_group
+for finding the CPU on which the task should be forked.
+
+Having this flag set on a domain will influence this decision
+in favour of a group which has CPU with higher capacity_orig_of
+(original capacity). This is done as a performance modification
+currently and need to be debated.
+
+Change-Id: Ie665358950c3f5d55869bba5d6d11ed4b4c9a650
+Signed-off-by: Kapileshwar Singh <kapileshwar.singh@arm.com>
+---
+ include/linux/sched.h | 1 +
+ kernel/sched/core.c   | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 1805123..076285d 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -984,6 +984,7 @@ extern void wake_up_q(struct wake_q_head *head);
+ #define SD_OVERLAP		0x2000	/* sched_domains of this level overlap */
+ #define SD_NUMA			0x4000	/* cross-node balancing */
+ #define SD_SHARE_CAP_STATES	0x8000  /* Domain members share capacity state */
++#define SD_FORK_HIGHEST_CAP	(1L << 20)  /* FORK on group with highest group_max_capacity */
+ 
+ #ifdef CONFIG_SCHED_SMT
+ static inline int cpu_smt_flags(void)
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index fb56d2e..a3ad1eb 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -6423,6 +6423,7 @@ static int sched_domains_curr_level;
+ 	 SD_NUMA |			\
+ 	 SD_ASYM_PACKING |		\
+ 	 SD_SHARE_POWERDOMAIN |		\
++	 SD_FORK_HIGHEST_CAP |		\
+ 	 SD_SHARE_CAP_STATES)
+ 
+ static struct sched_domain *
+-- 
+1.9.1
+

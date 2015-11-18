@@ -1,0 +1,114 @@
+From 791955fb1728c475f42740fca7c995d08305759b Mon Sep 17 00:00:00 2001
+From: Kapileshwar Singh <kapileshwar.singh@arm.com>
+Date: Sun, 14 Jun 2015 19:57:18 +0100
+Subject: [PATCH 1/6] WIP: sched: WakeMigration: Add cpu_saturated and
+ saturated cpu accounting
+
+INTRODUCTION
+============
+
+This patch introduces a new member in sg_lb_stats,
+nr_saturated, which is an indicator of the number of
+saturated CPUs in the sched_group.
+
+A saturated CPU is defined as a CPU which is being overutilized
+by a single task. The criteria for saturation is
+
+       capacity_of * 1024           utilization_load_avg
+      ---------------------    <   -----------------------
+        capacity_margin           	 nr_running
+
+The goal of nr_saturated is to identify if a group has CPUs
+that are running tasks which could benefit from being moved to
+a group with higher capacity CPUs.
+
+TARGET PROBLEM
+==============
+
+Since the tasks that tend to saturate CPUs can potentially
+be CPU hogging and may not undergo wakeups to eventually land up
+on the correct/fitting CPU, such an intervention is necessary even
+if the group has a single running task.
+
+Consider a scenario when a task changes it's nature from being
+I/O bound, i.e waits for some resources to being CPU bound. In
+such a scenario, where this is the only task running on the CPU
+the find_busiest_group returns NULL which does not trigger the
+load balancer and thus does not migrate to a higher capacity CPU
+
+In order to identify such scenarios, where the CPU is being saturated
+by a single task, cpu_saturated is being introduced.
+
+Change-Id: I8573801f49787b61885f42f09044477d42463c40
+Signed-off-by: Kapileshwar Singh <kapileshwar.singh@arm.com>
+---
+ kernel/sched/fair.c | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index e5a2506..fe7d768 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6561,6 +6561,7 @@ struct sg_lb_stats {
+ 	unsigned long load_per_task;
+ 	unsigned long group_capacity;
+ 	unsigned long group_util; /* Total utilization of the group */
++	unsigned long nr_saturated;
+ 	unsigned int sum_nr_running; /* Nr tasks running in the group */
+ 	unsigned int idle_cpus;
+ 	unsigned int group_weight;
+@@ -6879,6 +6880,40 @@ group_type group_classify(struct sched_group *group,
+ }
+ 
+ /**
++ * A CPU is said to be saturated if it is overutilized due a single
++ * running task. cpu_saturated does not take blocked load into
++ * account and is an indicator of the scenario when a single
++ * task is using the CPUs capacity over a certain threshold.
++ * This threshold is controlled by capacity_margin.
++ *
++ * The capacity of the CPU may differ from it's original
++ * capacity due to pressure from Real Time tasks and IRQ's
++ * capacity_of(cpu) <= capacity_orig_of(cpu).
++ *
++ * The saturation check uses capacity_of since saturation
++ * must be checked against the capacity available to the
++ * CFS sched class.
++ */
++static bool cpu_saturated(int cpu)
++{
++	unsigned long usage = cpu_rq(cpu)->cfs.avg.util_avg;
++	unsigned long capacity_orig = capacity_orig_of(cpu);
++
++	/* Clamp the utilization to the capacity */
++	if (usage > capacity_orig)
++		usage = capacity_orig;
++
++	/* The condition below translates to:
++	 *
++	 *    capacity_of * 1024          util_avg
++	 *  --------------------- <   -----------------------
++	 *     capacity_margin            nr_running
++	 */
++	return (capacity_of(cpu) * 1024 * cpu_rq(cpu)->nr_running) <
++			(usage * capacity_margin);
++}
++
++/**
+  * update_sg_lb_stats - Update sched_group's statistics for load balancing.
+  * @env: The load balancing environment.
+  * @group: sched_group whose statistics are to be updated.
+@@ -6924,6 +6959,10 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+ 
+ 		if (cpu_overutilized(i))
+ 			*overutilized = true;
++
++		if (cpu_saturated(i))
++			sgs->nr_saturated += 1;
++
+ 	}
+ 
+ 	/* Adjust by relative CPU capacity of the group */
+-- 
+1.9.1
+

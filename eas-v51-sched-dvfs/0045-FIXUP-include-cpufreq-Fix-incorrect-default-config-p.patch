@@ -1,0 +1,32 @@
+From be8be4eca3b361de67fa4876f0d882190668b102 Mon Sep 17 00:00:00 2001
+From: Kapileshwar Singh <kapileshwar.singh@arm.com>
+Date: Fri, 7 Aug 2015 17:28:00 +0100
+Subject: [PATCH 45/49] FIXUP: include/cpufreq: Fix incorrect default config
+ param for CPU_FREQ_GOV_SCHED
+
+This problem fixes build failure when CONFIG_CPU_FREQ_DEFAULT_GOV_SCHED
+is set.
+
+Signed-off-by: Kapileshwar Singh <kapileshwar.singh@arm.com>
+---
+ include/linux/cpufreq.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+index 9735b21..51a8c34 100644
+--- a/include/linux/cpufreq.h
++++ b/include/linux/cpufreq.h
+@@ -495,8 +495,8 @@ extern struct cpufreq_governor cpufreq_gov_ondemand;
+ #elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE)
+ extern struct cpufreq_governor cpufreq_gov_conservative;
+ #define CPUFREQ_DEFAULT_GOVERNOR	(&cpufreq_gov_conservative)
+-#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_SCHED_GOV)
+-extern struct cpufreq_governor cpufreq_gov_sched_gov;
++#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_SCHED)
++extern struct cpufreq_governor cpufreq_gov_sched;
+ #define CPUFREQ_DEFAULT_GOVERNOR	(&cpufreq_gov_sched)
+ #endif
+ 
+-- 
+1.9.1
+

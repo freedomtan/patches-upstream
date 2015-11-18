@@ -1,0 +1,45 @@
+From cd9da1d6073045d7c105c7d7bfaf5ce516809afa Mon Sep 17 00:00:00 2001
+From: Ricky Liang <jcliang@chromium.org>
+Date: Sat, 12 Sep 2015 00:49:45 +0800
+Subject: [PATCH 46/49] FIXUP: sched/cpufreq_sched: Clear __sched_energy_freq
+ only when no policy is using sched governor
+
+The current implementation of SchedDVFS is turned off completely if a
+cpufreq policy is completely offline. This is because the way the
+{set|clear}_sched_energy_freq() functions are implemented only allows
+the __sched_energy_freq static_key to be either 1 or 0, while there
+are two possible cpufreq policies (one for each cluster) on Oak. The
+__sched_energy_freq static_key acts like a switch for the SchedDVFS
+hook in the CFS scheduler. So whenever a cluster is turned off, which
+sets the corresponding cpufreq policy offline, will result in the
+__sched_energy_freq being set to 0.
+
+Signed-off-by: Ricky Liang <jcliang@chromium.org>
+---
+ kernel/sched/cpufreq_sched.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/sched/cpufreq_sched.c b/kernel/sched/cpufreq_sched.c
+index 27f2cec..700def0 100644
+--- a/kernel/sched/cpufreq_sched.c
++++ b/kernel/sched/cpufreq_sched.c
+@@ -217,14 +217,12 @@ void cpufreq_sched_reset_cap(int cpu)
+ 
+ static inline void set_sched_energy_freq(void)
+ {
+-	if (!sched_energy_freq())
+-		static_key_slow_inc(&__sched_energy_freq);
++	static_key_slow_inc(&__sched_energy_freq);
+ }
+ 
+ static inline void clear_sched_energy_freq(void)
+ {
+-	if (sched_energy_freq())
+-		static_key_slow_dec(&__sched_energy_freq);
++	static_key_slow_dec(&__sched_energy_freq);
+ }
+ 
+ static int cpufreq_sched_start(struct cpufreq_policy *policy)
+-- 
+1.9.1
+

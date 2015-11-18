@@ -1,0 +1,32 @@
+From cca9a113346a83cfa0561c323f554a72000a6fe1 Mon Sep 17 00:00:00 2001
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Date: Wed, 23 Sep 2015 12:47:48 +0100
+Subject: [PATCH 02/49] arm: Enable frequency invariant scheduler load-tracking
+ support
+
+Defines arch_scale_freq_capacity() to use cpufreq implementation.
+
+Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+---
+ arch/arm/include/asm/topology.h | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/include/asm/topology.h b/arch/arm/include/asm/topology.h
+index 370f7a7..a69917b 100644
+--- a/arch/arm/include/asm/topology.h
++++ b/arch/arm/include/asm/topology.h
+@@ -24,6 +24,11 @@ void init_cpu_topology(void);
+ void store_cpu_topology(unsigned int cpuid);
+ const struct cpumask *cpu_coregroup_mask(int cpu);
+ 
++#ifdef CONFIG_CPU_FREQ
++#include <linux/cpufreq.h>
++#define arch_scale_freq_capacity cpufreq_scale_freq_capacity
++#endif
++
+ #else
+ 
+ static inline void init_cpu_topology(void) { }
+-- 
+1.9.1
+

@@ -1,0 +1,86 @@
+From 39371afcd7d56fe48d71b2983b714ab855c2388e Mon Sep 17 00:00:00 2001
+From: Kapileshwar Singh <kapileshwar.singh@arm.com>
+Date: Tue, 9 Jun 2015 19:01:59 +0100
+Subject: [PATCH 2/6] WIP: sched: WakeMigration: Move Tasks to a higher
+ capacity group
+
+In the current scenario if there is a single task running on a CPU in a sched group
+it is not moved to a group that has CPUs with higher capacity. The added condition
+allows a group to be marked as overloaded if the sds->local group has available capacity
+and has CPUs that have higher capacity than the group the task is currently executing on.
+
+This patch aims at fixing the problem described in the following scenario:
+
+* A task which was a predominantly an I/O bound task changes its behaviour to
+  a CPU bound task and starts saturating the CPU it is running on.
+
+* If there is a CPU with a higher capacity available, (the difference in capacity
+  can also arise to varying real time task pressure across different CPUs.
+
+* The find_busiest_group logic, in this scenario, returns NULL which prevents
+  the load balance code from placing the task on a befitting idle CPU.
+
+* This patch marks the group as overloaded:
+	group_no_capacity = 1
+	group_type = group_overloaded
+
+ if there exists a sched_group with higher average CPU capacity.
+
+Change-Id: I3f94d19896cb9241250de00fba4100a855eab393
+Signed-off-by: Kapileshwar Singh <kapileshwar.singh@arm.com>
+---
+ kernel/sched/fair.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index fe7d768..e78e4c5 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5466,6 +5466,22 @@ static int energy_aware_wake_cpu(struct task_struct *p, int target)
+ 	return target_cpu;
+ }
+ 
++static bool
++compare_group_capacity(struct sched_group *sg, struct sched_group *local)
++{
++	unsigned long sg_total = 0, local_total = 0;
++	int cpu;
++
++	for_each_cpu(cpu, sched_group_cpus(sg))
++		sg_total += capacity_of(cpu);
++
++	for_each_cpu(cpu, sched_group_cpus(local))
++		local_total += capacity_of(cpu);
++
++	return ((sg_total * local->group_weight) <
++		 (local_total * sg->group_weight));
++}
++
+ /*
+  * select_task_rq_fair: Select target runqueue for the waking task in domains
+  * that have the 'sd_flag' flag set. In practice, this is SD_BALANCE_WAKE,
+@@ -7112,6 +7128,21 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+ 			sgs->group_type = group_classify(sg, sgs);
+ 		}
+ 
++		/*
++		 * In case there is group with higher capacity CPUs available
++		 * and the current group has saturated CPUs (CPUs that are being
++		 * overutilized potentially by a single task. This differentiates
++		 * from the case when the CPU has many "small" tasks running.
++		 * The task would be better off running on the higher capacity
++		 * CPUs, if their group has availble capacity.
++		 */
++		if (sds->local && compare_group_capacity(sg, sds->local)
++		    && group_has_capacity(env, &sds->local_stat)
++		    && (sgs->nr_saturated >= 1)) {
++		    sgs->group_no_capacity = 1;
++		    sgs->group_type = group_overloaded;
++		}
++
+ 		if (update_sd_pick_busiest(env, sds, sg, sgs)) {
+ 			sds->busiest = sg;
+ 			sds->busiest_stat = *sgs;
+-- 
+1.9.1
+
