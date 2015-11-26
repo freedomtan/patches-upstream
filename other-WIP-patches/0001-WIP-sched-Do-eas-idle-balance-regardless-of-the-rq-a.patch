@@ -1,0 +1,51 @@
+From 8c3054c48c70e0c50aadea9bb422372a67904148 Mon Sep 17 00:00:00 2001
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Date: Tue, 4 Aug 2015 17:17:23 +0100
+Subject: [PATCH 1/4] WIP: sched: Do eas idle balance regardless of the rq avg
+ idle value
+
+EAS relies on idle balance to migrate a misfit task towards a cpu with
+higher capacity.
+
+When such a cpu becomes idle, idle balance should happen even if the rq
+avg idle is smaller than the sched migration cost (default 500us).
+
+The rq avg idle is updated during the wakeup of a task in case the rq has
+a non-null idle_stamp. This value stays unchanged and valid until the next
+task wakes up on this cpu after an idle period.
+
+So rq avg idle could be smaller than sched migration cost preventing the
+idle balance from happening. In this case we would be at the mercy of
+wakeup, periodic or nohz-idle load balancing to put another task on this
+cpu.
+
+To break this dependency towards rq avg idle make EAS idle balance
+independent from this rq avg idle has to be larger than sched migration
+cost.
+
+Change-Id: I880a25180062444d72947461d976dc44f9672f13
+Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+---
+ kernel/sched/fair.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 9ecebc6..aaa9b5c 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7999,9 +7999,9 @@ static int idle_balance(struct rq *this_rq)
+ 	 * measure the duration of idle_balance() as idle time.
+ 	 */
+ 	this_rq->idle_stamp = rq_clock(this_rq);
+-
+-	if (this_rq->avg_idle < sysctl_sched_migration_cost ||
+-	    !this_rq->rd->overload) {
++	if ((!energy_aware() && (this_rq->avg_idle < sysctl_sched_migration_cost
++				 || !this_rq->rd->overload)) ||
++		(energy_aware() && !this_rq->rd->overutilized)) {
+ 		rcu_read_lock();
+ 		sd = rcu_dereference_check_sched_domain(this_rq->sd);
+ 		if (sd)
+-- 
+1.9.1
+

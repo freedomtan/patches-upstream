@@ -1,4 +1,4 @@
-From c3d0f1bf1c7ab03aca5c4a09c81969471462c567 Mon Sep 17 00:00:00 2001
+From 0ac065b12d4409517f86548e4ec2995802020480 Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Wed, 19 Aug 2015 19:47:20 +0100
 Subject: [PATCH 3/7] sched/fair: add function to convert boost value into
@@ -47,7 +47,7 @@ Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
  1 file changed, 38 insertions(+)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 2e3b505..8c66bb0 100644
+index 733e8f4..5826885 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -5114,6 +5114,44 @@ static bool cpu_overutilized(int cpu)

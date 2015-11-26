@@ -1,0 +1,125 @@
+From 7be43771801c81c3a1adebf794e92973253ca566 Mon Sep 17 00:00:00 2001
+From: Morten Rasmussen <morten.rasmussen@arm.com>
+Date: Fri, 17 Jul 2015 14:31:08 +0100
+Subject: [PATCH 2/4] WIP: sched: Add per-cpu max capacity to
+ sched_group_capacity
+
+struct sched_group_capacity currently represents the compute capacity
+sum of all cpus in the sched_group. Unless it is divided by the
+group_weight to get the average capacity per cpu it hides differences in
+cpu capacity for mixed capacity systems (e.g. high RT/IRQ utilization or
+ARM big.LITTLE). But even the average may not be sufficient if the group
+covers cpus of different capacities. Instead, by extending struct
+sched_group_capacity to indicate max per-cpu capacity in the group a
+suitable group for a given task utilization can easily be found such
+that cpus with reduced capacity can be avoided for tasks with high
+utilization (not implemented by this patch).
+
+Change-Id: I3ad0e6df855b1a184db05cb310e91e1e03061467
+Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
+---
+ kernel/sched/core.c  |  3 ++-
+ kernel/sched/fair.c  | 17 ++++++++++++-----
+ kernel/sched/sched.h |  3 ++-
+ 3 files changed, 16 insertions(+), 7 deletions(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 36da658..3b17ccf 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5690,7 +5690,7 @@ static int sched_domain_debug_one(struct sched_domain *sd, int cpu, int level,
+ 		printk(KERN_CONT " %*pbl",
+ 		       cpumask_pr_args(sched_group_cpus(group)));
+ 		if (group->sgc->capacity != SCHED_CAPACITY_SCALE) {
+-			printk(KERN_CONT " (cpu_capacity = %d)",
++			printk(KERN_CONT " (cpu_capacity = %lu)",
+ 				group->sgc->capacity);
+ 		}
+ 
+@@ -6165,6 +6165,7 @@ build_overlap_sched_groups(struct sched_domain *sd, int cpu)
+ 		 * die on a /0 trap.
+ 		 */
+ 		sg->sgc->capacity = SCHED_CAPACITY_SCALE * cpumask_weight(sg_span);
++		sg->sgc->max_capacity = SCHED_CAPACITY_SCALE;
+ 
+ 		/*
+ 		 * Make sure the first group of this domain contains the
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index aaa9b5c..aadc82a 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6775,13 +6775,14 @@ skip_unlock: __attribute__ ((unused));
+ 
+ 	cpu_rq(cpu)->cpu_capacity = capacity;
+ 	sdg->sgc->capacity = capacity;
++	sdg->sgc->max_capacity = capacity;
+ }
+ 
+ void update_group_capacity(struct sched_domain *sd, int cpu)
+ {
+ 	struct sched_domain *child = sd->child;
+ 	struct sched_group *group, *sdg = sd->groups;
+-	unsigned long capacity;
++	unsigned long capacity, max_capacity;
+ 	unsigned long interval;
+ 
+ 	interval = msecs_to_jiffies(sd->balance_interval);
+@@ -6794,6 +6795,7 @@ void update_group_capacity(struct sched_domain *sd, int cpu)
+ 	}
+ 
+ 	capacity = 0;
++	max_capacity = 0;
+ 
+ 	if (child->flags & SD_OVERLAP) {
+ 		/*
+@@ -6818,11 +6820,12 @@ void update_group_capacity(struct sched_domain *sd, int cpu)
+ 			 */
+ 			if (unlikely(!rq->sd)) {
+ 				capacity += capacity_of(cpu);
+-				continue;
++			} else {
++				sgc = rq->sd->groups->sgc;
++				capacity += sgc->capacity;
+ 			}
+ 
+-			sgc = rq->sd->groups->sgc;
+-			capacity += sgc->capacity;
++			max_capacity = max(capacity, max_capacity);
+ 		}
+ 	} else  {
+ 		/*
+@@ -6832,12 +6835,16 @@ void update_group_capacity(struct sched_domain *sd, int cpu)
+ 
+ 		group = child->groups;
+ 		do {
+-			capacity += group->sgc->capacity;
++			struct sched_group_capacity *sgc = group->sgc;
++
++			capacity += sgc->capacity;
++			max_capacity = max(sgc->max_capacity, max_capacity);
+ 			group = group->next;
+ 		} while (group != child->groups);
+ 	}
+ 
+ 	sdg->sgc->capacity = capacity;
++	sdg->sgc->max_capacity = max_capacity;
+ }
+ 
+ /*
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 11bc904..e3d30e3 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -857,7 +857,8 @@ struct sched_group_capacity {
+ 	 * CPU capacity of this group, SCHED_LOAD_SCALE being max capacity
+ 	 * for a single CPU.
+ 	 */
+-	unsigned int capacity;
++	unsigned long capacity;
++	unsigned long max_capacity; /* Max per-cpu capacity in group */
+ 	unsigned long next_update;
+ 	int imbalance; /* XXX unrelated to capacity but shared group state */
+ 	/*
+-- 
+1.9.1
+

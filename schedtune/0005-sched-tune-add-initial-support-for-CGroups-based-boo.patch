@@ -1,4 +1,4 @@
-From 155f5419954ac437dda63d4205e29e0c088b7101 Mon Sep 17 00:00:00 2001
+From 27b5a8af7682fbba4ce931f744a8ca2ba8b08e7c Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Wed, 19 Aug 2015 19:47:22 +0100
 Subject: [PATCH 5/7] sched/tune: add initial support for CGroups based
@@ -308,10 +308,10 @@ index 4c44b1a..a26295c 100644
  sysctl_sched_cfs_boost_handler(struct ctl_table *table, int write,
  			       void __user *buffer, size_t *lenp,
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index feddb9e..f77152a 100644
+index 827ba25..98c0f6e 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -438,7 +438,11 @@ static struct ctl_table kern_table[] = {
+@@ -439,7 +439,11 @@ static struct ctl_table kern_table[] = {
  		.procname	= "sched_cfs_boost",
  		.data		= &sysctl_sched_cfs_boost,
  		.maxlen		= sizeof(sysctl_sched_cfs_boost),

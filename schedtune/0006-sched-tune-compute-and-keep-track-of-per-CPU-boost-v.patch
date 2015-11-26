@@ -1,4 +1,4 @@
-From afe85b2bd0a2a568b45689c9b3a76ac41134e861 Mon Sep 17 00:00:00 2001
+From 582dd7b0abab66ffb05dbb8047648e5c3e29387f Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Wed, 19 Aug 2015 19:47:23 +0100
 Subject: [PATCH 6/7] sched/tune: compute and keep track of per CPU boost value

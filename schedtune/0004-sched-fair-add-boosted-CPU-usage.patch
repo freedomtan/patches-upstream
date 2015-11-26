@@ -1,4 +1,4 @@
-From 5fb5e655c5633f39ea4250cafaf93a18d001af64 Mon Sep 17 00:00:00 2001
+From dca768453b9e09cc400362f900dad1a5d1838f42 Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Wed, 19 Aug 2015 19:47:21 +0100
 Subject: [PATCH 4/7] sched/fair: add boosted CPU usage
@@ -30,7 +30,7 @@ Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
  1 file changed, 32 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 8c66bb0..db5a9ba 100644
+index 5826885..4c94441 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -4133,10 +4133,11 @@ static bool cpu_overutilized(int cpu);

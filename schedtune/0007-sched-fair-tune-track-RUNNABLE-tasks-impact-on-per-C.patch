@@ -1,4 +1,4 @@
-From 93e0adf0e53139219d202bad5d9de15a3126b2d7 Mon Sep 17 00:00:00 2001
+From 3667f7891bd867cec4317848b73e430d02937585 Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Wed, 19 Aug 2015 19:47:24 +0100
 Subject: [PATCH 7/7] sched/{fair, tune}: track RUNNABLE tasks impact on per
@@ -34,13 +34,13 @@ cc: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
 ---
  kernel/sched/fair.c | 17 +++++++---
- kernel/sched/tune.c | 94 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- kernel/sched/tune.h | 23 +++++++++++++
- 3 files changed, 130 insertions(+), 4 deletions(-)
+ kernel/sched/tune.c | 92 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/tune.h | 23 ++++++++++++++
+ 3 files changed, 128 insertions(+), 4 deletions(-)
  create mode 100644 kernel/sched/tune.h
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index db5a9ba..a56d242 100644
+index 4c94441..19febd6 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -34,6 +34,7 @@
@@ -105,7 +105,7 @@ index db5a9ba..a56d242 100644
  	return util + margin;
  }
 diff --git a/kernel/sched/tune.c b/kernel/sched/tune.c
-index 3223ef3..3838106 100644
+index 3223ef3..207d460 100644
 --- a/kernel/sched/tune.c
 +++ b/kernel/sched/tune.c
 @@ -2,6 +2,7 @@
@@ -204,16 +204,14 @@ index 3223ef3..3838106 100644
  static u64
  boost_read(struct cgroup_subsys_state *css, struct cftype *cft)
  {
-@@ -293,9 +375,21 @@ schedtune_css_free(struct cgroup_subsys_state *css)
+@@ -293,9 +375,19 @@ schedtune_css_free(struct cgroup_subsys_state *css)
  	kfree(st);
  }
  
 +static void
-+schedtune_exit(struct cgroup_subsys_state *css,
-+	       struct cgroup_subsys_state *old_css,
-+	       struct task_struct *tsk)
++schedtune_exit(struct task_struct *tsk)
 +{
-+	struct schedtune *old_st = css_st(old_css);
++	struct schedtune *old_st = task_schedtune(tsk);
 +	int cpu = task_cpu(tsk);
 +
 +	schedtune_tasks_update(tsk, cpu, old_st->idx, -1);

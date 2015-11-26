@@ -1,4 +1,4 @@
-From da4d2cb1da03d2fce19122f83c5b61157f407299 Mon Sep 17 00:00:00 2001
+From cc5780163b41bcc3ab7d5ef1d3e61e567e9506b8 Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Wed, 19 Aug 2015 19:47:19 +0100
 Subject: [PATCH 2/7] sched/tune: add sysctl interface to define a boost value
@@ -137,10 +137,10 @@ index 0000000..4c44b1a
 +}
 +
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index e69201d..feddb9e 100644
+index dc6858d..827ba25 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -433,6 +433,17 @@ static struct ctl_table kern_table[] = {
+@@ -434,6 +434,17 @@ static struct ctl_table kern_table[] = {
  		.extra1		= &one,
  	},
  #endif
