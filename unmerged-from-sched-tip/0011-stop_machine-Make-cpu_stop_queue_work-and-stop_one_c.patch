@@ -1,0 +1,114 @@
+From e0314de8db3693e2b4b5ac92f538baa37e28ad43 Mon Sep 17 00:00:00 2001
+From: Oleg Nesterov <oleg@redhat.com>
+Date: Tue, 17 Nov 2015 18:05:23 +0100
+Subject: [PATCH 11/28] stop_machine: Make cpu_stop_queue_work() and
+ stop_one_cpu_nowait() return bool
+
+Change cpu_stop_queue_work() to return true if the work was queued and
+change stop_one_cpu_nowait() to return the result of cpu_stop_queue_work().
+This makes it more useful, for example now you can alloc cpu_stop_work for
+stop_one_cpu_nowait() and free it in the callback or if stop_one_cpu_nowait()
+fails, currently this is impossible because you can't know if @fn will be
+called or not.
+
+Also, this allows to kill cpu_stop_done->executed, see the next changes.
+
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Tejun Heo <tj@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Milos Vyletel <milos@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Prarit Bhargava <prarit@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20151117170523.GA13955@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ include/linux/stop_machine.h |  7 +++++--
+ kernel/stop_machine.c        | 16 ++++++++++++----
+ 2 files changed, 17 insertions(+), 6 deletions(-)
+
+diff --git a/include/linux/stop_machine.h b/include/linux/stop_machine.h
+index 0e1b154..3cc9632 100644
+--- a/include/linux/stop_machine.h
++++ b/include/linux/stop_machine.h
+@@ -29,7 +29,7 @@ struct cpu_stop_work {
+ 
+ int stop_one_cpu(unsigned int cpu, cpu_stop_fn_t fn, void *arg);
+ int stop_two_cpus(unsigned int cpu1, unsigned int cpu2, cpu_stop_fn_t fn, void *arg);
+-void stop_one_cpu_nowait(unsigned int cpu, cpu_stop_fn_t fn, void *arg,
++bool stop_one_cpu_nowait(unsigned int cpu, cpu_stop_fn_t fn, void *arg,
+ 			 struct cpu_stop_work *work_buf);
+ int stop_cpus(const struct cpumask *cpumask, cpu_stop_fn_t fn, void *arg);
+ int try_stop_cpus(const struct cpumask *cpumask, cpu_stop_fn_t fn, void *arg);
+@@ -65,7 +65,7 @@ static void stop_one_cpu_nowait_workfn(struct work_struct *work)
+ 	preempt_enable();
+ }
+ 
+-static inline void stop_one_cpu_nowait(unsigned int cpu,
++static inline bool stop_one_cpu_nowait(unsigned int cpu,
+ 				       cpu_stop_fn_t fn, void *arg,
+ 				       struct cpu_stop_work *work_buf)
+ {
+@@ -74,7 +74,10 @@ static inline void stop_one_cpu_nowait(unsigned int cpu,
+ 		work_buf->fn = fn;
+ 		work_buf->arg = arg;
+ 		schedule_work(&work_buf->work);
++		return true;
+ 	}
++
++	return false;
+ }
+ 
+ static inline int stop_cpus(const struct cpumask *cpumask,
+diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
+index 9f3bba3..edabfd5 100644
+--- a/kernel/stop_machine.c
++++ b/kernel/stop_machine.c
+@@ -81,17 +81,21 @@ static void __cpu_stop_queue_work(struct cpu_stopper *stopper,
+ }
+ 
+ /* queue @work to @stopper.  if offline, @work is completed immediately */
+-static void cpu_stop_queue_work(unsigned int cpu, struct cpu_stop_work *work)
++static bool cpu_stop_queue_work(unsigned int cpu, struct cpu_stop_work *work)
+ {
+ 	struct cpu_stopper *stopper = &per_cpu(cpu_stopper, cpu);
+ 	unsigned long flags;
++	bool enabled;
+ 
+ 	spin_lock_irqsave(&stopper->lock, flags);
+-	if (stopper->enabled)
++	enabled = stopper->enabled;
++	if (enabled)
+ 		__cpu_stop_queue_work(stopper, work);
+ 	else
+ 		cpu_stop_signal_done(work->done, false);
+ 	spin_unlock_irqrestore(&stopper->lock, flags);
++
++	return enabled;
+ }
+ 
+ /**
+@@ -297,12 +301,16 @@ int stop_two_cpus(unsigned int cpu1, unsigned int cpu2, cpu_stop_fn_t fn, void *
+  *
+  * CONTEXT:
+  * Don't care.
++ *
++ * RETURNS:
++ * true if cpu_stop_work was queued successfully and @fn will be called,
++ * false otherwise.
+  */
+-void stop_one_cpu_nowait(unsigned int cpu, cpu_stop_fn_t fn, void *arg,
++bool stop_one_cpu_nowait(unsigned int cpu, cpu_stop_fn_t fn, void *arg,
+ 			struct cpu_stop_work *work_buf)
+ {
+ 	*work_buf = (struct cpu_stop_work){ .fn = fn, .arg = arg, };
+-	cpu_stop_queue_work(cpu, work_buf);
++	return cpu_stop_queue_work(cpu, work_buf);
+ }
+ 
+ /* static data for stop_cpus */
+-- 
+1.9.1
+

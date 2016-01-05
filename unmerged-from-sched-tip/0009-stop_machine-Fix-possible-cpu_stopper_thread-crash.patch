@@ -1,0 +1,42 @@
+From b2d1e34f174ee8e1dfd511c842056b625958daad Mon Sep 17 00:00:00 2001
+From: Oleg Nesterov <oleg@redhat.com>
+Date: Sun, 15 Nov 2015 20:33:11 +0100
+Subject: [PATCH 09/28] stop_machine: Fix possible cpu_stopper_thread() crash
+
+stop_one_cpu_nowait(fn) will crash the kernel if the callback returns
+nonzero, work->done == NULL in this case.
+
+This needs more cleanups, cpu_stop_signal_done() is called right after
+we check done != NULL and it does the same check.
+
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Tejun Heo <tj@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Milos Vyletel <milos@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Prarit Bhargava <prarit@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20151115193311.GA8242@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/stop_machine.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
+index a3bbaee..148fc4d 100644
+--- a/kernel/stop_machine.c
++++ b/kernel/stop_machine.c
+@@ -454,7 +454,7 @@ repeat:
+ 		preempt_disable();
+ 
+ 		ret = fn(arg);
+-		if (ret)
++		if (ret && done)
+ 			done->ret = ret;
+ 
+ 		/* restore preemption and check it's still balanced */
+-- 
+1.9.1
+
