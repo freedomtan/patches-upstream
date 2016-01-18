@@ -1,7 +1,7 @@
-From 2f7a602b652c194107a2e6ad1f0a8ff1ef51037a Mon Sep 17 00:00:00 2001
+From 014dd1e769bb4c6117ed401612671e0e73a1418c Mon Sep 17 00:00:00 2001
 From: Juri Lelli <juri.lelli@arm.com>
 Date: Thu, 30 Apr 2015 11:53:48 +0100
-Subject: [PATCH 17/61] arm64: Cpu invariant scheduler load-tracking and
+Subject: [PATCH 17/62] arm64: Cpu invariant scheduler load-tracking and
  capacity support
 
 Provides the scheduler with a cpu scaling correction factor for more

@@ -1,7 +1,7 @@
-From 8c989c4577076427700e3673899a6b3c354d8f1b Mon Sep 17 00:00:00 2001
+From 05797826464cf88d34be4aeb65d7f935c0b341a6 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Tue, 3 Feb 2015 13:54:11 +0000
-Subject: [PATCH 29/61] sched: Disable energy-unfriendly nohz kicks
+Subject: [PATCH 29/62] sched: Disable energy-unfriendly nohz kicks
 
 With energy-aware scheduling enabled nohz_kick_needed() generates many
 nohz idle-balance kicks which lead to nothing when multiple tasks get
@@ -17,7 +17,7 @@ Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
  1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 523b58e..7c627c3 100644
+index f18fe7f..4de079b 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -8343,12 +8343,13 @@ static inline bool nohz_kick_needed(struct rq *rq)

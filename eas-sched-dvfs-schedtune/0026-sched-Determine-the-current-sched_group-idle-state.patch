@@ -1,7 +1,7 @@
-From c42b994d637f66df43b082330923fd7a1d9378f6 Mon Sep 17 00:00:00 2001
+From a7e983a192931cde53ffc82a77c2a08d99581f8e Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Tue, 27 Jan 2015 14:04:17 +0000
-Subject: [PATCH 26/61] sched: Determine the current sched_group idle-state
+Subject: [PATCH 26/62] sched: Determine the current sched_group idle-state
 
 To estimate the energy consumption of a sched_group in
 sched_group_energy() it is necessary to know which idle-state the group
@@ -18,7 +18,7 @@ Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
  1 file changed, 21 insertions(+), 4 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 7c31e36..b1f1151 100644
+index ea7ced7..324f8fa 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -4900,6 +4900,20 @@ static int find_new_capacity(struct energy_env *eenv,

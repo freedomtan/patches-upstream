@@ -1,7 +1,7 @@
-From 149dff5299b647005d8f67ff1f1ef95c69eaafc5 Mon Sep 17 00:00:00 2001
+From 89cd77ed7d912243698101ce0d0cc1e479ed0274 Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Fri, 14 Nov 2014 16:08:45 +0000
-Subject: [PATCH 11/61] sched: Introduce energy data structures
+Subject: [PATCH 11/62] sched: Introduce energy data structures
 
 The struct sched_group_energy represents the per sched_group related
 data which is needed for energy aware scheduling. It contains:
@@ -45,7 +45,7 @@ Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
  2 files changed, 20 insertions(+)
 
 diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 3b0de68..09053c4 100644
+index 791b47e..780e148 100644
 --- a/include/linux/sched.h
 +++ b/include/linux/sched.h
 @@ -1021,6 +1021,22 @@ struct sched_domain_attr {

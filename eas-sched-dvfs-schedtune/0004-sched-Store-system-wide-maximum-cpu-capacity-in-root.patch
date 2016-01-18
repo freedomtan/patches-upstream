@@ -1,7 +1,7 @@
-From 43ed899c1807665780bbd7c9ffd5a166aec87337 Mon Sep 17 00:00:00 2001
+From c8d53c21712924ee5c95f710442f1aa20b86d292 Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Thu, 7 May 2015 18:46:15 +0100
-Subject: [PATCH 04/61] sched: Store system-wide maximum cpu capacity in root
+Subject: [PATCH 04/62] sched: Store system-wide maximum cpu capacity in root
  domain
 
 To be able to compare the capacity of the target cpu with the highest

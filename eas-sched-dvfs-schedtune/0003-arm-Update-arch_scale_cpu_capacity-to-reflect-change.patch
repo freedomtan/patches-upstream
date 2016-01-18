@@ -1,7 +1,7 @@
-From 1de3d3a494ec288e21d9322e724c4ca04c234f09 Mon Sep 17 00:00:00 2001
+From 65535faafe649b6b21a7ab9469732f20e3841757 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Tue, 14 Apr 2015 16:25:31 +0100
-Subject: [PATCH 03/61] arm: Update arch_scale_cpu_capacity() to reflect change
+Subject: [PATCH 03/62] arm: Update arch_scale_cpu_capacity() to reflect change
  to define
 
 arch_scale_cpu_capacity() is no longer a weak function but a #define

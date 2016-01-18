@@ -1,7 +1,7 @@
-From 2b4169e02fd35f302dfdafb52cb2cb75841b7cd5 Mon Sep 17 00:00:00 2001
+From 113dd0f43ac901d0be9fcf193f04c513a2b9fa34 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Thu, 11 Dec 2014 15:25:29 +0000
-Subject: [PATCH 19/61] sched: Relocated cpu_util() and change return type
+Subject: [PATCH 19/62] sched: Relocated cpu_util() and change return type
 
 Move cpu_util() to an earlier position in fair.c and change return
 type to unsigned long as negative usage doesn't make much sense. All
@@ -16,7 +16,7 @@ Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
  1 file changed, 34 insertions(+), 36 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 08a4877..919fc8a 100644
+index 547ad13..3b68ed8 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -4747,6 +4747,40 @@ static unsigned long capacity_curr_of(int cpu)

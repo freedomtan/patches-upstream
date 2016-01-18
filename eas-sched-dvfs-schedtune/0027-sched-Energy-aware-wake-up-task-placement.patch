@@ -1,7 +1,7 @@
-From c5fd70b7a26fdfbf9e3cf8a1a72205306ff5e9da Mon Sep 17 00:00:00 2001
+From e93c52b5990b10c9bb5f4b9e20f0bb2e213d3961 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Sat, 9 May 2015 20:03:19 +0100
-Subject: [PATCH 27/61] sched: Energy-aware wake-up task placement
+Subject: [PATCH 27/62] sched: Energy-aware wake-up task placement
 
 Let available compute capacity and estimated energy impact select
 wake-up target cpu when energy-aware scheduling is enabled and the
@@ -22,7 +22,7 @@ Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
  1 file changed, 86 insertions(+), 3 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index b1f1151..34dba92 100644
+index 324f8fa..3e9cd1d 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -5372,6 +5372,86 @@ done:

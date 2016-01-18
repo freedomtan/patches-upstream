@@ -1,7 +1,7 @@
-From 4a7ec5940c9609c6012b947c82070185cda5a0ab Mon Sep 17 00:00:00 2001
+From dceb04600f84e31a1e7d15de34dd08e29d96997b Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Tue, 13 Jan 2015 13:43:28 +0000
-Subject: [PATCH 09/61] sched: Documentation for scheduler energy cost model
+Subject: [PATCH 09/62] sched: Documentation for scheduler energy cost model
 
 This documentation patch provides an overview of the experimental
 scheduler energy costing model, associated data structures, and a

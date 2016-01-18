@@ -1,7 +1,7 @@
-From c457bba124c2f720f3ba17a0da5113191185b790 Mon Sep 17 00:00:00 2001
+From 153a8997f312e2f92ddf7d6c492d18ed606aca80 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Sat, 9 May 2015 16:49:57 +0100
-Subject: [PATCH 24/61] sched: Add over-utilization/tipping point indicator
+Subject: [PATCH 24/62] sched: Add over-utilization/tipping point indicator
 
 Energy-aware scheduling is only meant to be active while the system is
 _not_ over-utilized. That is, there are spare cycles available to shift
@@ -63,7 +63,7 @@ Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
  2 files changed, 28 insertions(+), 6 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 3e4eb0c..7c31e36 100644
+index bf6bc82..ea7ced7 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -4199,6 +4199,8 @@ static inline void hrtick_update(struct rq *rq)

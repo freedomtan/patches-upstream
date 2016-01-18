@@ -1,7 +1,7 @@
-From b7d3e167532a2997df1153944089efb03bec7c08 Mon Sep 17 00:00:00 2001
+From 4a862c39c12ec0cef5c2d07c4be49f6dd2ab5ba7 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Sat, 9 May 2015 19:53:49 +0100
-Subject: [PATCH 05/61] sched: Add cpu capacity awareness to wakeup balancing
+Subject: [PATCH 05/62] sched: Add cpu capacity awareness to wakeup balancing
 
 Wakeup balancing is completely unaware of cpu capacity, cpu utilization
 and task utilization. The task is preferably placed on a cpu which is
@@ -35,7 +35,7 @@ Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
  1 file changed, 63 insertions(+), 3 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e3266eb..6037618 100644
+index 93efb96..a2bc914 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -4827,6 +4827,43 @@ static int wake_affine(struct sched_domain *sd, struct task_struct *p, int sync)

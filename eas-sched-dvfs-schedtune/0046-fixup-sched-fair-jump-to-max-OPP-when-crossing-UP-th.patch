@@ -1,0 +1,35 @@
+From e0f6e14b0b0c4cc9bd94b3322975a3d4beca78f1 Mon Sep 17 00:00:00 2001
+From: Juri Lelli <juri.lelli@arm.com>
+Date: Fri, 11 Dec 2015 11:58:05 +0000
+Subject: [PATCH 46/62] fixup! sched/fair: jump to max OPP when crossing UP
+ threshold
+
+Signed-off-by: Juri Lelli <juri.lelli@arm.com>
+---
+ kernel/sched/core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 803882d..4c29a30 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2925,6 +2925,7 @@ void scheduler_tick(void)
+ 	curr->sched_class->task_tick(rq, curr, 0);
+ 	update_cpu_load_active(rq);
+ 	calc_global_load_tick(rq);
++	sched_freq_tick(cpu);
+ 	raw_spin_unlock(&rq->lock);
+ 
+ 	perf_event_task_tick();
+@@ -2934,8 +2935,6 @@ void scheduler_tick(void)
+ 	trigger_load_balance(rq);
+ #endif
+ 	rq_last_tick_reset(rq);
+-
+-	sched_freq_tick(cpu);
+ }
+ 
+ #ifdef CONFIG_NO_HZ_FULL
+-- 
+1.9.1
+

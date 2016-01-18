@@ -1,0 +1,55 @@
+From 8ab72684a8f5c60e468500270581c328565da629 Mon Sep 17 00:00:00 2001
+From: Steve Muckle <smuckle@linaro.org>
+Date: Tue, 1 Dec 2015 15:54:43 -0800
+Subject: [PATCH 4/4] cpufreq: interactive: remove
+ cpufreq_{get,put}_global_kobject usage
+
+Commit 8eec1020f0 ("cpufreq: create cpu/cpufreq at boot time") removed
+the need for the cpufreq_{get,put}_global_kobject APIs since the
+/sys/devices/system/cpu/cpufreq directory will always exist.
+
+Signed-off-by: Steve Muckle <smuckle@linaro.org>
+---
+ drivers/cpufreq/cpufreq_interactive.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/cpufreq/cpufreq_interactive.c b/drivers/cpufreq/cpufreq_interactive.c
+index e569e0b..c4196da 100644
+--- a/drivers/cpufreq/cpufreq_interactive.c
++++ b/drivers/cpufreq/cpufreq_interactive.c
+@@ -1148,20 +1148,16 @@ static int cpufreq_governor_interactive(struct cpufreq_policy *policy,
+ 		spin_lock_init(&tunables->above_hispeed_delay_lock);
+ 
+ 		policy->governor_data = tunables;
+-		if (!have_governor_per_policy()) {
++		if (!have_governor_per_policy())
+ 			common_tunables = tunables;
+-			WARN_ON(cpufreq_get_global_kobject());
+-		}
+ 
+ 		rc = sysfs_create_group(get_governor_parent_kobj(policy),
+ 				get_sysfs_attr());
+ 		if (rc) {
+ 			kfree(tunables);
+ 			policy->governor_data = NULL;
+-			if (!have_governor_per_policy()) {
++			if (!have_governor_per_policy())
+ 				common_tunables = NULL;
+-				cpufreq_put_global_kobject();
+-			}
+ 			return rc;
+ 		}
+ 
+@@ -1184,9 +1180,6 @@ static int cpufreq_governor_interactive(struct cpufreq_policy *policy,
+ 			sysfs_remove_group(get_governor_parent_kobj(policy),
+ 					get_sysfs_attr());
+ 
+-			if (!have_governor_per_policy())
+-				cpufreq_put_global_kobject();
+-
+ 			kfree(tunables);
+ 			common_tunables = NULL;
+ 		}
+-- 
+1.9.1
+

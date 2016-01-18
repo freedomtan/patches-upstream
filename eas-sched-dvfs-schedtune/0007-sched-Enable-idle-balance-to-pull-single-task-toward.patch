@@ -1,7 +1,7 @@
-From 04b338e673c3d2f0cbe785152bfad17ebdc0518b Mon Sep 17 00:00:00 2001
+From 496635ffb17e70a732a5dba12fd45248e3e44d46 Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Mon, 26 Jan 2015 19:47:28 +0000
-Subject: [PATCH 07/61] sched: Enable idle balance to pull single task towards
+Subject: [PATCH 07/62] sched: Enable idle balance to pull single task towards
  cpu with higher capacity
 
 We do not want to miss out on the ability to pull a single remaining
@@ -19,7 +19,7 @@ Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
  1 file changed, 12 insertions(+)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 6a434ed..919998b 100644
+index 81cf6c2..84a87b9 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -4864,6 +4864,11 @@ static inline bool task_fits_spare(struct task_struct *p, int cpu)

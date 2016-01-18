@@ -1,7 +1,7 @@
-From 882f3391a5f5c4880ffe99cf924d86fef7bfd9c7 Mon Sep 17 00:00:00 2001
+From 26be5973e81615b3e29f3cd015d091430718a9f5 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Fri, 2 Jan 2015 14:21:56 +0000
-Subject: [PATCH 22/61] sched: Extend sched_group_energy to test load-balancing
+Subject: [PATCH 22/62] sched: Extend sched_group_energy to test load-balancing
  decisions
 
 Extended sched_group_energy() to support energy prediction with usage
@@ -16,7 +16,7 @@ Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
  1 file changed, 63 insertions(+), 27 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e3935ee..96b5dce 100644
+index 8d08fb7..cb7060f 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -4773,12 +4773,21 @@ static unsigned long capacity_curr_of(int cpu)

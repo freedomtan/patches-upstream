@@ -1,7 +1,7 @@
-From a5392d18533f55f55dc13bc1137bacb9bf710337 Mon Sep 17 00:00:00 2001
+From 85ac3a733c71a48a57c5c8f80ddb64314f4e836a Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Tue, 13 Jan 2015 13:50:46 +0000
-Subject: [PATCH 13/61] sched: Introduce SD_SHARE_CAP_STATES sched_domain flag
+Subject: [PATCH 13/62] sched: Introduce SD_SHARE_CAP_STATES sched_domain flag
 
 cpufreq is currently keeping it a secret which cpus are sharing
 clock source. The scheduler needs to know about clock domains as well
@@ -37,7 +37,7 @@ index 6145547..38e7be1 100644
  
  static struct sched_domain_topology_level arm_topology[] = {
 diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 09053c4..d6421b5 100644
+index 780e148..2e9d10a 100644
 --- a/include/linux/sched.h
 +++ b/include/linux/sched.h
 @@ -989,6 +989,7 @@ extern void wake_up_q(struct wake_q_head *head);

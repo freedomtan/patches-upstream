@@ -1,7 +1,7 @@
-From 3b748155700145136dc6efcfc0fd91f207af8874 Mon Sep 17 00:00:00 2001
+From 20165420047e84e6edd5deeaa632e36cf07551db Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Fri, 10 Jul 2015 13:57:19 +0100
-Subject: [PATCH 16/61] arm: Cpu invariant scheduler load-tracking and capacity
+Subject: [PATCH 16/62] arm: Cpu invariant scheduler load-tracking and capacity
  support
 
 Provides the scheduler with a cpu scaling correction factor for more

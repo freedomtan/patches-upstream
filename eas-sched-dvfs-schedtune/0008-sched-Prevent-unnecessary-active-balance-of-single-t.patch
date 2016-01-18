@@ -1,7 +1,7 @@
-From aa99eeef444a1004b24866a7b19eba4a5e46c493 Mon Sep 17 00:00:00 2001
+From 518419c71ab2c9f1b50c70cf07c554a86a6ad941 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Thu, 2 Jul 2015 17:16:34 +0100
-Subject: [PATCH 08/61] sched: Prevent unnecessary active balance of single
+Subject: [PATCH 08/62] sched: Prevent unnecessary active balance of single
  task in sched group
 
 Scenarios with the busiest group having just one task and the local
@@ -26,7 +26,7 @@ Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 919998b..5dab2a5 100644
+index 84a87b9..53d6663 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -5713,6 +5713,7 @@ struct lb_env {

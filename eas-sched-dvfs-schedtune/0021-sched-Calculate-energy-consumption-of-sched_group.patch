@@ -1,7 +1,7 @@
-From 9c21e169305e197550450bcaa1ce9a756153b8f5 Mon Sep 17 00:00:00 2001
+From fbd6fab3031486015c7670b282211532732ce7e9 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Thu, 18 Dec 2014 14:47:18 +0000
-Subject: [PATCH 21/61] sched: Calculate energy consumption of sched_group
+Subject: [PATCH 21/62] sched: Calculate energy consumption of sched_group
 
 For energy-aware load-balancing decisions it is necessary to know the
 energy consumption estimates of groups of cpus. This patch introduces a
@@ -44,7 +44,7 @@ index 8bedfdd..c32cd13 100644
  
  /*
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 919fc8a..e3935ee 100644
+index 3b68ed8..8d08fb7 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -4787,6 +4787,162 @@ static inline bool energy_aware(void)

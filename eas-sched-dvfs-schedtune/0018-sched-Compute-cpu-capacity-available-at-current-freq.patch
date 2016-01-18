@@ -1,7 +1,7 @@
-From a15fa976e260f8f2d0ada7c1f9a68eec90cbce0f Mon Sep 17 00:00:00 2001
+From ffc32990cde2ca3bee9f7aa5e75fba61a4b1e751 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Tue, 13 Jan 2015 14:11:28 +0000
-Subject: [PATCH 18/61] sched: Compute cpu capacity available at current
+Subject: [PATCH 18/62] sched: Compute cpu capacity available at current
  frequency
 
 capacity_orig_of() returns the max available compute capacity of a cpu.
@@ -17,7 +17,7 @@ Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
  1 file changed, 11 insertions(+)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 1c3fb61..08a4877 100644
+index f281afd..547ad13 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -4736,6 +4736,17 @@ static long effective_load(struct task_group *tg, int cpu, long wl, long wg)
