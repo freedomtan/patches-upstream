@@ -1,7 +1,7 @@
-From b7ea792da84a6c58b3aa3c8a841725c3a5aedba2 Mon Sep 17 00:00:00 2001
+From 8f6d388ee5fb17f5b0710936866ddc0123e2432c Mon Sep 17 00:00:00 2001
 From: "chunfeng.yun@mediatek.com" <chunfeng.yun@mediatek.com>
 Date: Mon, 19 Oct 2015 14:21:15 +0800
-Subject: [PATCH 3/3] arm64: dts: mediatek: add xHCI & usb phy for mt8173
+Subject: [PATCH 4/4] arm64: dts: mediatek: add xHCI & usb phy for mt8173
 
 add xHCI and phy drivers for MT8173-EVB
 
@@ -12,7 +12,7 @@ Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
  2 files changed, 58 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173-evb.dts b/arch/arm64/boot/dts/mediatek/mt8173-evb.dts
-index 811cb76..9b1482a 100644
+index d2cf4c5..86009ca 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173-evb.dts
 +++ b/arch/arm64/boot/dts/mediatek/mt8173-evb.dts
 @@ -13,6 +13,7 @@
@@ -39,7 +39,7 @@ index 811cb76..9b1482a 100644
  };
  
  &i2c1 {
-@@ -408,3 +418,9 @@
+@@ -411,3 +421,9 @@
  &uart0 {
  	status = "okay";
  };

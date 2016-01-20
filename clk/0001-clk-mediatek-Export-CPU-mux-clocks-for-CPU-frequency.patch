@@ -1,4 +1,4 @@
-From a9c4451fcfcfccdb74492b48cc3672b5ec0d222a Mon Sep 17 00:00:00 2001
+From f43b3ad06e810a641a3027326e92ca2c7e38c0fd Mon Sep 17 00:00:00 2001
 From: "pi-cheng.chen" <pi-cheng.chen@linaro.org>
 Date: Mon, 14 Sep 2015 19:27:52 +0800
 Subject: [PATCH] clk: mediatek: Export CPU mux clocks for CPU frequency

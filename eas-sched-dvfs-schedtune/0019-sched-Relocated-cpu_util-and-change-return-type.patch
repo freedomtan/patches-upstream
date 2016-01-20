@@ -1,7 +1,7 @@
-From 113dd0f43ac901d0be9fcf193f04c513a2b9fa34 Mon Sep 17 00:00:00 2001
+From 7e59edfcf1d09d65e8b3e094b508e72f4da9fb75 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Thu, 11 Dec 2014 15:25:29 +0000
-Subject: [PATCH 19/62] sched: Relocated cpu_util() and change return type
+Subject: [PATCH 19/63] sched: Relocated cpu_util() and change return type
 
 Move cpu_util() to an earlier position in fair.c and change return
 type to unsigned long as negative usage doesn't make much sense. All

@@ -1,7 +1,7 @@
-From 26be5973e81615b3e29f3cd015d091430718a9f5 Mon Sep 17 00:00:00 2001
+From 49da11edf51e227b421d5f4d2b02d486027167c0 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Fri, 2 Jan 2015 14:21:56 +0000
-Subject: [PATCH 22/62] sched: Extend sched_group_energy to test load-balancing
+Subject: [PATCH 22/63] sched: Extend sched_group_energy to test load-balancing
  decisions
 
 Extended sched_group_energy() to support energy prediction with usage

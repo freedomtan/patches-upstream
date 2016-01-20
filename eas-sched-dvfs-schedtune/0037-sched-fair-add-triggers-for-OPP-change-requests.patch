@@ -1,7 +1,7 @@
-From 59e6b3b4727aea130cdbbfc04b82d59048cd1cb5 Mon Sep 17 00:00:00 2001
+From e17448963c088cc70fd0d18c9a3739347ba5b2bd Mon Sep 17 00:00:00 2001
 From: Juri Lelli <juri.lelli@arm.com>
 Date: Wed, 19 Aug 2015 19:47:12 +0100
-Subject: [PATCH 37/62] sched/fair: add triggers for OPP change requests
+Subject: [PATCH 37/63] sched/fair: add triggers for OPP change requests
 
 Each time a task is {en,de}queued we might need to adapt the current
 frequency to the new usage. Add triggers on {en,de}queue_task_fair() for

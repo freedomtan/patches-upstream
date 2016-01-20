@@ -1,7 +1,7 @@
-From 1286dcaa92458e4b04b307514c3485a6a57ee134 Mon Sep 17 00:00:00 2001
+From ef0442ffcfa19f504dfaec63aaea9323688aa242 Mon Sep 17 00:00:00 2001
 From: Juri Lelli <juri.lelli@arm.com>
 Date: Thu, 25 Jun 2015 14:37:27 +0100
-Subject: [PATCH 39/62] sched/fair: cpufreq_sched triggers for load balancing
+Subject: [PATCH 39/63] sched/fair: cpufreq_sched triggers for load balancing
 
 As we don't trigger freq changes from {en,de}queue_task_fair() during load
 balancing, we need to do explicitly so on load balancing paths.

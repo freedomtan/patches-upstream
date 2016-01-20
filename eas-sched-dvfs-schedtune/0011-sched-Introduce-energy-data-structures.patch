@@ -1,7 +1,7 @@
-From 89cd77ed7d912243698101ce0d0cc1e479ed0274 Mon Sep 17 00:00:00 2001
+From c1a2d5171bd04b22b87aece415dd492bc6214de0 Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Fri, 14 Nov 2014 16:08:45 +0000
-Subject: [PATCH 11/62] sched: Introduce energy data structures
+Subject: [PATCH 11/63] sched: Introduce energy data structures
 
 The struct sched_group_energy represents the per sched_group related
 data which is needed for energy aware scheduling. It contains:

@@ -1,7 +1,7 @@
-From 85ac3a733c71a48a57c5c8f80ddb64314f4e836a Mon Sep 17 00:00:00 2001
+From ef22a1435cf4c7962816d1e204066bdc56491642 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Tue, 13 Jan 2015 13:50:46 +0000
-Subject: [PATCH 13/62] sched: Introduce SD_SHARE_CAP_STATES sched_domain flag
+Subject: [PATCH 13/63] sched: Introduce SD_SHARE_CAP_STATES sched_domain flag
 
 cpufreq is currently keeping it a secret which cpus are sharing
 clock source. The scheduler needs to know about clock domains as well

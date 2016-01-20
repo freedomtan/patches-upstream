@@ -1,7 +1,7 @@
-From a5e2d6326b5322d4359b0a62900a28c6713deada Mon Sep 17 00:00:00 2001
+From 42907f5d37c9c8677445c581252906ca20b10db2 Mon Sep 17 00:00:00 2001
 From: Juri Lelli <juri.lelli@arm.com>
 Date: Tue, 10 Feb 2015 12:05:22 +0000
-Subject: [PATCH 15/62] arm64, topology: Define JUNO energy and provide it to
+Subject: [PATCH 15/63] arm64, topology: Define JUNO energy and provide it to
  the scheduler
 
 This patch is only here to be able to test provisioning of energy related

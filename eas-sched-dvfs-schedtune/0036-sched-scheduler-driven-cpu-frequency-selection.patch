@@ -1,7 +1,7 @@
-From 34b58edd80465c0cd9065655fc86a97364eae285 Mon Sep 17 00:00:00 2001
+From 1863ec069abd9d29e093f0b071d75aecc49464eb Mon Sep 17 00:00:00 2001
 From: Michael Turquette <mturquette@baylibre.com>
 Date: Tue, 30 Jun 2015 12:45:48 +0100
-Subject: [PATCH 36/62] sched: scheduler-driven cpu frequency selection
+Subject: [PATCH 36/63] sched: scheduler-driven cpu frequency selection
 
 Scheduler-driven CPU frequency selection hopes to exploit both
 per-task and global information in the scheduler to improve frequency

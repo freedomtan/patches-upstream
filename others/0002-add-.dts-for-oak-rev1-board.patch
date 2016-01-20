@@ -1,7 +1,7 @@
-From e339dae4db32390eb3c6d18b66685172439178f6 Mon Sep 17 00:00:00 2001
+From 6a6f1d2a91caac9faa09d147311eb45a64da9233 Mon Sep 17 00:00:00 2001
 From: "freedom.tan" <freedom.tan@mediatek.com>
 Date: Wed, 16 Sep 2015 14:12:29 +0800
-Subject: [PATCH 1/2] add .dts for oak-rev1 board
+Subject: [PATCH 2/3] add .dts for oak-rev1 board
 
 ---
  arch/arm64/boot/dts/mediatek/Makefile            |   1 +

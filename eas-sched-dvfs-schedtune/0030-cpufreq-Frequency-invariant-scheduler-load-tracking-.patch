@@ -1,7 +1,7 @@
-From 31015cfc022d6aaf7c0b3fe218f2a1861ddc571a Mon Sep 17 00:00:00 2001
+From eb7c91cfc32fd8649d4979c7e3c57b329f899a25 Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Thu, 17 Sep 2015 16:10:56 +0100
-Subject: [PATCH 30/62] cpufreq: Frequency invariant scheduler load-tracking
+Subject: [PATCH 30/63] cpufreq: Frequency invariant scheduler load-tracking
  support
 
 Implements cpufreq_scale_freq_capacity() to provide the scheduler with a

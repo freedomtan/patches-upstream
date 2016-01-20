@@ -1,7 +1,7 @@
-From 3b6c01f7dedad23e998a06c48cb51715518459ea Mon Sep 17 00:00:00 2001
+From 4fa45c5206e94418fadb30b6d704ad75e146b262 Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Mon, 22 Jun 2015 13:51:07 +0100
-Subject: [PATCH 61/62] DEBUG: schedtune: add tracepoint for CPU boost signal
+Subject: [PATCH 61/63] DEBUG: schedtune: add tracepoint for CPU boost signal
 
 Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
 ---

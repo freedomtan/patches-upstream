@@ -1,7 +1,7 @@
-From 31861752ab985b5cda327fc0ad94369323045d99 Mon Sep 17 00:00:00 2001
+From e4d119b760f14361317e85a293ff34430d0a308e Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Wed, 23 Sep 2015 17:59:55 +0100
-Subject: [PATCH 33/62] arm: Enable max freq invariant scheduler load-tracking
+Subject: [PATCH 33/63] arm: Enable max freq invariant scheduler load-tracking
  and capacity support
 
 Maximum Frequency Invariance has to be part of Cpu Invariance because

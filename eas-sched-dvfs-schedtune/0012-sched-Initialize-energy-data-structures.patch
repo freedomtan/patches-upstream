@@ -1,7 +1,7 @@
-From f9bb6a092ce8dd898fca7116623d94d6f23804ee Mon Sep 17 00:00:00 2001
+From 2463322389993047cbdaf3641ea05b722d6f3272 Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Fri, 14 Nov 2014 16:20:20 +0000
-Subject: [PATCH 12/62] sched: Initialize energy data structures
+Subject: [PATCH 12/63] sched: Initialize energy data structures
 
 The sched_group_energy (sge) pointer of the first sched_group (sg) in
 the sched_domain (sd) is initialized to point to the appropriate (in

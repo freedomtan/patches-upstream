@@ -1,7 +1,7 @@
-From a7e983a192931cde53ffc82a77c2a08d99581f8e Mon Sep 17 00:00:00 2001
+From aab742d9d7e6464c77797f814ff60ccfbda46f77 Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Tue, 27 Jan 2015 14:04:17 +0000
-Subject: [PATCH 26/62] sched: Determine the current sched_group idle-state
+Subject: [PATCH 26/63] sched: Determine the current sched_group idle-state
 
 To estimate the energy consumption of a sched_group in
 sched_group_energy() it is necessary to know which idle-state the group

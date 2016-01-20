@@ -1,7 +1,7 @@
-From 512d73eca1c6063ff806655e0bade502442fa50b Mon Sep 17 00:00:00 2001
+From 239841ae4606b4623f3f697ac578771844b26b2c Mon Sep 17 00:00:00 2001
 From: Steve Muckle <smuckle@linaro.org>
 Date: Thu, 25 Jun 2015 14:12:33 +0100
-Subject: [PATCH 40/62] sched/fair: jump to max OPP when crossing UP threshold
+Subject: [PATCH 40/63] sched/fair: jump to max OPP when crossing UP threshold
 
 Since the true utilization of a long running task is not detectable
 while it is running and might be bigger than the current cpu capacity,

@@ -1,7 +1,7 @@
-From 66ff8aacee358ac5cae44e3f56c335496daf358a Mon Sep 17 00:00:00 2001
+From e3b8352aec993e0d09b1638ae6912e4cec5fe415 Mon Sep 17 00:00:00 2001
 From: Juri Lelli <juri.lelli@arm.com>
 Date: Mon, 9 Nov 2015 12:07:27 +0000
-Subject: [PATCH 55/62] DEBUG: sched: add tracepoint for task load/util signals
+Subject: [PATCH 55/63] DEBUG: sched: add tracepoint for task load/util signals
 
 Signed-off-by: Juri Lelli <juri.lelli@arm.com>
 ---

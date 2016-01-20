@@ -1,7 +1,7 @@
-From 296a5996c45024676f5f66acd632d0a94ed6dc80 Mon Sep 17 00:00:00 2001
+From 291e32ff7802c1db5d1c8edd936778df471af042 Mon Sep 17 00:00:00 2001
 From: Michael Turquette <mturquette@baylibre.com>
 Date: Tue, 30 Jun 2015 12:45:27 +0100
-Subject: [PATCH 35/62] cpufreq: introduce cpufreq_driver_is_slow
+Subject: [PATCH 35/63] cpufreq: introduce cpufreq_driver_is_slow
 
 Some architectures and platforms perform CPU frequency transitions
 through a non-blocking method, while some might block or sleep. Even

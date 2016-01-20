@@ -1,7 +1,7 @@
-From 1b9f7e9f82cabc9bc8bd9617465e0aba89533d3a Mon Sep 17 00:00:00 2001
+From 8215ed0292ea7ab2729c6d61e6c8eff8045f7601 Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Mon, 22 Jun 2015 18:11:44 +0100
-Subject: [PATCH 48/62] sched/tune: add sysctl interface to define a boost
+Subject: [PATCH 48/63] sched/tune: add sysctl interface to define a boost
  value
 
 The current (CFS) scheduler implementation does not allow "to boost"

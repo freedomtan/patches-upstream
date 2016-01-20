@@ -1,7 +1,7 @@
-From 18afbb9709a631dc279715d118b4b8883e6c7b1b Mon Sep 17 00:00:00 2001
+From 9b2b49f3bcfa8f41403429eaac6704c0a5bd5bc0 Mon Sep 17 00:00:00 2001
 From: Vincent Guittot <vincent.guittot@linaro.org>
 Date: Tue, 20 Oct 2015 10:46:26 +0200
-Subject: [PATCH 42/62] sched: remove call of sched_avg_update from
+Subject: [PATCH 42/63] sched: remove call of sched_avg_update from
  sched_rt_avg_update
 
 rt_avg is only used to scale the available CPU's capacity for CFS

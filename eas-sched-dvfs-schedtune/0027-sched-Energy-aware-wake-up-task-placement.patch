@@ -1,7 +1,7 @@
-From e93c52b5990b10c9bb5f4b9e20f0bb2e213d3961 Mon Sep 17 00:00:00 2001
+From e0887e6e1172e6b2667e59ee9a008cfc51b3fd80 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Sat, 9 May 2015 20:03:19 +0100
-Subject: [PATCH 27/62] sched: Energy-aware wake-up task placement
+Subject: [PATCH 27/63] sched: Energy-aware wake-up task placement
 
 Let available compute capacity and estimated energy impact select
 wake-up target cpu when energy-aware scheduling is enabled and the

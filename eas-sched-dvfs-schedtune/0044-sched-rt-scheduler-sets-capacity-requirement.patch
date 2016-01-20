@@ -1,7 +1,7 @@
-From 308c021f453d012117cdfd7a9604c8b520df903a Mon Sep 17 00:00:00 2001
+From 6ec8e853895d9f3834f2f7f76737c7934a30cc0b Mon Sep 17 00:00:00 2001
 From: Vincent Guittot <vincent.guittot@linaro.org>
 Date: Mon, 26 Oct 2015 18:14:50 +0100
-Subject: [PATCH 44/62] sched: rt scheduler sets capacity requirement
+Subject: [PATCH 44/63] sched: rt scheduler sets capacity requirement
 
 RT tasks don't provide any running constraints like deadline ones
 except their running priority. The only current usable input to

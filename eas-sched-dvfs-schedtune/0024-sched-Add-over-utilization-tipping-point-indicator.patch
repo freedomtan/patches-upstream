@@ -1,7 +1,7 @@
-From 153a8997f312e2f92ddf7d6c492d18ed606aca80 Mon Sep 17 00:00:00 2001
+From 6b02825b4da725db1f854df454b6b167d3b844a9 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Sat, 9 May 2015 16:49:57 +0100
-Subject: [PATCH 24/62] sched: Add over-utilization/tipping point indicator
+Subject: [PATCH 24/63] sched: Add over-utilization/tipping point indicator
 
 Energy-aware scheduling is only meant to be active while the system is
 _not_ over-utilized. That is, there are spare cycles available to shift

@@ -1,7 +1,7 @@
-From ffc32990cde2ca3bee9f7aa5e75fba61a4b1e751 Mon Sep 17 00:00:00 2001
+From 366bd1d258d91e00739b2ba3391a0dc98e53b250 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Tue, 13 Jan 2015 14:11:28 +0000
-Subject: [PATCH 18/62] sched: Compute cpu capacity available at current
+Subject: [PATCH 18/63] sched: Compute cpu capacity available at current
  frequency
 
 capacity_orig_of() returns the max available compute capacity of a cpu.

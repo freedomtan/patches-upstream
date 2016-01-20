@@ -1,7 +1,7 @@
-From 91f8e5c1281441c00f168a15ab9f8567f52f0da5 Mon Sep 17 00:00:00 2001
+From 2e4392013629ee3e6903626cddb456cafad8f63e Mon Sep 17 00:00:00 2001
 From: Vincent Guittot <vincent.guittot@linaro.org>
 Date: Tue, 3 Nov 2015 10:39:01 +0100
-Subject: [PATCH 43/62] sched: deadline: use deadline bandwidth in
+Subject: [PATCH 43/63] sched: deadline: use deadline bandwidth in
  scale_rt_capacity
 
 Instead of monitoring the exec time of deadline tasks to evaluate the

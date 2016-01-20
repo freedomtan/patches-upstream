@@ -1,7 +1,7 @@
-From 7100767107f0dbb463e62bac72c14bd8e340c71e Mon Sep 17 00:00:00 2001
+From 3834a55cad3106a2adc63caf98cefa1fbd048d7e Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Wed, 24 Jun 2015 15:36:08 +0100
-Subject: [PATCH 62/62] DEBUG: schedtune: add tracepoint for
+Subject: [PATCH 62/63] DEBUG: schedtune: add tracepoint for
  schedtune_tasks_update() values
 
 Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>

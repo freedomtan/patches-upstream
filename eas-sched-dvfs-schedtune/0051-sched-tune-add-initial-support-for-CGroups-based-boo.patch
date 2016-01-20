@@ -1,7 +1,7 @@
-From a17e21caf6e3d5496ef29edd021f99fe1db7ca58 Mon Sep 17 00:00:00 2001
+From f2ef24fb9aade83166eca4953f4acb7ade997b81 Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Tue, 23 Jun 2015 09:17:54 +0100
-Subject: [PATCH 51/62] sched/tune: add initial support for CGroups based
+Subject: [PATCH 51/63] sched/tune: add initial support for CGroups based
  boosting
 
 To support task performance boosting, the usage of a single knob has the

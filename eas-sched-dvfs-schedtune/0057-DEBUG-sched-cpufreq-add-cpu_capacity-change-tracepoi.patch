@@ -1,7 +1,7 @@
-From aa4df227acfe36a89b29f344d6baecdae40ab280 Mon Sep 17 00:00:00 2001
+From ab555797ad7fb15d331850f6341a1eafe9a71421 Mon Sep 17 00:00:00 2001
 From: Juri Lelli <juri.lelli@arm.com>
 Date: Thu, 30 Apr 2015 17:35:23 +0100
-Subject: [PATCH 57/62] DEBUG: sched,cpufreq: add cpu_capacity change
+Subject: [PATCH 57/63] DEBUG: sched,cpufreq: add cpu_capacity change
  tracepoint
 
 This is useful when we want to compare cpu utilization and

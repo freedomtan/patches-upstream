@@ -1,0 +1,32 @@
+From 64ec2edc65abf6be7dff5bffdb33f2d9d7d47212 Mon Sep 17 00:00:00 2001
+From: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
+Date: Sun, 29 Nov 2015 16:31:36 +0800
+Subject: [PATCH 2/9] cpufreq: mt8173: remove redundant regulator_get_voltage()
+ call
+
+Remove redundant regulator_get_voltage() call to get Vsram value
+since it will be obtained later at the beginning of voltage tracking
+loop.
+
+Signed-off-by: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpufreq/mt8173-cpufreq.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/cpufreq/mt8173-cpufreq.c b/drivers/cpufreq/mt8173-cpufreq.c
+index c438109..750cda7 100644
+--- a/drivers/cpufreq/mt8173-cpufreq.c
++++ b/drivers/cpufreq/mt8173-cpufreq.c
+@@ -59,7 +59,6 @@ static int mtk_cpufreq_voltage_tracking(struct mtk_cpu_dvfs_info *info,
+ 	int old_vproc, old_vsram, new_vsram, vsram, vproc, ret;
+ 
+ 	old_vproc = regulator_get_voltage(proc_reg);
+-	old_vsram = regulator_get_voltage(sram_reg);
+ 	/* Vsram should not exceed the maximum allowed voltage of SoC. */
+ 	new_vsram = min(new_vproc + MIN_VOLT_SHIFT, MAX_VOLT_LIMIT);
+ 
+-- 
+1.9.1
+

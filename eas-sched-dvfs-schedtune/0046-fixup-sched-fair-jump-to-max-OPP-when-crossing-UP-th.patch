@@ -1,7 +1,7 @@
-From e0f6e14b0b0c4cc9bd94b3322975a3d4beca78f1 Mon Sep 17 00:00:00 2001
+From 5fe54874d42e7513cfa39c46667c2a8ccf10729d Mon Sep 17 00:00:00 2001
 From: Juri Lelli <juri.lelli@arm.com>
 Date: Fri, 11 Dec 2015 11:58:05 +0000
-Subject: [PATCH 46/62] fixup! sched/fair: jump to max OPP when crossing UP
+Subject: [PATCH 46/63] fixup! sched/fair: jump to max OPP when crossing UP
  threshold
 
 Signed-off-by: Juri Lelli <juri.lelli@arm.com>

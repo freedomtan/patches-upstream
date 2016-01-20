@@ -1,7 +1,7 @@
-From 6a7740ac3fdf404b6a44338116a83cf683cdd702 Mon Sep 17 00:00:00 2001
+From 84a94701f37303616c625510ebc31eaedda6bcc8 Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Mon, 22 Jun 2015 12:25:35 +0100
-Subject: [PATCH 52/62] sched/tune: compute and keep track of per CPU boost
+Subject: [PATCH 52/63] sched/tune: compute and keep track of per CPU boost
  value
 
 When per task boosting is enabled, we could have multiple RUNNABLE tasks

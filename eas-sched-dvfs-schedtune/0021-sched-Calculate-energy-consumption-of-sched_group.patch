@@ -1,7 +1,7 @@
-From fbd6fab3031486015c7670b282211532732ce7e9 Mon Sep 17 00:00:00 2001
+From 3ca2324b91168b63d60086e98835235cc70e8dfb Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Thu, 18 Dec 2014 14:47:18 +0000
-Subject: [PATCH 21/62] sched: Calculate energy consumption of sched_group
+Subject: [PATCH 21/63] sched: Calculate energy consumption of sched_group
 
 For energy-aware load-balancing decisions it is necessary to know the
 energy consumption estimates of groups of cpus. This patch introduces a

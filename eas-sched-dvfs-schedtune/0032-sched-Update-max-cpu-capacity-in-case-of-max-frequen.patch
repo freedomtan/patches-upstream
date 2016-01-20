@@ -1,7 +1,7 @@
-From d7327e4b113d3f6141c00d6e8e16c46878e1d95e Mon Sep 17 00:00:00 2001
+From 31ea7ed8a0e685aac6f2c51bac8bebcd2199149b Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Sat, 26 Sep 2015 18:19:54 +0100
-Subject: [PATCH 32/62] sched: Update max cpu capacity in case of max frequency
+Subject: [PATCH 32/63] sched: Update max cpu capacity in case of max frequency
  constraints
 
 Wakeup balancing uses cpu capacity awareness and needs to know the

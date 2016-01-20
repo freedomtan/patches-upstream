@@ -1,7 +1,7 @@
-From ce0819c51484ef6b082c2aaa670725ea042a2e9a Mon Sep 17 00:00:00 2001
+From 45d76b4f16a5c69de7e31d04f9b39106b00fe975 Mon Sep 17 00:00:00 2001
 From: Juri Lelli <juri.lelli@arm.com>
 Date: Mon, 9 Nov 2015 12:06:24 +0000
-Subject: [PATCH 54/62] DEBUG: sched: add tracepoint for cpu/freq scale
+Subject: [PATCH 54/63] DEBUG: sched: add tracepoint for cpu/freq scale
  invariance
 
 Signed-off-by: Juri Lelli <juri.lelli@arm.com>

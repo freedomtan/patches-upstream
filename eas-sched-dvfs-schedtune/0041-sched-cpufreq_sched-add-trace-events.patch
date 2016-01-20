@@ -1,7 +1,7 @@
-From 81d4a0714119073086ef822e942780807d4934e0 Mon Sep 17 00:00:00 2001
+From f77f03b6023b073de1aaf48424f251ef1c44444d Mon Sep 17 00:00:00 2001
 From: Steve Muckle <smuckle@linaro.org>
 Date: Wed, 25 Nov 2015 15:59:25 -0800
-Subject: [PATCH 41/62] sched/cpufreq_sched: add trace events
+Subject: [PATCH 41/63] sched/cpufreq_sched: add trace events
 
 Trace events will aid in debugging, profiling and tuning.
 

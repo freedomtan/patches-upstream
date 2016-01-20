@@ -1,7 +1,7 @@
-From dd6eb66c82ef733f95e0bc113816e509f0023721 Mon Sep 17 00:00:00 2001
+From edc52c530eb9ce85e0e9b205e37a908a12df971b Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Fri, 26 Jun 2015 09:55:06 +0100
-Subject: [PATCH 50/62] sched/fair: add boosted CPU usage
+Subject: [PATCH 50/63] sched/fair: add boosted CPU usage
 
 The CPU usage signal is used by the scheduler as an estimation of the
 overall bandwidth currently allocated on a CPU. When SchedDVFS is in

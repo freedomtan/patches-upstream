@@ -1,7 +1,7 @@
-From e05b4bb0f3a2a70e16971e3157b364ced6d8e6c3 Mon Sep 17 00:00:00 2001
+From 3f384298fd742ce878189107173d4906a86e6103 Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Fri, 25 Sep 2015 17:15:11 +0100
-Subject: [PATCH 02/62] arm64: Enable frequency invariant scheduler
+Subject: [PATCH 02/63] arm64: Enable frequency invariant scheduler
  load-tracking support
 
 Defines arch_scale_freq_capacity() to use cpufreq implementation.

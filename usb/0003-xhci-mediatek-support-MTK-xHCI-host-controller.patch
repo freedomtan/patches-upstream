@@ -1,7 +1,7 @@
-From ceb1f3228d27ff20ae4fb6a1d1f61e07ad45540b Mon Sep 17 00:00:00 2001
+From 1e71e2f0e4ab1e8c1c7c1d0176c4dad011f265c2 Mon Sep 17 00:00:00 2001
 From: "chunfeng.yun@mediatek.com" <chunfeng.yun@mediatek.com>
 Date: Mon, 19 Oct 2015 14:21:14 +0800
-Subject: [PATCH 2/3] xhci: mediatek: support MTK xHCI host controller
+Subject: [PATCH 3/4] xhci: mediatek: support MTK xHCI host controller
 
 There some vendor quirks for MTK xhci host controller:
 1. It defines some extra SW scheduling parameters for HW
@@ -1431,7 +1431,7 @@ index 0000000..7da677c
 +
 +#endif		/* _XHCI_MTK_H_ */
 diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index fa83625..9d79566 100644
+index eeaa6c6..4c870e0 100644
 --- a/drivers/usb/host/xhci-ring.c
 +++ b/drivers/usb/host/xhci-ring.c
 @@ -68,6 +68,7 @@
@@ -1442,7 +1442,7 @@ index fa83625..9d79566 100644
  
  /*
   * Returns zero if the TRB isn't in this segment, otherwise it returns the DMA
-@@ -3074,17 +3075,22 @@ static u32 xhci_td_remainder(struct xhci_hcd *xhci, int transferred,
+@@ -3075,17 +3076,22 @@ static u32 xhci_td_remainder(struct xhci_hcd *xhci, int transferred,
  {
  	u32 maxp, total_packet_count;
  
@@ -1469,7 +1469,7 @@ index fa83625..9d79566 100644
  	/* Queueing functions don't count the current TRB into transferred */
  	return (total_packet_count - ((transferred + trb_buff_len) / maxp));
  }
-@@ -3472,7 +3478,8 @@ int xhci_queue_ctrl_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
+@@ -3473,7 +3479,8 @@ int xhci_queue_ctrl_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
  		field |= 0x1;
  
  	/* xHCI 1.0/1.1 6.4.1.2.1: Transfer Type field */
@@ -1480,7 +1480,7 @@ index fa83625..9d79566 100644
  			if (setup->bRequestType & USB_DIR_IN)
  				field |= TRB_TX_TYPE(TRB_DATA_IN);
 diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index 6e7dc6f..6cbcd1e 100644
+index 3f91270..15fedb2 100644
 --- a/drivers/usb/host/xhci.c
 +++ b/drivers/usb/host/xhci.c
 @@ -31,6 +31,7 @@
@@ -1491,7 +1491,7 @@ index 6e7dc6f..6cbcd1e 100644
  
  #define DRIVER_AUTHOR "Sarah Sharp"
  #define DRIVER_DESC "'eXtensible' Host Controller (xHC) Driver"
-@@ -624,7 +625,11 @@ int xhci_run(struct usb_hcd *hcd)
+@@ -634,7 +635,11 @@ int xhci_run(struct usb_hcd *hcd)
  			"// Set the interrupt modulation register");
  	temp = readl(&xhci->ir_set->irq_control);
  	temp &= ~ER_IRQ_INTERVAL_MASK;
@@ -1504,7 +1504,7 @@ index 6e7dc6f..6cbcd1e 100644
  	writel(temp, &xhci->ir_set->irq_control);
  
  	/* Set the HCD state before we enable the irqs */
-@@ -1688,6 +1693,9 @@ int xhci_drop_endpoint(struct usb_hcd *hcd, struct usb_device *udev,
+@@ -1698,6 +1703,9 @@ int xhci_drop_endpoint(struct usb_hcd *hcd, struct usb_device *udev,
  
  	xhci_endpoint_zero(xhci, xhci->devs[udev->slot_id], ep);
  
@@ -1514,7 +1514,7 @@ index 6e7dc6f..6cbcd1e 100644
  	xhci_dbg(xhci, "drop ep 0x%x, slot id %d, new drop flags = %#x, new add flags = %#x\n",
  			(unsigned int) ep->desc.bEndpointAddress,
  			udev->slot_id,
-@@ -1783,6 +1791,15 @@ int xhci_add_endpoint(struct usb_hcd *hcd, struct usb_device *udev,
+@@ -1793,6 +1801,15 @@ int xhci_add_endpoint(struct usb_hcd *hcd, struct usb_device *udev,
  		return -ENOMEM;
  	}
  

@@ -1,4 +1,4 @@
-From 3f955a288849e7f8809996d26bc07e51a41beddb Mon Sep 17 00:00:00 2001
+From de599578e3cda42b3b376879745cf5bd8e89094d Mon Sep 17 00:00:00 2001
 From: "dawei.chien@mediatek.com" <dawei.chien@mediatek.com>
 Date: Thu, 22 Oct 2015 20:02:38 +0800
 Subject: [PATCH 3/3] thermal: mediatek: Add cpu power cooling model.
@@ -15,7 +15,7 @@ Signed-off-by: Dawei.Chien <dawei.chien@mediatek.com>
  1 file changed, 144 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/cpufreq/mt8173-cpufreq.c b/drivers/cpufreq/mt8173-cpufreq.c
-index 83001dc..f9f8e20 100644
+index 1efba34..ed11ed5 100644
 --- a/drivers/cpufreq/mt8173-cpufreq.c
 +++ b/drivers/cpufreq/mt8173-cpufreq.c
 @@ -29,6 +29,16 @@
@@ -35,9 +35,9 @@ index 83001dc..f9f8e20 100644
  /*
   * The struct mtk_cpu_dvfs_info holds necessary information for doing CPU DVFS
   * on each CPU power/clock domain of Mediatek SoCs. Each CPU cluster in
-@@ -51,6 +61,110 @@ struct mtk_cpu_dvfs_info {
- 	bool need_voltage_tracking;
- };
+@@ -70,6 +80,110 @@ static struct mtk_cpu_dvfs_info *mtk_cpu_dvfs_info_lookup(int cpu)
+ 	return NULL;
+ }
  
 +unsigned int mtk_cpufreq_lookup_power(const struct mtk_cpu_static_power *table,
 +		unsigned int count, unsigned long voltage)
@@ -146,7 +146,7 @@ index 83001dc..f9f8e20 100644
  static int mtk_cpufreq_voltage_tracking(struct mtk_cpu_dvfs_info *info,
  					int new_vproc)
  {
-@@ -267,20 +381,40 @@ static void mtk_cpufreq_ready(struct cpufreq_policy *policy)
+@@ -313,20 +427,40 @@ static void mtk_cpufreq_ready(struct cpufreq_policy *policy)
  {
  	struct mtk_cpu_dvfs_info *info = policy->driver_data;
  	struct device_node *np = of_node_get(info->cpu_dev->of_node);
@@ -194,7 +194,7 @@ index 83001dc..f9f8e20 100644
  		}
  	}
  
-@@ -460,7 +594,9 @@ static int mtk_cpufreq_exit(struct cpufreq_policy *policy)
+@@ -502,7 +636,9 @@ static int mtk_cpufreq_exit(struct cpufreq_policy *policy)
  {
  	struct mtk_cpu_dvfs_info *info = policy->driver_data;
  
@@ -203,8 +203,8 @@ index 83001dc..f9f8e20 100644
 +		cpufreq_cooling_unregister(info->cdev);
 +
  	dev_pm_opp_free_cpufreq_table(info->cpu_dev, &policy->freq_table);
- 	mtk_cpu_dvfs_info_release(info);
- 	kfree(info);
+ 
+ 	return 0;
 -- 
 1.9.1
 

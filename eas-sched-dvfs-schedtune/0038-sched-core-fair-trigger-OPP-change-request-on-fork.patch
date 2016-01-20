@@ -1,7 +1,7 @@
-From 1dcb8c64721867b6c96100ff698723ffaf6b45dc Mon Sep 17 00:00:00 2001
+From b0e60607b6e2c3b4d3461d42f83612222e3d883a Mon Sep 17 00:00:00 2001
 From: Juri Lelli <juri.lelli@arm.com>
 Date: Fri, 26 Jun 2015 12:14:23 +0100
-Subject: [PATCH 38/62] sched/{core,fair}: trigger OPP change request on fork()
+Subject: [PATCH 38/63] sched/{core,fair}: trigger OPP change request on fork()
 
 Patch "sched/fair: add triggers for OPP change requests" introduced OPP
 change triggers for enqueue_task_fair(), but the trigger was operating only

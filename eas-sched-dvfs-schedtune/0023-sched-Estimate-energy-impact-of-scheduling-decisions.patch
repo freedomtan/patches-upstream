@@ -1,7 +1,7 @@
-From 78859d26d31b4428e576b02c037d153c23165bb7 Mon Sep 17 00:00:00 2001
+From ae14d563afb8cb73e486f81d2198265a6212a16d Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Tue, 6 Jan 2015 17:34:05 +0000
-Subject: [PATCH 23/62] sched: Estimate energy impact of scheduling decisions
+Subject: [PATCH 23/63] sched: Estimate energy impact of scheduling decisions
 
 Adds a generic energy-aware helper function, energy_diff(), that
 calculates energy impact of adding, removing, and migrating utilization

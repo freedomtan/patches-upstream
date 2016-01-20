@@ -1,7 +1,7 @@
-From e7bf4b1d68dd32ca263f4d5e4f243c8b2c8b0c72 Mon Sep 17 00:00:00 2001
+From 8590552eaa28dc35f93cac1bdfba0c0f4127757a Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Fri, 14 Nov 2014 16:25:50 +0000
-Subject: [PATCH 59/62] DEBUG: sched: add energy procfs interface
+Subject: [PATCH 59/63] DEBUG: sched: add energy procfs interface
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

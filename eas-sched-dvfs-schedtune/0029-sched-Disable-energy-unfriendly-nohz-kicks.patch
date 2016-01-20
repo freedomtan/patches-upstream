@@ -1,7 +1,7 @@
-From 05797826464cf88d34be4aeb65d7f935c0b341a6 Mon Sep 17 00:00:00 2001
+From 9a2eed880eb75f8cf9f2f73fb871c173f0ab2d1f Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Tue, 3 Feb 2015 13:54:11 +0000
-Subject: [PATCH 29/62] sched: Disable energy-unfriendly nohz kicks
+Subject: [PATCH 29/63] sched: Disable energy-unfriendly nohz kicks
 
 With energy-aware scheduling enabled nohz_kick_needed() generates many
 nohz idle-balance kicks which lead to nothing when multiple tasks get

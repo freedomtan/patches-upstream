@@ -1,7 +1,7 @@
-From 4a862c39c12ec0cef5c2d07c4be49f6dd2ab5ba7 Mon Sep 17 00:00:00 2001
+From 6f19a7a608f94a834cb741d907e8b56ea784d1ba Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Sat, 9 May 2015 19:53:49 +0100
-Subject: [PATCH 05/62] sched: Add cpu capacity awareness to wakeup balancing
+Subject: [PATCH 05/63] sched: Add cpu capacity awareness to wakeup balancing
 
 Wakeup balancing is completely unaware of cpu capacity, cpu utilization
 and task utilization. The task is preferably placed on a cpu which is

@@ -1,7 +1,7 @@
-From 1a4c7fb58cda05455b2950862bc50fc63995b788 Mon Sep 17 00:00:00 2001
+From ef8d6499b0bae1618aed975ddcd06d754e8f606a Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Fri, 14 Nov 2014 17:16:41 +0000
-Subject: [PATCH 14/62] arm: topology: Define TC2 energy and provide it to the
+Subject: [PATCH 14/63] arm: topology: Define TC2 energy and provide it to the
  scheduler
 
 This patch is only here to be able to test provisioning of energy related

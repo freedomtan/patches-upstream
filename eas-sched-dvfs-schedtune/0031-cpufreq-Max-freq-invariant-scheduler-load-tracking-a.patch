@@ -1,7 +1,7 @@
-From 81bc03bbeee2978cd953dd91fd5b07ed2d353bf9 Mon Sep 17 00:00:00 2001
+From 8f42ac2f299ce98c6cda9f2285a3249a0fea5a0a Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Tue, 22 Sep 2015 16:47:48 +0100
-Subject: [PATCH 31/62] cpufreq: Max freq invariant scheduler load-tracking and
+Subject: [PATCH 31/63] cpufreq: Max freq invariant scheduler load-tracking and
  cpu capacity support
 
 Implements cpufreq_scale_max_freq_capacity() to provide the scheduler

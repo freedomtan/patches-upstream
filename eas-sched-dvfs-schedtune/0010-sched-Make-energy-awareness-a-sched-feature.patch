@@ -1,7 +1,7 @@
-From 9a3119d3274a7162693e17b9f758412eab702484 Mon Sep 17 00:00:00 2001
+From 880f8db536ffd8094829c8291a1ae6c2b3822064 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Tue, 13 Jan 2015 13:45:51 +0000
-Subject: [PATCH 10/62] sched: Make energy awareness a sched feature
+Subject: [PATCH 10/63] sched: Make energy awareness a sched feature
 
 This patch introduces the ENERGY_AWARE sched feature, which is
 implemented using jump labels when SCHED_DEBUG is defined. It is

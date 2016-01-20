@@ -1,7 +1,7 @@
-From 346d0e78549c53907d311943224f2953f57422d9 Mon Sep 17 00:00:00 2001
+From f4ffb8b57e2d337b54a2c3c7228c4718fa4d54d8 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Mon, 6 Jul 2015 15:01:10 +0100
-Subject: [PATCH 06/62] sched: Consider spare cpu capacity at task wake-up
+Subject: [PATCH 06/63] sched: Consider spare cpu capacity at task wake-up
 
 find_idlest_group() selects the wake-up target group purely
 based on group load which leads to suboptimal choices in low load

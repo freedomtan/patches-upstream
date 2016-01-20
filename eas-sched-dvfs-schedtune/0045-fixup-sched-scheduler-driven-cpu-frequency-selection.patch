@@ -1,7 +1,7 @@
-From a0b103966d5a274fea6cd6bcd9708ad4d06962fd Mon Sep 17 00:00:00 2001
+From 2a6cd5b10b5037cc5b3cab45285fe02daf491582 Mon Sep 17 00:00:00 2001
 From: Juri Lelli <juri.lelli@arm.com>
 Date: Fri, 11 Dec 2015 11:55:51 +0000
-Subject: [PATCH 45/62] fixup! sched: scheduler-driven cpu frequency selection
+Subject: [PATCH 45/63] fixup! sched: scheduler-driven cpu frequency selection
 
 Signed-off-by: Juri Lelli <juri.lelli@arm.com>
 ---

@@ -1,7 +1,7 @@
-From e4eac06b5ed02bf4b040ffa12b9c09bdc603d105 Mon Sep 17 00:00:00 2001
+From 589c4a68c6c89ec5ff73a239b4e2313c44b21978 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Tue, 27 Jan 2015 13:48:07 +0000
-Subject: [PATCH 25/62] sched, cpuidle: Track cpuidle state index in the
+Subject: [PATCH 25/63] sched, cpuidle: Track cpuidle state index in the
  scheduler
 
 The idle-state of each cpu is currently pointed to by rq->idle_state but

@@ -1,7 +1,7 @@
-From c384c013732c2ae760af0659e89661ccd84285c7 Mon Sep 17 00:00:00 2001
+From 5188fca3a021f7a6c3eaff68f15e0a886393a312 Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Tue, 7 Jul 2015 15:33:20 +0100
-Subject: [PATCH 53/62] sched/{fair,tune}: track RUNNABLE tasks impact on per
+Subject: [PATCH 53/63] sched/{fair,tune}: track RUNNABLE tasks impact on per
  CPU boost value
 
 When per-task boosting is enabled, every time a task enters/exits a CPU

@@ -1,7 +1,7 @@
-From 496635ffb17e70a732a5dba12fd45248e3e44d46 Mon Sep 17 00:00:00 2001
+From 48c58dd62bc14bba01aa2e502436ffaa2d11dc10 Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Mon, 26 Jan 2015 19:47:28 +0000
-Subject: [PATCH 07/62] sched: Enable idle balance to pull single task towards
+Subject: [PATCH 07/63] sched: Enable idle balance to pull single task towards
  cpu with higher capacity
 
 We do not want to miss out on the ability to pull a single remaining

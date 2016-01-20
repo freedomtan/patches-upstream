@@ -1,4 +1,4 @@
-From 3e6b4b17594b3a085ec719bac3e58ca7ba505582 Mon Sep 17 00:00:00 2001
+From d4b8edf1097009ea55e7c8d4a27882d0a722226a Mon Sep 17 00:00:00 2001
 From: Sudeep Holla <sudeep.holla@arm.com>
 Date: Wed, 3 Jun 2015 14:45:41 +0100
 Subject: [PATCH 3/3] arm64: dts: add cpu and cluster idle states on Juno

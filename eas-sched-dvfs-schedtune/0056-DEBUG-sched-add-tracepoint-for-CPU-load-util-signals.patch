@@ -1,7 +1,7 @@
-From 248c5f52b01fdbbea4f2d213960d7a3080c127f4 Mon Sep 17 00:00:00 2001
+From 1d67a4710dec1fecdb253c5fb49a3f8ffbc1c4ac Mon Sep 17 00:00:00 2001
 From: Juri Lelli <juri.lelli@arm.com>
 Date: Mon, 9 Nov 2015 12:07:48 +0000
-Subject: [PATCH 56/62] DEBUG: sched: add tracepoint for CPU load/util signals
+Subject: [PATCH 56/63] DEBUG: sched: add tracepoint for CPU load/util signals
 
 Signed-off-by: Juri Lelli <juri.lelli@arm.com>
 ---

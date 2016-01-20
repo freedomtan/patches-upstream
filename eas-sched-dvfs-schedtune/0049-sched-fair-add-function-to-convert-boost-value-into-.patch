@@ -1,7 +1,7 @@
-From 77fe6ac27c1fb1580f5bbec647f4924e377335d6 Mon Sep 17 00:00:00 2001
+From 732a99c833d9b3edd4f45880b54bd815bdde3cf0 Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Mon, 22 Jun 2015 18:32:36 +0100
-Subject: [PATCH 49/62] sched/fair: add function to convert boost value into
+Subject: [PATCH 49/63] sched/fair: add function to convert boost value into
  "margin"
 
 The basic idea of the boost knob is to "artificially inflate" a signal
