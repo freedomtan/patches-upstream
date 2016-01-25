@@ -1,0 +1,96 @@
+From 2b9e3294a4a9929acd763493da917e3eb77ea7cd Mon Sep 17 00:00:00 2001
+From: Lina Iyer <lina.iyer@linaro.org>
+Date: Wed, 4 Nov 2015 15:45:52 -0700
+Subject: [PATCH 17/25] drivers: cpu-pd: Record CPUs that are part of the
+ domain
+
+In order to power down the heirarchy of the CPU domain, the domain needs
+information about the CPUs in that domain hierarchy. A domain that has
+sub-domains containing CPU devices, will need information about all the
+CPUs in the sub-domains as well.
+
+Use the ->parent member of CPU PM domain and recursively set CPUs to the
+domain hierarchy.
+
+Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
+---
+ drivers/base/power/cpu-pd.c | 14 ++++++++++++--
+ include/linux/cpu-pd.h      |  2 ++
+ 2 files changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/base/power/cpu-pd.c b/drivers/base/power/cpu-pd.c
+index d47f5ba..d19c5af 100644
+--- a/drivers/base/power/cpu-pd.c
++++ b/drivers/base/power/cpu-pd.c
+@@ -98,7 +98,7 @@ static int cpu_pd_power_on(struct generic_pm_domain *genpd)
+ 	return 0;
+ }
+ 
+-static int of_pm_domain_attach_cpu(int cpu)
++static int of_pm_domain_attach_cpu(struct cpu_pm_domain *cpu_pd, int cpu)
+ {
+ 	int ret;
+ 	struct device *cpu_dev;
+@@ -125,6 +125,11 @@ static int of_pm_domain_attach_cpu(int cpu)
+ 		dev_dbg(cpu_dev, "Attached to domain\n");
+ 	}
+ 
++	while (!ret && cpu_pd) {
++		cpumask_set_cpu(cpu, cpu_pd->cpus);
++		cpu_pd = cpu_pd->parent;
++	};
++
+ 	return ret;
+ }
+ 
+@@ -221,6 +226,9 @@ struct generic_pm_domain *of_init_cpu_pm_domain(struct device_node *dn,
+ 
+ 	pd->genpd = genpd;
+ 
++	if (!zalloc_cpumask_var(&pd->cpus, GFP_KERNEL))
++		goto fail;
++
+ 	if (ops) {
+ 		pd->plat_ops.power_off = ops->power_off;
+ 		pd->plat_ops.power_on = ops->power_on;
+@@ -235,6 +243,8 @@ fail:
+ 
+ 	kfree(genpd);
+ 	kfree(genpd->name);
++	if (pd)
++		kfree(pd->cpus);
+ 	kfree(pd);
+ 	return ERR_PTR(ret);
+ }
+@@ -334,7 +344,7 @@ int of_setup_cpu_pm_domains(const struct cpu_pd_ops *ops)
+ 			return -ENOENT;
+ 		}
+ 
+-		ret = of_pm_domain_attach_cpu(cpu);
++		ret = of_pm_domain_attach_cpu(cpu_pd, cpu);
+ 		if (ret)
+ 			return ret;
+ 
+diff --git a/include/linux/cpu-pd.h b/include/linux/cpu-pd.h
+index 68a476f..e7ddcd2 100644
+--- a/include/linux/cpu-pd.h
++++ b/include/linux/cpu-pd.h
+@@ -11,6 +11,7 @@
+ #ifndef __CPU_PD_H__
+ #define __CPU_PD_H__
+ 
++#include <linux/cpumask.h>
+ #include <linux/list.h>
+ #include <linux/of.h>
+ #include <linux/pm_domain.h>
+@@ -26,6 +27,7 @@ struct cpu_pm_domain {
+ 	struct device_node *dn;
+ 	struct cpu_pd_ops plat_ops;
+ 	struct cpu_pm_domain *parent;
++	cpumask_var_t cpus;
+ };
+ 
+ #ifdef CONFIG_PM
+-- 
+1.9.1
+

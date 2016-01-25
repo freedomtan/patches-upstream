@@ -1,0 +1,72 @@
+From cb62767f0e4e002192bbd7f738204916f412c841 Mon Sep 17 00:00:00 2001
+From: Lina Iyer <lina.iyer@linaro.org>
+Date: Mon, 19 Oct 2015 09:59:36 -0600
+Subject: [PATCH 16/25] drivers: cpu-pd: Invoke CPU PM runtime on hotplug
+
+When a CPU is hotplugged off invoke CPU runtime suspend to notify
+runtime PM of the CPU being powered down and opportunistically power
+down the domain as well. Do that independent of the architecture using
+hotplug notifiers.
+
+Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
+---
+ drivers/base/power/cpu-pd.c | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/base/power/cpu-pd.c b/drivers/base/power/cpu-pd.c
+index 5727b01..d47f5ba 100644
+--- a/drivers/base/power/cpu-pd.c
++++ b/drivers/base/power/cpu-pd.c
+@@ -128,6 +128,26 @@ static int of_pm_domain_attach_cpu(int cpu)
+ 	return ret;
+ }
+ 
++static int cpu_hotplug(struct notifier_block *nb,
++			unsigned long action, void *data)
++{
++	/* Execute CPU runtime PM on that CPU */
++	switch (action) {
++	case CPU_DYING:
++	case CPU_DYING_FROZEN:
++		cpu_pm_runtime_suspend();
++		break;
++	case CPU_STARTING:
++	case CPU_STARTING_FROZEN:
++		cpu_pm_runtime_resume();
++		break;
++	default:
++		break;
++	}
++
++	return NOTIFY_OK;
++}
++
+ static int of_register_cpu_pm_domain(struct device_node *dn,
+ 		struct cpu_pm_domain *pd)
+ {
+@@ -285,7 +305,7 @@ int of_setup_cpu_pm_domains(const struct cpu_pd_ops *ops)
+ 	struct device_node *dn;
+ 	struct generic_pm_domain *genpd;
+ 	struct cpu_pm_domain *cpu_pd;
+-	int cpu;
++	int cpu, cpus_attached = 0;
+ 	int ret = 0;
+ 
+ 	for_each_possible_cpu(cpu) {
+@@ -317,8 +337,13 @@ int of_setup_cpu_pm_domains(const struct cpu_pd_ops *ops)
+ 		ret = of_pm_domain_attach_cpu(cpu);
+ 		if (ret)
+ 			return ret;
++
++		cpus_attached++;
+ 	}
+ 
++	if (cpus_attached > 0)
++		hotcpu_notifier(cpu_hotplug, 0);
++
+ 	return ret;
+ }
+ EXPORT_SYMBOL(of_setup_cpu_pm_domains);
+-- 
+1.9.1
+

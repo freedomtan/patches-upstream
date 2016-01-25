@@ -1,0 +1,53 @@
+From a1c72f4b6037db4217c014fe295602e07c3ef1b5 Mon Sep 17 00:00:00 2001
+From: Axel Haslam <ahaslam+renesas@baylibre.com>
+Date: Fri, 30 Oct 2015 16:39:59 +0100
+Subject: [PATCH 09/25] ARM: imx6: pm: declare pm domain latency on power_state
+ struct.
+
+The generic_pm_domain structure uses an array of latencies to be able to
+declare multiple intermediate states.
+
+Declare a single "OFF" state with the default latencies So that the
+power_off_latency_ns and power_on_latency_ns fields of generic_pm_domain
+structure can be eventualy removed.
+
+Signed-off-by: Axel Haslam <ahaslam+renesas@baylibre.com>
+Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
+[Lina: pm_genpd_init() argument change]
+---
+ arch/arm/mach-imx/gpc.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-imx/gpc.c b/arch/arm/mach-imx/gpc.c
+index cfc696b..17fea61 100644
+--- a/arch/arm/mach-imx/gpc.c
++++ b/arch/arm/mach-imx/gpc.c
+@@ -369,13 +369,23 @@ static struct generic_pm_domain imx6q_arm_domain = {
+ 	.name = "ARM",
+ };
+ 
++static struct genpd_power_state imx6q_arm_domain_states[] = {
++	{
++		.name = "OFF",
++		.power_off_latency_ns = 25000,
++		.power_on_latency_ns = 2000000,
++	},
++};
++
+ static struct pu_domain imx6q_pu_domain = {
+ 	.base = {
+ 		.name = "PU",
+ 		.power_off = imx6q_pm_pu_power_off,
+ 		.power_on = imx6q_pm_pu_power_on,
+-		.power_off_latency_ns = 25000,
+-		.power_on_latency_ns = 2000000,
++		.gov = NULL,
++		.status = GPD_STATE_POWER_OFF,
++		.states = imx6q_arm_domain_states,
++		.state_count = ARRAY_SIZE(imx6q_arm_domain_states),
+ 	},
+ };
+ 
+-- 
+1.9.1
+

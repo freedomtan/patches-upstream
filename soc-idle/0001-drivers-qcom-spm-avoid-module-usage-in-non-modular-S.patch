@@ -1,0 +1,51 @@
+From 1a13ead90e7b75f0ceeaeb5060bf849efcdc01b6 Mon Sep 17 00:00:00 2001
+From: Lina Iyer <lina.iyer@linaro.org>
+Date: Mon, 4 Jan 2016 09:52:31 -0700
+Subject: [PATCH 01/25] drivers: qcom: spm: avoid module usage in non-modular
+ SPM driver
+
+SPM driver provides cpuidle support on some QC SoC's. The functionality
+is non-modular and there is no need for module support. Convert module
+platform init to builtin platform driver init. The driver functionality
+is not affected by this change.
+
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
+---
+ drivers/soc/qcom/spm.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/soc/qcom/spm.c b/drivers/soc/qcom/spm.c
+index b04b05a..8ee5192 100644
+--- a/drivers/soc/qcom/spm.c
++++ b/drivers/soc/qcom/spm.c
+@@ -2,6 +2,8 @@
+  * Copyright (c) 2011-2014, The Linux Foundation. All rights reserved.
+  * Copyright (c) 2014,2015, Linaro Ltd.
+  *
++ * SAW power controller driver
++ *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 and
+  * only version 2 as published by the Free Software Foundation.
+@@ -12,7 +14,6 @@
+  * GNU General Public License for more details.
+  */
+ 
+-#include <linux/module.h>
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+@@ -378,8 +379,5 @@ static struct platform_driver spm_driver = {
+ 		.of_match_table = spm_match_table,
+ 	},
+ };
+-module_platform_driver(spm_driver);
+ 
+-MODULE_LICENSE("GPL v2");
+-MODULE_DESCRIPTION("SAW power controller driver");
+-MODULE_ALIAS("platform:saw");
++builtin_platform_driver(spm_driver);
+-- 
+1.9.1
+

@@ -1,0 +1,48 @@
+From 4bd1f09d721686446b518d353e0662c221443018 Mon Sep 17 00:00:00 2001
+From: Lina Iyer <lina.iyer@linaro.org>
+Date: Fri, 19 Jun 2015 11:27:00 -0600
+Subject: [PATCH 21/25] ARM: cpuidle: Add runtime PM support for CPU idle
+
+Notify runtime PM when the CPU is going to be powered off in the idle
+state. This allows for runtime PM suspend/resume of the CPU as well as
+its PM domain.
+
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
+---
+ drivers/cpuidle/cpuidle-arm.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/cpuidle/cpuidle-arm.c b/drivers/cpuidle/cpuidle-arm.c
+index 251fa2a..ed9f0e09 100644
+--- a/drivers/cpuidle/cpuidle-arm.c
++++ b/drivers/cpuidle/cpuidle-arm.c
+@@ -14,6 +14,7 @@
+ #include <linux/cpuidle.h>
+ #include <linux/cpumask.h>
+ #include <linux/cpu_pm.h>
++#include <linux/cpu-pd.h>
+ #include <linux/of_device.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+@@ -46,6 +47,8 @@ static int arm_enter_idle_state(struct cpuidle_device *dev,
+ 
+ 	ret = cpu_pm_enter();
+ 	if (!ret) {
++		cpu_pm_runtime_suspend();
++
+ 		/*
+ 		 * Pass idle state index to cpu_suspend which in turn will
+ 		 * call the CPU ops suspend protocol with idle index as a
+@@ -53,6 +56,7 @@ static int arm_enter_idle_state(struct cpuidle_device *dev,
+ 		 */
+ 		arm_cpuidle_suspend(idx);
+ 
++		cpu_pm_runtime_resume();
+ 		cpu_pm_exit();
+ 	}
+ 
+-- 
+1.9.1
+

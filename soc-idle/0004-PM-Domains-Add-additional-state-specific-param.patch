@@ -1,0 +1,88 @@
+From b1d1ee386682aca7e451fc839f0284c0172aa532 Mon Sep 17 00:00:00 2001
+From: Lina Iyer <lina.iyer@linaro.org>
+Date: Wed, 28 Oct 2015 11:30:25 -0600
+Subject: [PATCH 04/25] PM / Domains: Add additional state specific param
+
+Allow domain states to hold additional state related data in a u32
+value. This may be used by the platform driver.
+
+Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
+---
+ Documentation/devicetree/bindings/power/power_domain.txt | 9 +++++++++
+ drivers/base/power/domain.c                              | 6 ++++++
+ include/linux/pm_domain.h                                | 1 +
+ 3 files changed, 16 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/power/power_domain.txt b/Documentation/devicetree/bindings/power/power_domain.txt
+index d9e8b8e..cda31a5 100644
+--- a/Documentation/devicetree/bindings/power/power_domain.txt
++++ b/Documentation/devicetree/bindings/power/power_domain.txt
+@@ -62,6 +62,14 @@ have the following properties -
+ 		If omitted, this is assumed to be equal to:
+ 			entry-latency-us + exit-latency-us
+ 
++	- state-param:
++		Usage: Optional
++		Value type: <prop-encoded-array>
++		Definition: A u32 value as defined by the state. May be used
++		by the driver to hold state related u32 data. In the case of
++		PSCI, an extended state-id for the domain may be encoded in
++		this value.
++
+ Example:
+ 
+ 	power: power-controller@12340000 {
+@@ -108,6 +116,7 @@ Example 3:
+ 		CLUSTER_SLEEP_0: power-state@0 {
+ 			entry-latency-us = <1000>;
+ 			exit-latency-us = <2000>;
++			state-param = <0x1000010>;
+ 		};
+ 	};
+ 
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 3c6d40a..c527e8f 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -1256,6 +1256,7 @@ static int genpd_alloc_states_data(struct generic_pm_domain *genpd,
+ 			st[i].power_on_latency_ns;
+ 		genpd->states[i].power_off_latency_ns =
+ 			st[i].power_off_latency_ns;
++		genpd->states[i].param = st[i].param;
+ 	}
+ 
+ 	/*
+@@ -1532,6 +1533,7 @@ static int of_get_genpd_power_state(struct genpd_power_state *genpd_state,
+ {
+ 	int err = 0;
+ 	u32 latency;
++	u32 param;
+ 
+ 	err = of_property_read_u32(state_node, "wakeup-latency-us", &latency);
+ 	if (err) {
+@@ -1568,6 +1570,10 @@ static int of_get_genpd_power_state(struct genpd_power_state *genpd_state,
+ 		return -EINVAL;
+ 	}
+ 
++	err = of_property_read_u32(state_node, "state-param", &param);
++	if (!err)
++		genpd_state->param = param;
++
+ 	genpd_state->power_off_latency_ns = 1000 * latency;
+ 
+ 	return 0;
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index 749c5e5..96b9972 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -41,6 +41,7 @@ struct genpd_power_state {
+ 	char *name;
+ 	s64 power_off_latency_ns;
+ 	s64 power_on_latency_ns;
++	u32 param;
+ };
+ 
+ struct generic_pm_domain {
+-- 
+1.9.1
+

@@ -1,0 +1,165 @@
+From 5669dc1f014d806d1db318a31284131f1ae435cb Mon Sep 17 00:00:00 2001
+From: Lina Iyer <lina.iyer@linaro.org>
+Date: Wed, 1 Oct 2014 13:53:29 -0700
+Subject: [PATCH 15/25] drivers: cpu-pd: Read CPU domains from DT
+
+Create CPU PM domains for those defined in the DT. CPU device nodes
+reference their domain providers, which in turn may reference their
+providers. Starting from each CPU, read the domain provider, create a
+new genpd PM domain if not found and attach the CPU to that domain.
+Bubble up the domain hierarchy and attach subdomains to their parents.
+
+of_setup_cpu_pm_domains() is a generic API that reads DT and registers
+CPU PM domains. Platform drivers may call this API and the register a
+generic callback for all their CPU domains.
+
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Kevin Hilman <khilman@linaro.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
+---
+ drivers/base/power/cpu-pd.c | 103 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/cpu-pd.h      |   6 +++
+ 2 files changed, 109 insertions(+)
+
+diff --git a/drivers/base/power/cpu-pd.c b/drivers/base/power/cpu-pd.c
+index da881fc..5727b01 100644
+--- a/drivers/base/power/cpu-pd.c
++++ b/drivers/base/power/cpu-pd.c
+@@ -219,3 +219,106 @@ fail:
+ 	return ERR_PTR(ret);
+ }
+ EXPORT_SYMBOL(of_init_cpu_pm_domain);
++
++static struct generic_pm_domain *of_get_cpu_domain(struct device_node *dn,
++		const struct cpu_pd_ops *ops, int cpu)
++{
++	struct of_phandle_args args;
++	struct generic_pm_domain *genpd, *parent;
++	int ret;
++
++	/* Do we have this domain? If not, create the domain */
++	args.np = dn;
++	args.args_count = 0;
++
++	genpd = of_genpd_get_from_provider(&args);
++	if (!IS_ERR(genpd))
++		goto skip_parent;
++
++	genpd = of_init_cpu_pm_domain(dn, ops);
++	if (IS_ERR(genpd))
++		return genpd;
++
++	/* Is there a domain provider for this domain? */
++	ret = of_parse_phandle_with_args(dn, "power-domains",
++			"#power-domain-cells", 0, &args);
++	of_node_put(dn);
++	if (ret < 0)
++		goto skip_parent;
++
++	/* Find its parent and attach this domain to it, recursively */
++	parent = of_get_cpu_domain(args.np, ops, cpu);
++	if (IS_ERR(parent)) {
++		struct cpu_pm_domain *cpu_pd, *parent_cpu_pd;
++
++		ret = pm_genpd_add_subdomain(genpd, parent);
++		if (ret) {
++			pr_err("%s: Unable to add sub-domain (%s) to parent (%s)\n err: %d",
++					__func__, genpd->name, parent->name,
++					ret);
++			return ERR_PTR(ret);
++		}
++
++		/*
++		 * Reference parent domain for easy access.
++		 * Note: We could be attached to a domain that is not a CPU PM domain,
++		 * in that case dont reference the parent.
++		 */
++		cpu_pd = to_cpu_pd(genpd);
++		parent_cpu_pd = to_cpu_pd(parent);
++
++		if (cpu_pd && parent_cpu_pd)
++			cpu_pd->parent = parent_cpu_pd;
++	}
++
++skip_parent:
++	return genpd;
++}
++
++/**
++ * of_setup_cpu_pm_domains() - Setup the CPU domains for all CPUs
++ *
++ * @ops: The PM domain suspend/resume ops for all the domains in the topology
++ */
++int of_setup_cpu_pm_domains(const struct cpu_pd_ops *ops)
++{
++	struct device_node *dn;
++	struct generic_pm_domain *genpd;
++	struct cpu_pm_domain *cpu_pd;
++	int cpu;
++	int ret = 0;
++
++	for_each_possible_cpu(cpu) {
++		dn = of_get_cpu_node(cpu, NULL);
++		if (!dn)
++			continue;
++
++		dn = of_parse_phandle(dn, "power-domains", 0);
++		if (!dn)
++			continue;
++		of_node_put(dn);
++
++		genpd = of_get_cpu_domain(dn, ops, cpu);
++		if (IS_ERR(genpd))
++			return PTR_ERR(genpd);
++
++		/*
++		 * Sanity check: Ensure that genpd was not created by this
++		 * code. If not, then the power_on and power_off callbacks
++		 * would already be setup and we will not get callbacks.
++		 */
++		cpu_pd = to_cpu_pd(genpd);
++		if (!cpu_pd) {
++			pr_err("%s: Genpd was created outside CPU PM domains\n",
++					__func__);
++			return -ENOENT;
++		}
++
++		ret = of_pm_domain_attach_cpu(cpu);
++		if (ret)
++			return ret;
++	}
++
++	return ret;
++}
++EXPORT_SYMBOL(of_setup_cpu_pm_domains);
+diff --git a/include/linux/cpu-pd.h b/include/linux/cpu-pd.h
+index 4d43543..68a476f 100644
+--- a/include/linux/cpu-pd.h
++++ b/include/linux/cpu-pd.h
+@@ -33,14 +33,20 @@ struct generic_pm_domain *of_init_cpu_pm_domain(struct device_node *dn,
+ 				const struct cpu_pd_ops *ops);
+ void cpu_pm_runtime_suspend(void);
+ void cpu_pm_runtime_resume(void);
++int of_setup_cpu_pm_domains(const struct cpu_pd_ops *ops);
+ #else
+ static inline struct generic_pm_domain *of_init_cpu_pm_domain(
+ 		struct device_node *dn, const struct cpu_pd_ops *ops)
+ {
+ 	return -ENOSYS;
+ }
++
+ static inline void cpu_pm_runtime_suspend(void) { };
+ static inline void cpu_pm_runtime_resume(void) { };
++static inline int of_setup_cpu_pm_domains(const struct cpu_pd_ops *ops)
++{
++	return -ENOSYS;
++}
+ #endif /* CONFIG_PM */
+ 
+ #endif /* __CPU_PD_H__ */
+-- 
+1.9.1
+

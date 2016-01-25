@@ -1,0 +1,99 @@
+From 1b906206fa6c34967fa9d17d152a3b7666e02655 Mon Sep 17 00:00:00 2001
+From: "freedom.tan" <freedom.tan@mediatek.com>
+Date: Mon, 25 Jan 2016 15:46:45 +0800
+Subject: [PATCH 25/25] ARM64: dts: Define CPU power domain for MT8173
+
+Define power domain and the power states for the domain as defined by
+the PSCI firmware.
+
+Signed-off-by: Koan-Sin Tnn <freedom.tan@linaro.org>
+---
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi | 32 +++++++++++++++++++++++++-------
+ 1 file changed, 25 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+index 5007f34..287e290 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+@@ -130,6 +130,7 @@
+ 			reg = <0x000>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
++			power-domains = <&CA53_PD>;
+ 			clocks = <&infracfg CLK_INFRA_CA53SEL>,
+ 				 <&apmixedsys CLK_APMIXED_MAINPLL>;
+ 			clock-names = "cpu", "intermediate";
+@@ -154,10 +155,11 @@
+ 			reg = <0x001>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
+-                        clocks = <&infracfg CLK_INFRA_CA53SEL>,
+-                                 <&apmixedsys CLK_APMIXED_MAINPLL>;
+-                        clock-names = "cpu", "intermediate";
+-                        operating-points-v2 = <&cluster0_opp>;
++			power-domains = <&CA53_PD>;
++			clocks = <&infracfg CLK_INFRA_CA53SEL>,
++				<&apmixedsys CLK_APMIXED_MAINPLL>;
++			clock-names = "cpu", "intermediate";
++			operating-points-v2 = <&cluster0_opp>;
+ 			static-power-points = <
+ 				859000  43
+ 				908000  52
+@@ -177,6 +179,7 @@
+ 			reg = <0x100>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
++			power-domains = <&CA57_PD>;
+ 			clocks = <&infracfg CLK_INFRA_CA57SEL>,
+ 				 <&apmixedsys CLK_APMIXED_MAINPLL>;
+ 			clock-names = "cpu", "intermediate";
+@@ -200,10 +203,11 @@
+ 			reg = <0x101>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
++			power-domains = <&CA57_PD>;
+ 			clocks = <&infracfg CLK_INFRA_CA57SEL>,
+-                                 <&apmixedsys CLK_APMIXED_MAINPLL>;
+-                        clock-names = "cpu", "intermediate";
+-                        operating-points-v2 = <&cluster1_opp>;
++				<&apmixedsys CLK_APMIXED_MAINPLL>;
++			clock-names = "cpu", "intermediate";
++			operating-points-v2 = <&cluster1_opp>;
+ 			static-power-points = <
+ 				828000  72
+ 				867000  90
+@@ -236,6 +240,8 @@
+ 				exit-latency-us = <60>;
+ 				min-residency-us = <331>;
+ 				arm,psci-suspend-param = <0x1010000>;
++				residency-us = <331>;
++				state-param = <0x1010000>;
+ 			};
+ 
+ 			CPU_SLEEP_1: cpu-sleep-1 {
+@@ -254,10 +260,22 @@
+ 				exit-latency-us = <62>;
+ 				min-residency-us = <1423>;
+ 				arm,psci-suspend-param = <0x1010000>;
++				residency-us = <1423>;
++				state-param = <0x1010000>;
+ 			};
+ 		};
+ 	};
+ 
++	CA53_PD: cpu-pd@0 {
++		#power-domain-cells = <0>;
++		power-states = <&CLUSTER_SLEEP_0>;
++	};
++
++	CA57_PD: cpu-pd@1 {
++		#power-domain-cells = <0>;
++		power-states = <&CLUSTER_SLEEP_1>;
++	};
++
+ 	psci {
+ 		compatible = "arm,psci-1.0", "arm,psci-0.2", "arm,psci";
+ 		method = "smc";
+-- 
+1.9.1
+

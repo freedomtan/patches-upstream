@@ -1,0 +1,305 @@
+From a67ef327b597758f07787096b1e50b2dc08499e1 Mon Sep 17 00:00:00 2001
+From: Lina Iyer <lina.iyer@linaro.org>
+Date: Fri, 27 Feb 2015 14:20:28 -0700
+Subject: [PATCH 10/25] PM / Domains: Abstact genpd locking
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Abstract genpd lock/unlock calls, in preperation for domain specific
+locks, added in the following patches.
+
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Kevin Hilman <khilman@linaro.org>
+Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Krzysztof Kozłowski <k.kozlowski@samsung.com>
+Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
+---
+ drivers/base/power/domain.c | 105 +++++++++++++++++++++++++++++++-------------
+ 1 file changed, 74 insertions(+), 31 deletions(-)
+
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 75b7f38c..3a56f22 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -44,6 +44,49 @@ static int pm_genpd_alloc_states_names(struct generic_pm_domain *genpd,
+ static LIST_HEAD(gpd_list);
+ static DEFINE_MUTEX(gpd_list_lock);
+ 
++static inline int genpd_lock_irq(struct generic_pm_domain *genpd,
++					unsigned int subclass)
++	__acquires(&genpd->lock)
++{
++	if (subclass > 0)
++		mutex_lock_nested(&genpd->lock, subclass);
++	else
++		mutex_lock(&genpd->lock);
++	return 0;
++}
++
++static inline int genpd_lock_interruptible_irq(struct generic_pm_domain *genpd)
++	__acquires(&genpd->lock)
++{
++	return mutex_lock_interruptible(&genpd->lock);
++}
++
++static inline void genpd_unlock_irq(struct generic_pm_domain *genpd)
++	__releases(&genpd->lock)
++{
++	mutex_unlock(&genpd->lock);
++}
++
++static inline int genpd_lock(struct generic_pm_domain *genpd)
++{
++	return genpd_lock_irq(genpd, 0);
++}
++
++static inline int genpd_lock_nested(struct generic_pm_domain *genpd)
++{
++	return genpd_lock_irq(genpd, SINGLE_DEPTH_NESTING);
++}
++
++static inline int genpd_lock_interruptible(struct generic_pm_domain *genpd)
++{
++	return genpd_lock_interruptible_irq(genpd);
++}
++
++static inline void genpd_unlock(struct generic_pm_domain *genpd)
++{
++	return genpd_unlock_irq(genpd);
++}
++
+ /*
+  * Get the generic PM domain for a particular struct device.
+  * This validates the struct device pointer, the PM domain pointer,
+@@ -238,9 +281,9 @@ static int genpd_poweron(struct generic_pm_domain *genpd)
+ {
+ 	int ret;
+ 
+-	mutex_lock(&genpd->lock);
++	genpd_lock(genpd);
+ 	ret = __genpd_poweron(genpd);
+-	mutex_unlock(&genpd->lock);
++	genpd_unlock(genpd);
+ 	return ret;
+ }
+ 
+@@ -282,9 +325,9 @@ static int genpd_dev_pm_qos_notifier(struct notifier_block *nb,
+ 		spin_unlock_irq(&dev->power.lock);
+ 
+ 		if (!IS_ERR(genpd)) {
+-			mutex_lock(&genpd->lock);
++			genpd_lock(genpd);
+ 			genpd->max_off_time_changed = true;
+-			mutex_unlock(&genpd->lock);
++			genpd_unlock(genpd);
+ 		}
+ 
+ 		dev = dev->parent;
+@@ -381,9 +424,9 @@ static void genpd_power_off_work_fn(struct work_struct *work)
+ 
+ 	genpd = container_of(work, struct generic_pm_domain, power_off_work);
+ 
+-	mutex_lock(&genpd->lock);
++	genpd_lock(genpd);
+ 	genpd_poweroff(genpd, true);
+-	mutex_unlock(&genpd->lock);
++	genpd_unlock(genpd);
+ }
+ 
+ /**
+@@ -453,9 +496,9 @@ static int pm_genpd_runtime_suspend(struct device *dev)
+ 	if (dev->power.irq_safe)
+ 		return 0;
+ 
+-	mutex_lock(&genpd->lock);
++	genpd_lock(genpd);
+ 	genpd_poweroff(genpd, false);
+-	mutex_unlock(&genpd->lock);
++	genpd_unlock(genpd);
+ 
+ 	return 0;
+ }
+@@ -490,9 +533,9 @@ static int pm_genpd_runtime_resume(struct device *dev)
+ 		goto out;
+ 	}
+ 
+-	mutex_lock(&genpd->lock);
++	genpd_lock(genpd);
+ 	ret = __genpd_poweron(genpd);
+-	mutex_unlock(&genpd->lock);
++	genpd_unlock(genpd);
+ 
+ 	if (ret)
+ 		return ret;
+@@ -706,14 +749,14 @@ static int pm_genpd_prepare(struct device *dev)
+ 	if (resume_needed(dev, genpd))
+ 		pm_runtime_resume(dev);
+ 
+-	mutex_lock(&genpd->lock);
++	genpd_lock(genpd);
+ 
+ 	if (genpd->prepared_count++ == 0) {
+ 		genpd->suspended_count = 0;
+ 		genpd->suspend_power_off = genpd->status == GPD_STATE_POWER_OFF;
+ 	}
+ 
+-	mutex_unlock(&genpd->lock);
++	genpd_unlock(genpd);
+ 
+ 	if (genpd->suspend_power_off) {
+ 		pm_runtime_put_noidle(dev);
+@@ -731,12 +774,12 @@ static int pm_genpd_prepare(struct device *dev)
+ 
+ 	ret = pm_generic_prepare(dev);
+ 	if (ret) {
+-		mutex_lock(&genpd->lock);
++		genpd_lock(genpd);
+ 
+ 		if (--genpd->prepared_count == 0)
+ 			genpd->suspend_power_off = false;
+ 
+-		mutex_unlock(&genpd->lock);
++		genpd_unlock(genpd);
+ 		pm_runtime_enable(dev);
+ 	}
+ 
+@@ -1094,13 +1137,13 @@ static void pm_genpd_complete(struct device *dev)
+ 	if (IS_ERR(genpd))
+ 		return;
+ 
+-	mutex_lock(&genpd->lock);
++	genpd_lock(genpd);
+ 
+ 	run_complete = !genpd->suspend_power_off;
+ 	if (--genpd->prepared_count == 0)
+ 		genpd->suspend_power_off = false;
+ 
+-	mutex_unlock(&genpd->lock);
++	genpd_unlock(genpd);
+ 
+ 	if (run_complete) {
+ 		pm_generic_complete(dev);
+@@ -1290,7 +1333,7 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
+ 	if (IS_ERR(gpd_data))
+ 		return PTR_ERR(gpd_data);
+ 
+-	mutex_lock(&genpd->lock);
++	genpd_lock(genpd);
+ 
+ 	if (genpd->prepared_count > 0) {
+ 		ret = -EAGAIN;
+@@ -1307,7 +1350,7 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
+ 	list_add_tail(&gpd_data->base.list_node, &genpd->dev_list);
+ 
+  out:
+-	mutex_unlock(&genpd->lock);
++	genpd_unlock(genpd);
+ 
+ 	if (ret)
+ 		genpd_free_dev_data(dev, gpd_data);
+@@ -1339,7 +1382,7 @@ int pm_genpd_remove_device(struct generic_pm_domain *genpd,
+ 	gpd_data = to_gpd_data(pdd);
+ 	dev_pm_qos_remove_notifier(dev, &gpd_data->nb);
+ 
+-	mutex_lock(&genpd->lock);
++	genpd_lock(genpd);
+ 
+ 	if (genpd->prepared_count > 0) {
+ 		ret = -EAGAIN;
+@@ -1354,14 +1397,14 @@ int pm_genpd_remove_device(struct generic_pm_domain *genpd,
+ 
+ 	list_del_init(&pdd->list_node);
+ 
+-	mutex_unlock(&genpd->lock);
++	genpd_unlock(genpd);
+ 
+ 	genpd_free_dev_data(dev, gpd_data);
+ 
+ 	return 0;
+ 
+  out:
+-	mutex_unlock(&genpd->lock);
++	genpd_unlock(genpd);
+ 	dev_pm_qos_add_notifier(dev, &gpd_data->nb);
+ 
+ 	return ret;
+@@ -1386,8 +1429,8 @@ int pm_genpd_add_subdomain(struct generic_pm_domain *genpd,
+ 	if (!link)
+ 		return -ENOMEM;
+ 
+-	mutex_lock(&genpd->lock);
+-	mutex_lock_nested(&subdomain->lock, SINGLE_DEPTH_NESTING);
++	genpd_lock(genpd);
++	genpd_lock_nested(subdomain);
+ 
+ 	if (genpd->status == GPD_STATE_POWER_OFF
+ 	    &&  subdomain->status != GPD_STATE_POWER_OFF) {
+@@ -1410,8 +1453,8 @@ int pm_genpd_add_subdomain(struct generic_pm_domain *genpd,
+ 		genpd_sd_counter_inc(genpd);
+ 
+  out:
+-	mutex_unlock(&subdomain->lock);
+-	mutex_unlock(&genpd->lock);
++	genpd_unlock(subdomain);
++	genpd_unlock(genpd);
+ 	if (ret)
+ 		kfree(link);
+ 	return ret;
+@@ -1432,7 +1475,7 @@ int pm_genpd_remove_subdomain(struct generic_pm_domain *genpd,
+ 	if (IS_ERR_OR_NULL(genpd) || IS_ERR_OR_NULL(subdomain))
+ 		return -EINVAL;
+ 
+-	mutex_lock(&genpd->lock);
++	genpd_lock(genpd);
+ 
+ 	if (!list_empty(&subdomain->slave_links) || subdomain->device_count) {
+ 		pr_warn("%s: unable to remove subdomain %s\n", genpd->name,
+@@ -1445,7 +1488,7 @@ int pm_genpd_remove_subdomain(struct generic_pm_domain *genpd,
+ 		if (link->slave != subdomain)
+ 			continue;
+ 
+-		mutex_lock_nested(&subdomain->lock, SINGLE_DEPTH_NESTING);
++		genpd_lock_nested(subdomain);
+ 
+ 		list_del(&link->master_node);
+ 		list_del(&link->slave_node);
+@@ -1453,14 +1496,14 @@ int pm_genpd_remove_subdomain(struct generic_pm_domain *genpd,
+ 		if (subdomain->status != GPD_STATE_POWER_OFF)
+ 			genpd_sd_counter_dec(genpd);
+ 
+-		mutex_unlock(&subdomain->lock);
++		genpd_unlock(subdomain);
+ 
+ 		ret = 0;
+ 		break;
+ 	}
+ 
+ out:
+-	mutex_unlock(&genpd->lock);
++	genpd_unlock(genpd);
+ 
+ 	return ret;
+ }
+@@ -2100,7 +2143,7 @@ static int pm_genpd_summary_one(struct seq_file *s,
+ 	struct gpd_link *link;
+ 	int ret;
+ 
+-	ret = mutex_lock_interruptible(&genpd->lock);
++	ret = genpd_lock_interruptible(genpd);
+ 	if (ret)
+ 		return -ERESTARTSYS;
+ 
+@@ -2135,7 +2178,7 @@ static int pm_genpd_summary_one(struct seq_file *s,
+ 
+ 	seq_puts(s, "\n");
+ exit:
+-	mutex_unlock(&genpd->lock);
++	genpd_unlock(genpd);
+ 
+ 	return 0;
+ }
+-- 
+1.9.1
+
