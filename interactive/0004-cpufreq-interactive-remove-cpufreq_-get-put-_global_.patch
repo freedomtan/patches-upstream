@@ -1,4 +1,4 @@
-From 8ab72684a8f5c60e468500270581c328565da629 Mon Sep 17 00:00:00 2001
+From 9439eec766f810995a717573eb51e7441993a841 Mon Sep 17 00:00:00 2001
 From: Steve Muckle <smuckle@linaro.org>
 Date: Tue, 1 Dec 2015 15:54:43 -0800
 Subject: [PATCH 4/4] cpufreq: interactive: remove

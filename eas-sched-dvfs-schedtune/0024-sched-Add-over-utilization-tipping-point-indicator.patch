@@ -1,4 +1,4 @@
-From 6b02825b4da725db1f854df454b6b167d3b844a9 Mon Sep 17 00:00:00 2001
+From ed03db0b0ddc80d6b4d5fcd1e169e18d0fa40f5d Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Sat, 9 May 2015 16:49:57 +0100
 Subject: [PATCH 24/63] sched: Add over-utilization/tipping point indicator
@@ -63,10 +63,10 @@ Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
  2 files changed, 28 insertions(+), 6 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index bf6bc82..ea7ced7 100644
+index afb20aa..2294a77 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -4199,6 +4199,8 @@ static inline void hrtick_update(struct rq *rq)
+@@ -4217,6 +4217,8 @@ static inline void hrtick_update(struct rq *rq)
  }
  #endif
  
@@ -75,7 +75,7 @@ index bf6bc82..ea7ced7 100644
  /*
   * The enqueue_task method is called before nr_running is
   * increased. Here we update the fair scheduling stats and
-@@ -4209,6 +4211,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+@@ -4227,6 +4229,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
  {
  	struct cfs_rq *cfs_rq;
  	struct sched_entity *se = &p->se;
@@ -83,7 +83,7 @@ index bf6bc82..ea7ced7 100644
  
  	for_each_sched_entity(se) {
  		if (se->on_rq)
-@@ -4240,9 +4243,12 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+@@ -4258,9 +4261,12 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
  		update_cfs_shares(cfs_rq);
  	}
  
@@ -98,7 +98,7 @@ index bf6bc82..ea7ced7 100644
  	hrtick_update(rq);
  }
  
-@@ -6735,11 +6741,12 @@ group_type group_classify(struct sched_group *group,
+@@ -6753,11 +6759,12 @@ group_type group_classify(struct sched_group *group,
   * @local_group: Does group contain this_cpu.
   * @sgs: variable to hold the statistics for this group.
   * @overload: Indicate more than one runnable task for any CPU.
@@ -112,7 +112,7 @@ index bf6bc82..ea7ced7 100644
  {
  	unsigned long load;
  	int i, nr_running;
-@@ -6773,6 +6780,9 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+@@ -6791,6 +6798,9 @@ static inline void update_sg_lb_stats(struct lb_env *env,
  		 */
  		if (!nr_running && idle_cpu(i))
  			sgs->idle_cpus++;
@@ -122,7 +122,7 @@ index bf6bc82..ea7ced7 100644
  	}
  
  	/* Adjust by relative CPU capacity of the group */
-@@ -6878,7 +6888,7 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+@@ -6896,7 +6906,7 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
  	struct sched_group *sg = env->sd->groups;
  	struct sg_lb_stats tmp_sgs;
  	int load_idx, prefer_sibling = 0;
@@ -131,7 +131,7 @@ index bf6bc82..ea7ced7 100644
  
  	if (child && child->flags & SD_PREFER_SIBLING)
  		prefer_sibling = 1;
-@@ -6900,7 +6910,7 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+@@ -6918,7 +6928,7 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
  		}
  
  		update_sg_lb_stats(env, sg, load_idx, local_group, sgs,
@@ -140,7 +140,7 @@ index bf6bc82..ea7ced7 100644
  
  		if (local_group)
  			goto next_group;
-@@ -6944,8 +6954,14 @@ next_group:
+@@ -6962,8 +6972,14 @@ next_group:
  		/* update overload indicator if we are at root domain */
  		if (env->dst_rq->rd->overload != overload)
  			env->dst_rq->rd->overload = overload;
@@ -156,7 +156,7 @@ index bf6bc82..ea7ced7 100644
  }
  
  /**
-@@ -8334,6 +8350,9 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
+@@ -8352,6 +8368,9 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
  
  	if (static_branch_unlikely(&sched_numa_balancing))
  		task_tick_numa(rq, curr);
@@ -167,7 +167,7 @@ index bf6bc82..ea7ced7 100644
  
  /*
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 289a2e6..3234458 100644
+index 6f737bb..71e1dda 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
 @@ -541,6 +541,9 @@ struct root_domain {

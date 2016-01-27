@@ -1,4 +1,4 @@
-From 42907f5d37c9c8677445c581252906ca20b10db2 Mon Sep 17 00:00:00 2001
+From 806c01785e5a53bcf6578187938735f34f4ce852 Mon Sep 17 00:00:00 2001
 From: Juri Lelli <juri.lelli@arm.com>
 Date: Tue, 10 Feb 2015 12:05:22 +0000
 Subject: [PATCH 15/63] arm64, topology: Define JUNO energy and provide it to

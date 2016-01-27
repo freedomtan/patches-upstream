@@ -1,4 +1,4 @@
-From ef22a1435cf4c7962816d1e204066bdc56491642 Mon Sep 17 00:00:00 2001
+From 61d54b579f6f2624c33ef07d5eb138a8b9669520 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Tue, 13 Jan 2015 13:50:46 +0000
 Subject: [PATCH 13/63] sched: Introduce SD_SHARE_CAP_STATES sched_domain flag
@@ -37,10 +37,10 @@ index 6145547..38e7be1 100644
  
  static struct sched_domain_topology_level arm_topology[] = {
 diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 780e148..2e9d10a 100644
+index bbb90e2..9edaf3f 100644
 --- a/include/linux/sched.h
 +++ b/include/linux/sched.h
-@@ -989,6 +989,7 @@ extern void wake_up_q(struct wake_q_head *head);
+@@ -995,6 +995,7 @@ extern void wake_up_q(struct wake_q_head *head);
  #define SD_PREFER_SIBLING	0x1000	/* Prefer to place tasks in a sibling domain */
  #define SD_OVERLAP		0x2000	/* sched_domains of this level overlap */
  #define SD_NUMA			0x4000	/* cross-node balancing */
@@ -49,10 +49,10 @@ index 780e148..2e9d10a 100644
  #ifdef CONFIG_SCHED_SMT
  static inline int cpu_smt_flags(void)
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index c5d1690..e1d134e 100644
+index 40e7548..27cbbbe 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -5790,7 +5790,8 @@ static int sd_degenerate(struct sched_domain *sd)
+@@ -5877,7 +5877,8 @@ static int sd_degenerate(struct sched_domain *sd)
  			 SD_BALANCE_EXEC |
  			 SD_SHARE_CPUCAPACITY |
  			 SD_SHARE_PKG_RESOURCES |
@@ -62,7 +62,7 @@ index c5d1690..e1d134e 100644
  		if (sd->groups != sd->groups->next)
  			return 0;
  	}
-@@ -5822,7 +5823,8 @@ sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
+@@ -5909,7 +5910,8 @@ sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
  				SD_SHARE_CPUCAPACITY |
  				SD_SHARE_PKG_RESOURCES |
  				SD_PREFER_SIBLING |
@@ -72,7 +72,7 @@ index c5d1690..e1d134e 100644
  		if (nr_node_ids == 1)
  			pflags &= ~SD_SERIALIZE;
  	}
-@@ -6487,6 +6489,7 @@ static int sched_domains_curr_level;
+@@ -6574,6 +6576,7 @@ static int sched_domains_curr_level;
   * SD_SHARE_PKG_RESOURCES - describes shared caches
   * SD_NUMA                - describes NUMA topologies
   * SD_SHARE_POWERDOMAIN   - describes shared power domain
@@ -80,7 +80,7 @@ index c5d1690..e1d134e 100644
   *
   * Odd one out:
   * SD_ASYM_PACKING        - describes SMT quirks
-@@ -6496,7 +6499,8 @@ static int sched_domains_curr_level;
+@@ -6583,7 +6586,8 @@ static int sched_domains_curr_level;
  	 SD_SHARE_PKG_RESOURCES |	\
  	 SD_NUMA |			\
  	 SD_ASYM_PACKING |		\

@@ -1,4 +1,4 @@
-From ef8d6499b0bae1618aed975ddcd06d754e8f606a Mon Sep 17 00:00:00 2001
+From 80a9910c414a238c4d29943e85f1704d48005b4b Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Fri, 14 Nov 2014 17:16:41 +0000
 Subject: [PATCH 14/63] arm: topology: Define TC2 energy and provide it to the

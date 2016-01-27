@@ -1,4 +1,4 @@
-From 7317d119fc636c5f9fdb7ecab0b7dd5c1a22229d Mon Sep 17 00:00:00 2001
+From cbeca4609856311700d67331576d4434c8de543d Mon Sep 17 00:00:00 2001
 From: Todd Poynor <toddpoynor@google.com>
 Date: Tue, 1 Dec 2015 15:43:33 -0800
 Subject: [PATCH 3/4] ARM: Call idle notifiers

@@ -1,4 +1,4 @@
-From edc52c530eb9ce85e0e9b205e37a908a12df971b Mon Sep 17 00:00:00 2001
+From 25b550fe84a0a97ec45923043ad517b0bbe9edc2 Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Fri, 26 Jun 2015 09:55:06 +0100
 Subject: [PATCH 50/63] sched/fair: add boosted CPU usage
@@ -30,10 +30,10 @@ Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
  1 file changed, 32 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 6cf9a6f..7212da6 100644
+index f5659df..d7710c7 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -4199,6 +4199,8 @@ static inline void hrtick_update(struct rq *rq)
+@@ -4217,6 +4217,8 @@ static inline void hrtick_update(struct rq *rq)
  }
  #endif
  
@@ -42,7 +42,7 @@ index 6cf9a6f..7212da6 100644
  static void update_capacity_of(int cpu)
  {
  	unsigned long req_cap;
-@@ -4207,7 +4209,8 @@ static void update_capacity_of(int cpu)
+@@ -4225,7 +4227,8 @@ static void update_capacity_of(int cpu)
  		return;
  
  	/* Convert scale-invariant capacity to cpu. */
@@ -52,7 +52,7 @@ index 6cf9a6f..7212da6 100644
  	set_cfs_cpu_capacity(cpu, true, req_cap);
  }
  
-@@ -5195,8 +5198,36 @@ schedtune_margin(unsigned long signal, unsigned long boost)
+@@ -5213,8 +5216,36 @@ schedtune_margin(unsigned long signal, unsigned long boost)
  	return margin;
  }
  

@@ -1,4 +1,4 @@
-From 1b3b737b2fe65eaf6e3797bacbd9f8b4bd29dce2 Mon Sep 17 00:00:00 2001
+From 4cd3b5a9b38323098d55c8a47b7de6a294bc2c80 Mon Sep 17 00:00:00 2001
 From: "freedom.tan" <freedom.tan@mediatek.com>
 Date: Thu, 8 Oct 2015 14:41:52 +0800
 Subject: [PATCH 63/63] 8173 power model measured by servo board

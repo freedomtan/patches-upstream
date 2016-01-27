@@ -1,4 +1,4 @@
-From 59604bd0f7a590a05a6e070847aab6168fb137b2 Mon Sep 17 00:00:00 2001
+From 50fd8891e56f6db0b3a7efe78adbd1deda4cdf18 Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Fri, 25 Sep 2015 17:34:15 +0100
 Subject: [PATCH 34/63] arm64: Enable max freq invariant scheduler

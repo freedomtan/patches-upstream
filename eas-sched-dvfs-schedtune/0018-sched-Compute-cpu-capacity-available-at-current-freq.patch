@@ -1,4 +1,4 @@
-From 366bd1d258d91e00739b2ba3391a0dc98e53b250 Mon Sep 17 00:00:00 2001
+From fbfcec650b5753be401dd3050dfb0645245c45b6 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Tue, 13 Jan 2015 14:11:28 +0000
 Subject: [PATCH 18/63] sched: Compute cpu capacity available at current
@@ -17,10 +17,10 @@ Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
  1 file changed, 11 insertions(+)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index f281afd..547ad13 100644
+index 1b89c21..2cb3c8b 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -4736,6 +4736,17 @@ static long effective_load(struct task_group *tg, int cpu, long wl, long wg)
+@@ -4754,6 +4754,17 @@ static long effective_load(struct task_group *tg, int cpu, long wl, long wg)
  
  #endif
  

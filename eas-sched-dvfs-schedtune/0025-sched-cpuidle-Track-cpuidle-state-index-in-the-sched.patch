@@ -1,4 +1,4 @@
-From 589c4a68c6c89ec5ff73a239b4e2313c44b21978 Mon Sep 17 00:00:00 2001
+From 090c4410506d8ba201aefe333f729990c0790918 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Tue, 27 Jan 2015 13:48:07 +0000
 Subject: [PATCH 25/63] sched, cpuidle: Track cpuidle state index in the
@@ -21,7 +21,7 @@ Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
  4 files changed, 26 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
-index 17a6dc0..b9a6cce 100644
+index 046423b..6606a00 100644
 --- a/drivers/cpuidle/cpuidle.c
 +++ b/drivers/cpuidle/cpuidle.c
 @@ -192,7 +192,7 @@ int cpuidle_enter_state(struct cpuidle_device *dev, struct cpuidle_driver *drv,
@@ -56,7 +56,7 @@ index 786ad32..6eae157 100644
  
  #ifdef CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED
 diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index 4a2ef5a..cbc130e 100644
+index de0e786..c18911f 100644
 --- a/kernel/sched/idle.c
 +++ b/kernel/sched/idle.c
 @@ -19,9 +19,10 @@
@@ -72,7 +72,7 @@ index 4a2ef5a..cbc130e 100644
  
  static int __read_mostly cpu_idle_force_poll;
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 3234458..d5bbeeb 100644
+index 71e1dda..e3d33e3 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
 @@ -706,6 +706,7 @@ struct rq {

@@ -1,7 +1,7 @@
-From 7a56d975046d2e26ffca1661d53bb160d80ba7bf Mon Sep 17 00:00:00 2001
+From 7286cc53505184da2eb4286247e8c595d5f739d7 Mon Sep 17 00:00:00 2001
 From: Sascha Hauer <s.hauer@pengutronix.de>
 Date: Mon, 9 Nov 2015 11:13:32 +0100
-Subject: [PATCH 2/7] thermal: Add Mediatek thermal controller support
+Subject: [PATCH 2/9] thermal: Add Mediatek thermal controller support
 
 This adds support for the Mediatek thermal controller found on MT8173
 and likely other SoCs.
@@ -19,7 +19,7 @@ Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
  create mode 100644 drivers/thermal/mtk_thermal.c
 
 diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index c463c89..49b8e4f 100644
+index 8cc4ac6..f654591 100644
 --- a/drivers/thermal/Kconfig
 +++ b/drivers/thermal/Kconfig
 @@ -365,6 +365,14 @@ config INTEL_PCH_THERMAL

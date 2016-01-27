@@ -1,4 +1,4 @@
-From ae14d563afb8cb73e486f81d2198265a6212a16d Mon Sep 17 00:00:00 2001
+From 15340eb1a70548d36310e6aff38fc813d47f63c5 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Tue, 6 Jan 2015 17:34:05 +0000
 Subject: [PATCH 23/63] sched: Estimate energy impact of scheduling decisions
@@ -15,10 +15,10 @@ Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
  1 file changed, 52 insertions(+)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index cb7060f..bf6bc82 100644
+index 0f78963..afb20aa 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -4978,6 +4978,58 @@ next_cpu:
+@@ -4996,6 +4996,58 @@ next_cpu:
  	return 0;
  }
  

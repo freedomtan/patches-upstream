@@ -1,4 +1,4 @@
-From 8215ed0292ea7ab2729c6d61e6c8eff8045f7601 Mon Sep 17 00:00:00 2001
+From d3c855139798fd083456ace714cdf07708e3305c Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Mon, 22 Jun 2015 18:11:44 +0100
 Subject: [PATCH 48/63] sched/tune: add sysctl interface to define a boost
@@ -67,10 +67,10 @@ index c9e4731..4479e48 100644
  extern unsigned int sysctl_sched_autogroup_enabled;
  #endif
 diff --git a/init/Kconfig b/init/Kconfig
-index 235c7a2..83d8c02 100644
+index 2232080..8b855a2 100644
 --- a/init/Kconfig
 +++ b/init/Kconfig
-@@ -1237,6 +1237,32 @@ config SCHED_AUTOGROUP
+@@ -1212,6 +1212,32 @@ config SCHED_AUTOGROUP
  	  desktop applications.  Task group autogeneration is currently based
  	  upon task session.
  
@@ -138,7 +138,7 @@ index 0000000..4c44b1a
 +}
 +
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index dc6858d..827ba25 100644
+index 97715fd..6792842 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
 @@ -434,6 +434,17 @@ static struct ctl_table kern_table[] = {

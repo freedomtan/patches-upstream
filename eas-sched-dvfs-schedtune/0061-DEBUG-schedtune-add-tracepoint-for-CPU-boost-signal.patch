@@ -1,4 +1,4 @@
-From 4fa45c5206e94418fadb30b6d704ad75e146b262 Mon Sep 17 00:00:00 2001
+From 411990b9a17ecf6a6c9f2f8b4386172664a3755f Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Mon, 22 Jun 2015 13:51:07 +0100
 Subject: [PATCH 61/63] DEBUG: schedtune: add tracepoint for CPU boost signal
@@ -48,10 +48,10 @@ index 8ae43a2..eb81207 100644
  
  /* This part must be outside protection */
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index c065629..007dfb3 100644
+index b5dc753..247555b 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -5250,6 +5250,8 @@ boosted_cpu_util(int cpu)
+@@ -5268,6 +5268,8 @@ boosted_cpu_util(int cpu)
  	unsigned long util = cpu_util(cpu);
  	unsigned long margin = schedtune_cpu_margin(util, cpu);
  

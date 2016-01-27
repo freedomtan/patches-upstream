@@ -1,4 +1,4 @@
-From 45d76b4f16a5c69de7e31d04f9b39106b00fe975 Mon Sep 17 00:00:00 2001
+From 3228446ae252b7e7505f0c41ef6282bdf2ceb62e Mon Sep 17 00:00:00 2001
 From: Juri Lelli <juri.lelli@arm.com>
 Date: Mon, 9 Nov 2015 12:06:24 +0000
 Subject: [PATCH 54/63] DEBUG: sched: add tracepoint for cpu/freq scale
@@ -46,7 +46,7 @@ index 9b90c57..20a7216 100644
  
  /* This part must be outside protection */
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 4fa93d5..8b69756 100644
+index 7adf9ec..6e980ea 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -2626,6 +2626,7 @@ __update_load_avg(u64 now, int cpu, struct sched_avg *sa,

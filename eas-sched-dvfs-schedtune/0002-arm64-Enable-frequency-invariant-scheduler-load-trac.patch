@@ -1,4 +1,4 @@
-From 3f384298fd742ce878189107173d4906a86e6103 Mon Sep 17 00:00:00 2001
+From 0da6d602b7f7306bc27f3ef930237408e33010e5 Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Fri, 25 Sep 2015 17:15:11 +0100
 Subject: [PATCH 02/63] arm64: Enable frequency invariant scheduler

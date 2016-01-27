@@ -1,7 +1,7 @@
-From de599578e3cda42b3b376879745cf5bd8e89094d Mon Sep 17 00:00:00 2001
+From e6d283bef2c8156e7fc8d674cec55aa4f5dd500d Mon Sep 17 00:00:00 2001
 From: "dawei.chien@mediatek.com" <dawei.chien@mediatek.com>
 Date: Thu, 22 Oct 2015 20:02:38 +0800
-Subject: [PATCH 3/3] thermal: mediatek: Add cpu power cooling model.
+Subject: [PATCH 2/2] thermal: mediatek: Add cpu power cooling model.
 
 This power model is base on Intelligent Power Allocation (IPA)
 technical, requires that the operating-points of the CPUs are
@@ -11,11 +11,11 @@ of the cpu MT8173.
 
 Signed-off-by: Dawei.Chien <dawei.chien@mediatek.com>
 ---
- drivers/cpufreq/mt8173-cpufreq.c | 152 ++++++++++++++++++++++++++++++++++++---
- 1 file changed, 144 insertions(+), 8 deletions(-)
+ drivers/cpufreq/mt8173-cpufreq.c | 152 +++++++++++++++++++++++++++++++++++----
+ 1 file changed, 140 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/cpufreq/mt8173-cpufreq.c b/drivers/cpufreq/mt8173-cpufreq.c
-index 1efba34..ed11ed5 100644
+index d8ad406..5757518 100644
 --- a/drivers/cpufreq/mt8173-cpufreq.c
 +++ b/drivers/cpufreq/mt8173-cpufreq.c
 @@ -29,6 +29,16 @@
@@ -146,55 +146,56 @@ index 1efba34..ed11ed5 100644
  static int mtk_cpufreq_voltage_tracking(struct mtk_cpu_dvfs_info *info,
  					int new_vproc)
  {
-@@ -313,20 +427,40 @@ static void mtk_cpufreq_ready(struct cpufreq_policy *policy)
- {
+@@ -316,25 +430,37 @@ static void mtk_cpufreq_ready(struct cpufreq_policy *policy)
  	struct mtk_cpu_dvfs_info *info = policy->driver_data;
  	struct device_node *np = of_node_get(info->cpu_dev->of_node);
-+	u32 capacitance;
+ 	u32 capacitance = 0;
 +	int ret;
  
  	if (WARN_ON(!np))
  		return;
  
  	if (of_find_property(np, "#cooling-cells", NULL)) {
--		info->cdev = of_cpufreq_cooling_register(np,
--							 policy->related_cpus);
+-		of_property_read_u32(np, DYNAMIC_POWER, &capacitance);
++		if (!info->cdev) {
++			of_property_read_u32(np,
++					"dynamic-power-coefficient",
++					&capacitance);
+ 
+-		info->cdev = of_cpufreq_power_cooling_register(np,
+-						policy->related_cpus,
+-						capacitance,
+-						NULL);
++			ret = mtk_get_power_table_info(policy, np,
++						"static-power-points");
++			if (ret) {
++				dev_err(info->cpu_dev,
++					"cpufreq without static-points: %d\n",
++					ret);
++			}
  
 -		if (IS_ERR(info->cdev)) {
 -			dev_err(info->cpu_dev,
 -				"running cpufreq without cooling device: %ld\n",
 -				PTR_ERR(info->cdev));
-+		if (!info->cdev) {
-+
-+			of_property_read_u32(np,
-+					"dynamic-power-coefficient",
-+					&capacitance);
-+
-+			ret = mtk_get_power_table_info(policy, np,
-+						"static-power-points");
-+			if (ret) {
-+                                dev_err(info->cpu_dev,
-+                                        "cpufreq without static-points: %d\n",
-+                                        ret);
-+			}
-+
 +			info->cdev = of_cpufreq_power_cooling_register(np,
 +				policy->related_cpus,
 +				capacitance,
 +				mtk_cpufreq_get_static);
-+
+ 
+-			info->cdev = NULL;
+-		}
 +			if (IS_ERR(info->cdev)) {
 +				dev_err(info->cpu_dev,
 +					"cpufreq without cdev: %ld\n",
 +					PTR_ERR(info->cdev));
 +					info->cdev = NULL;
 +			}
- 
--			info->cdev = NULL;
- 		}
++ 		}
  	}
  
-@@ -502,7 +636,9 @@ static int mtk_cpufreq_exit(struct cpufreq_policy *policy)
+ 	of_node_put(np);
+@@ -509,7 +635,9 @@ static int mtk_cpufreq_exit(struct cpufreq_policy *policy)
  {
  	struct mtk_cpu_dvfs_info *info = policy->driver_data;
  

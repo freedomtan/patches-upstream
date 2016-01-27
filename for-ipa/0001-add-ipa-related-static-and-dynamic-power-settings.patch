@@ -1,0 +1,77 @@
+From fa0a480495be0e873eb78265431e5eb2f3d7a4b7 Mon Sep 17 00:00:00 2001
+From: "freedom.tan" <freedom.tan@mediatek.com>
+Date: Thu, 12 Nov 2015 17:51:06 +0800
+Subject: [PATCH 1/2] add ipa related static and dynamic power settings
+
+---
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi | 33 ++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+index d40942c2..db2282b 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+@@ -136,6 +136,16 @@
+ 			#cooling-cells = <2>;
+ 			#cooling-min-level = <0>;
+ 			#cooling-max-level = <7>;
++			static-power-points = <
++				859000  43
++				908000  52
++				983000  86
++				1009000 123
++				1028000 138
++				1083000 172
++				1110900 180
++				1125000 192
++			>;
+ 			dynamic-power-coefficient = <263>;
+ 		};
+ 
+@@ -152,6 +162,7 @@
+ 			#cooling-cells = <2>;
+ 			#cooling-min-level = <0>;
+ 			#cooling-max-level = <7>;
++			dynamic-power-coefficient = <263>;
+ 		};
+ 
+ 		cpu2: cpu@100 {
+@@ -167,6 +178,17 @@
+ 			#cooling-cells = <2>;
+ 			#cooling-min-level = <0>;
+ 			#cooling-max-level = <7>;
++			dynamic-power-coefficient = <530>;
++			static-power-points = <
++				828000  72
++				867000  90
++				927000  156
++				968000  181
++				1007000 298
++				1049000 435
++				1089900 533
++				1125000 533
++				>;
+ 		};
+ 
+ 		cpu3: cpu@101 {
+@@ -182,6 +204,17 @@
+ 			#cooling-cells = <2>;
+ 			#cooling-min-level = <0>;
+ 			#cooling-max-level = <7>;
++			dynamic-power-coefficient = <530>;
++			static-power-points = <
++				828000  72
++				867000  90
++				927000  156
++				968000  181
++				1007000 298
++				1049000 435
++				1089900 533
++				1125000 533
++				>;
+ 		};
+ 
+ 		idle-states {
+-- 
+1.9.1
+

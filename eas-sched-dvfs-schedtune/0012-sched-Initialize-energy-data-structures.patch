@@ -1,4 +1,4 @@
-From 2463322389993047cbdaf3641ea05b722d6f3272 Mon Sep 17 00:00:00 2001
+From 79b5871b3f816840498fc128ed1c72135b328adc Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Fri, 14 Nov 2014 16:20:20 +0000
 Subject: [PATCH 12/63] sched: Initialize energy data structures
@@ -27,10 +27,10 @@ Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
  1 file changed, 64 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 4152bf4..c5d1690 100644
+index 5587b22..40e7548 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -6320,6 +6320,66 @@ static void init_sched_groups_capacity(int cpu, struct sched_domain *sd)
+@@ -6407,6 +6407,66 @@ static void init_sched_groups_capacity(int cpu, struct sched_domain *sd)
  }
  
  /*
@@ -97,7 +97,7 @@ index 4152bf4..c5d1690 100644
   * Initializers for schedule domains
   * Non-inlined to reduce accumulated stack pressure in build_sched_domains()
   */
-@@ -7025,10 +7085,13 @@ static int build_sched_domains(const struct cpumask *cpu_map,
+@@ -7112,10 +7172,13 @@ static int build_sched_domains(const struct cpumask *cpu_map,
  
  	/* Calculate CPU capacity for physical packages and nodes */
  	for (i = nr_cpumask_bits-1; i >= 0; i--) {

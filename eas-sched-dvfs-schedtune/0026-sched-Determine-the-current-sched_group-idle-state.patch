@@ -1,4 +1,4 @@
-From aab742d9d7e6464c77797f814ff60ccfbda46f77 Mon Sep 17 00:00:00 2001
+From 16600d478dfb480b0e5e646b8dcaeb10f90e31da Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Tue, 27 Jan 2015 14:04:17 +0000
 Subject: [PATCH 26/63] sched: Determine the current sched_group idle-state
@@ -18,10 +18,10 @@ Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
  1 file changed, 21 insertions(+), 4 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index ea7ced7..324f8fa 100644
+index 2294a77..2ab366a 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -4900,6 +4900,20 @@ static int find_new_capacity(struct energy_env *eenv,
+@@ -4918,6 +4918,20 @@ static int find_new_capacity(struct energy_env *eenv,
  	return idx;
  }
  
@@ -42,7 +42,7 @@ index ea7ced7..324f8fa 100644
  /*
   * sched_group_energy(): Computes the absolute energy consumption of cpus
   * belonging to the sched_group including shared resources shared only by
-@@ -4952,7 +4966,8 @@ static int sched_group_energy(struct energy_env *eenv)
+@@ -4970,7 +4984,8 @@ static int sched_group_energy(struct energy_env *eenv)
  
  			do {
  				unsigned long group_util;
@@ -52,7 +52,7 @@ index ea7ced7..324f8fa 100644
  
  				if (sg_shared_cap && sg_shared_cap->group_weight >= sg->group_weight)
  					eenv->sg_cap = sg_shared_cap;
-@@ -4960,11 +4975,13 @@ static int sched_group_energy(struct energy_env *eenv)
+@@ -4978,11 +4993,13 @@ static int sched_group_energy(struct energy_env *eenv)
  					eenv->sg_cap = sg;
  
  				cap_idx = find_new_capacity(eenv, sg->sge);

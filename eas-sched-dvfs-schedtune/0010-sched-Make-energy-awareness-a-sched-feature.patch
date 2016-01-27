@@ -1,4 +1,4 @@
-From 880f8db536ffd8094829c8291a1ae6c2b3822064 Mon Sep 17 00:00:00 2001
+From 51aa2b306f551d66d21d8bdcc8d33dbcf0a148a3 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Tue, 13 Jan 2015 13:45:51 +0000
 Subject: [PATCH 10/63] sched: Make energy awareness a sched feature
@@ -22,10 +22,10 @@ Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
  2 files changed, 10 insertions(+)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 53d6663..f281afd 100644
+index ee2fb97..1b89c21 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -4736,6 +4736,11 @@ static long effective_load(struct task_group *tg, int cpu, long wl, long wg)
+@@ -4754,6 +4754,11 @@ static long effective_load(struct task_group *tg, int cpu, long wl, long wg)
  
  #endif
  

@@ -1,7 +1,7 @@
-From 0d1cd2974f8327c1b4583dbfad6b3b0e9810a4b9 Mon Sep 17 00:00:00 2001
+From baa330cb6b4402e235b85fae7c7aabaada093872 Mon Sep 17 00:00:00 2001
 From: Sascha Hauer <s.hauer@pengutronix.de>
 Date: Mon, 9 Nov 2015 11:13:31 +0100
-Subject: [PATCH 1/7] dt-bindings: thermal: Add binding document for Mediatek
+Subject: [PATCH 1/9] dt-bindings: thermal: Add binding document for Mediatek
  thermal controller
 
 This adds the device tree binding documentation for the mediatek thermal

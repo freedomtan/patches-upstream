@@ -1,4 +1,4 @@
-From 8f42ac2f299ce98c6cda9f2285a3249a0fea5a0a Mon Sep 17 00:00:00 2001
+From 7d59d8210370522c95113d52c3d79acbc11e6c63 Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Tue, 22 Sep 2015 16:47:48 +0100
 Subject: [PATCH 31/63] cpufreq: Max freq invariant scheduler load-tracking and
@@ -29,7 +29,7 @@ Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
  2 files changed, 20 insertions(+)
 
 diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 46a7d62..96f1a88 100644
+index 7a07fda..87819da 100644
 --- a/drivers/cpufreq/cpufreq.c
 +++ b/drivers/cpufreq/cpufreq.c
 @@ -352,12 +352,14 @@ static void adjust_jiffies(unsigned long val, struct cpufreq_freqs *ci)
@@ -79,10 +79,10 @@ index 46a7d62..96f1a88 100644
  		struct cpufreq_freqs *freqs, unsigned int state)
  {
 diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-index 11c65f5..9b1d61e 100644
+index 131b7a5..38ba3e1 100644
 --- a/include/linux/cpufreq.h
 +++ b/include/linux/cpufreq.h
-@@ -619,4 +619,5 @@ int cpufreq_generic_init(struct cpufreq_policy *policy,
+@@ -613,4 +613,5 @@ int cpufreq_generic_init(struct cpufreq_policy *policy,
  
  struct sched_domain;
  unsigned long cpufreq_scale_freq_capacity(struct sched_domain *sd, int cpu);

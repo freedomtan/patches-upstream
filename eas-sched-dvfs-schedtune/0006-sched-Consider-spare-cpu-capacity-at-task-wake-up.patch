@@ -1,4 +1,4 @@
-From f4ffb8b57e2d337b54a2c3c7228c4718fa4d54d8 Mon Sep 17 00:00:00 2001
+From e210d9a82bb8291c68b559dffa9eea2149855107 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Mon, 6 Jul 2015 15:01:10 +0100
 Subject: [PATCH 06/63] sched: Consider spare cpu capacity at task wake-up
@@ -29,10 +29,10 @@ Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
  1 file changed, 16 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index a2bc914..81cf6c2 100644
+index 9179875..9ed6de0 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -4873,9 +4873,10 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
+@@ -4891,9 +4891,10 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
  		  int this_cpu, int sd_flag)
  {
  	struct sched_group *idlest = NULL, *group = sd->groups;
@@ -44,7 +44,7 @@ index a2bc914..81cf6c2 100644
  	int load_idx = sd->forkexec_idx;
  	int imbalance = 100 + (sd->imbalance_pct-100)/2;
  
-@@ -4883,7 +4884,7 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
+@@ -4901,7 +4902,7 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
  		load_idx = sd->wake_idx;
  
  	do {
@@ -53,7 +53,7 @@ index a2bc914..81cf6c2 100644
  		int local_group;
  		int i;
  
-@@ -4915,6 +4916,16 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
+@@ -4933,6 +4934,16 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
  				fit_capacity = capacity_of(i);
  				fit_group = group;
  			}
@@ -70,7 +70,7 @@ index a2bc914..81cf6c2 100644
  		}
  
  		/* Adjust by relative CPU capacity of the group */
-@@ -4931,6 +4942,9 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
+@@ -4949,6 +4960,9 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
  	if (fit_group)
  		return fit_group;
  

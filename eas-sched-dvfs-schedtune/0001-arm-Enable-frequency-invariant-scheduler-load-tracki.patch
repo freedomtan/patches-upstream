@@ -1,4 +1,4 @@
-From 9c825637d99f04e5293f587b49008f2d7409a825 Mon Sep 17 00:00:00 2001
+From b3f595176dbfcd6ffa14d2054750e2c5d6a743d2 Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Wed, 23 Sep 2015 12:47:48 +0100
 Subject: [PATCH 01/63] arm: Enable frequency invariant scheduler load-tracking

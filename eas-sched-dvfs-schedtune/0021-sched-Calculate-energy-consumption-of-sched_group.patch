@@ -1,4 +1,4 @@
-From 3ca2324b91168b63d60086e98835235cc70e8dfb Mon Sep 17 00:00:00 2001
+From 9c4d9cb34160935aef063af00a5321d4cb608fb0 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Thu, 18 Dec 2014 14:47:18 +0000
 Subject: [PATCH 21/63] sched: Calculate energy consumption of sched_group
@@ -22,10 +22,10 @@ Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
  3 files changed, 161 insertions(+)
 
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 8bedfdd..c32cd13 100644
+index 7aa5c57..00af779 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -6009,6 +6009,7 @@ DEFINE_PER_CPU(struct sched_domain *, sd_numa);
+@@ -6096,6 +6096,7 @@ DEFINE_PER_CPU(struct sched_domain *, sd_numa);
  DEFINE_PER_CPU(struct sched_domain *, sd_busy);
  DEFINE_PER_CPU(struct sched_domain *, sd_asym);
  DEFINE_PER_CPU(struct sched_domain *, sd_ea);
@@ -33,7 +33,7 @@ index 8bedfdd..c32cd13 100644
  
  static void update_top_cache_domain(int cpu)
  {
-@@ -6042,6 +6043,9 @@ static void update_top_cache_domain(int cpu)
+@@ -6129,6 +6130,9 @@ static void update_top_cache_domain(int cpu)
  			break;
  	}
  	rcu_assign_pointer(per_cpu(sd_ea, cpu), ea_sd);
@@ -44,10 +44,10 @@ index 8bedfdd..c32cd13 100644
  
  /*
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 3b68ed8..8d08fb7 100644
+index ead78e5..b0ef427 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -4787,6 +4787,162 @@ static inline bool energy_aware(void)
+@@ -4805,6 +4805,162 @@ static inline bool energy_aware(void)
  }
  
  /*
@@ -211,7 +211,7 @@ index 3b68ed8..8d08fb7 100644
   * A waker of many should wake a different task than the one last awakened
   * at a frequency roughly N times higher than one of its wakees.  In order
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 34384e1..289a2e6 100644
+index 9b3918d..6f737bb 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
 @@ -853,6 +853,7 @@ DECLARE_PER_CPU(struct sched_domain *, sd_numa);

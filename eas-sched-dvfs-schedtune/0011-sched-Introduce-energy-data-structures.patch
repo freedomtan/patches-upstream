@@ -1,4 +1,4 @@
-From c1a2d5171bd04b22b87aece415dd492bc6214de0 Mon Sep 17 00:00:00 2001
+From b99b73fab2c6fe59fb2b2b0775e6e74b9d86b64c Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Fri, 14 Nov 2014 16:08:45 +0000
 Subject: [PATCH 11/63] sched: Introduce energy data structures
@@ -45,10 +45,10 @@ Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
  2 files changed, 20 insertions(+)
 
 diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 791b47e..780e148 100644
+index a10494a..bbb90e2 100644
 --- a/include/linux/sched.h
 +++ b/include/linux/sched.h
-@@ -1021,6 +1021,22 @@ struct sched_domain_attr {
+@@ -1027,6 +1027,22 @@ struct sched_domain_attr {
  
  extern int sched_domain_level_max;
  
@@ -71,7 +71,7 @@ index 791b47e..780e148 100644
  struct sched_group;
  
  struct sched_domain {
-@@ -1119,6 +1135,8 @@ bool cpus_share_cache(int this_cpu, int that_cpu);
+@@ -1125,6 +1141,8 @@ bool cpus_share_cache(int this_cpu, int that_cpu);
  
  typedef const struct cpumask *(*sched_domain_mask_f)(int cpu);
  typedef int (*sched_domain_flags_f)(void);
@@ -80,7 +80,7 @@ index 791b47e..780e148 100644
  
  #define SDTL_OVERLAP	0x01
  
-@@ -1131,6 +1149,7 @@ struct sd_data {
+@@ -1137,6 +1155,7 @@ struct sd_data {
  struct sched_domain_topology_level {
  	sched_domain_mask_f mask;
  	sched_domain_flags_f sd_flags;
@@ -89,7 +89,7 @@ index 791b47e..780e148 100644
  	int		    numa_level;
  	struct sd_data      data;
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 8249689..97c1231 100644
+index 7b25303..0c32dec 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
 @@ -876,6 +876,7 @@ struct sched_group {

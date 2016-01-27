@@ -1,4 +1,4 @@
-From ab555797ad7fb15d331850f6341a1eafe9a71421 Mon Sep 17 00:00:00 2001
+From 6e2d1c19cd9e06b3c098f86d0fa5f85cc53daff7 Mon Sep 17 00:00:00 2001
 From: Juri Lelli <juri.lelli@arm.com>
 Date: Thu, 30 Apr 2015 17:35:23 +0100
 Subject: [PATCH 57/63] DEBUG: sched,cpufreq: add cpu_capacity change
@@ -17,7 +17,7 @@ Signed-off-by: Juri Lelli <juri.lelli@arm.com>
  5 files changed, 24 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 5ca8e95..0f30d11 100644
+index f1922c1..09db8c1 100644
 --- a/drivers/cpufreq/cpufreq.c
 +++ b/drivers/cpufreq/cpufreq.c
 @@ -29,6 +29,7 @@
@@ -46,10 +46,10 @@ index 5ca8e95..0f30d11 100644
  	cpufreq_notify_transition(policy, freqs, CPUFREQ_PRECHANGE);
  }
 diff --git a/include/linux/sched.h b/include/linux/sched.h
-index e00667b..4773c94 100644
+index 55ab185..444b38c 100644
 --- a/include/linux/sched.h
 +++ b/include/linux/sched.h
-@@ -1046,6 +1046,8 @@ struct sched_group_energy {
+@@ -1052,6 +1052,8 @@ struct sched_group_energy {
  	struct capacity_state *cap_states; /* ptr to capacity state array */
  };
  
@@ -77,10 +77,10 @@ index 284244e..f4be04e 100644
  
  	TP_PROTO(struct device *dev, const char *pm_ops, int event),
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e3fd4e0..c065629 100644
+index 18cf597..b5dc753 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -4783,6 +4783,17 @@ static long effective_load(struct task_group *tg, int cpu, long wl, long wg)
+@@ -4801,6 +4801,17 @@ static long effective_load(struct task_group *tg, int cpu, long wl, long wg)
  
  #endif
  
@@ -99,7 +99,7 @@ index e3fd4e0..c065629 100644
  {
  	return sched_feat(ENERGY_AWARE);
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 5d3bc1d..e52ff95 100644
+index 8cdd4a6..23b073d 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
 @@ -1478,17 +1478,6 @@ static inline unsigned long cpu_util(int cpu)

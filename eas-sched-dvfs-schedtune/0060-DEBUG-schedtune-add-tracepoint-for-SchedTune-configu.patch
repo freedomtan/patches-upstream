@@ -1,4 +1,4 @@
-From 0c551e7a2d1ddee67023ecb5074fe471976e7612 Mon Sep 17 00:00:00 2001
+From e6406c1a41688de091ef76393819dc183e1937f1 Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Mon, 22 Jun 2015 13:49:07 +0100
 Subject: [PATCH 60/63] DEBUG: schedtune: add tracepoint for SchedTune

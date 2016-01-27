@@ -1,4 +1,4 @@
-From 6f19a7a608f94a834cb741d907e8b56ea784d1ba Mon Sep 17 00:00:00 2001
+From be8fa022253a03e378b263bdd1ad124aa105b1b2 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Sat, 9 May 2015 19:53:49 +0100
 Subject: [PATCH 05/63] sched: Add cpu capacity awareness to wakeup balancing
@@ -35,10 +35,10 @@ Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
  1 file changed, 63 insertions(+), 3 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 93efb96..a2bc914 100644
+index 1926606..9179875 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -4827,6 +4827,43 @@ static int wake_affine(struct sched_domain *sd, struct task_struct *p, int sync)
+@@ -4845,6 +4845,43 @@ static int wake_affine(struct sched_domain *sd, struct task_struct *p, int sync)
  	return 1;
  }
  
@@ -82,7 +82,7 @@ index 93efb96..a2bc914 100644
  /*
   * find_idlest_group finds and returns the least busy CPU group within the
   * domain.
-@@ -4836,7 +4873,9 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
+@@ -4854,7 +4891,9 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
  		  int this_cpu, int sd_flag)
  {
  	struct sched_group *idlest = NULL, *group = sd->groups;
@@ -92,7 +92,7 @@ index 93efb96..a2bc914 100644
  	int load_idx = sd->forkexec_idx;
  	int imbalance = 100 + (sd->imbalance_pct-100)/2;
  
-@@ -4867,6 +4906,15 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
+@@ -4885,6 +4924,15 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
  				load = target_load(i, load_idx);
  
  			avg_load += load;
@@ -108,7 +108,7 @@ index 93efb96..a2bc914 100644
  		}
  
  		/* Adjust by relative CPU capacity of the group */
-@@ -4880,6 +4928,9 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
+@@ -4898,6 +4946,9 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
  		}
  	} while (group = group->next, group != sd->groups);
  
@@ -118,7 +118,7 @@ index 93efb96..a2bc914 100644
  	if (!idlest || 100*this_load < imbalance*min_load)
  		return NULL;
  	return idlest;
-@@ -4900,7 +4951,7 @@ find_idlest_cpu(struct sched_group *group, struct task_struct *p, int this_cpu)
+@@ -4918,7 +4969,7 @@ find_idlest_cpu(struct sched_group *group, struct task_struct *p, int this_cpu)
  
  	/* Traverse only the allowed CPUs */
  	for_each_cpu_and(i, sched_group_cpus(group), tsk_cpus_allowed(p)) {
@@ -127,7 +127,7 @@ index 93efb96..a2bc914 100644
  			struct rq *rq = cpu_rq(i);
  			struct cpuidle_state *idle = idle_get_state(rq);
  			if (idle && idle->exit_latency < min_exit_latency) {
-@@ -4912,7 +4963,8 @@ find_idlest_cpu(struct sched_group *group, struct task_struct *p, int this_cpu)
+@@ -4930,7 +4981,8 @@ find_idlest_cpu(struct sched_group *group, struct task_struct *p, int this_cpu)
  				min_exit_latency = idle->exit_latency;
  				latest_idle_timestamp = rq->idle_stamp;
  				shallowest_idle_cpu = i;
@@ -137,7 +137,7 @@ index 93efb96..a2bc914 100644
  				   rq->idle_stamp > latest_idle_timestamp) {
  				/*
  				 * If equal or no active idle state, then
-@@ -4921,6 +4973,13 @@ find_idlest_cpu(struct sched_group *group, struct task_struct *p, int this_cpu)
+@@ -4939,6 +4991,13 @@ find_idlest_cpu(struct sched_group *group, struct task_struct *p, int this_cpu)
  				 */
  				latest_idle_timestamp = rq->idle_stamp;
  				shallowest_idle_cpu = i;
@@ -151,7 +151,7 @@ index 93efb96..a2bc914 100644
  			}
  		} else if (shallowest_idle_cpu == -1) {
  			load = weighted_cpuload(i);
-@@ -5035,7 +5094,8 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
+@@ -5053,7 +5112,8 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
  	int sync = wake_flags & WF_SYNC;
  
  	if (sd_flag & SD_BALANCE_WAKE)

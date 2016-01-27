@@ -1,22 +1,22 @@
-From db8854b13af2621fd236a93f6159b0e030b428bb Mon Sep 17 00:00:00 2001
+From 140b9c4870abca0fa680c3b8dd1a4782d8446d53 Mon Sep 17 00:00:00 2001
 From: Sudeep Holla <sudeep.holla@arm.com>
 Date: Wed, 3 Jun 2015 14:48:29 +0100
-Subject: [PATCH 2/3] arm64: defconfig: add few misc configs for
+Subject: [PATCH 2/2] arm64: defconfig: add few misc configs for
  development/debugging/testing
 
 Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- arch/arm64/configs/defconfig | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+ arch/arm64/configs/defconfig | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
  mode change 100755 => 100644 arch/arm64/configs/defconfig
 
 diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
 old mode 100755
 new mode 100644
-index bac329c..e3aba1f
+index e4623a2..8b6f2ce
 --- a/arch/arm64/configs/defconfig
 +++ b/arch/arm64/configs/defconfig
-@@ -60,13 +60,23 @@ CONFIG_CMA=y
+@@ -64,13 +64,23 @@ CONFIG_CMA=y
  CONFIG_CMDLINE="console=ttyAMA0"
  # CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
  CONFIG_COMPAT=y
@@ -40,7 +40,7 @@ index bac329c..e3aba1f
  CONFIG_ARM_MT8173_CPUFREQ=y
  CONFIG_NET=y
  CONFIG_PACKET=y
-@@ -88,6 +98,7 @@ CONFIG_DEVTMPFS_MOUNT=y
+@@ -91,6 +101,7 @@ CONFIG_DEVTMPFS_MOUNT=y
  CONFIG_DMA_CMA=y
  CONFIG_BLK_DEV_LOOP=y
  CONFIG_VIRTIO_BLK=y
@@ -48,7 +48,7 @@ index bac329c..e3aba1f
  # CONFIG_SCSI_PROC_FS is not set
  CONFIG_BLK_DEV_SD=y
  # CONFIG_SCSI_LOWLEVEL is not set
-@@ -137,7 +148,8 @@ CONFIG_GPIO_PL061=y
+@@ -150,7 +161,8 @@ CONFIG_GPIO_RCAR=y
  CONFIG_GPIO_XGENE=y
  CONFIG_POWER_RESET_XGENE=y
  CONFIG_POWER_RESET_SYSCON=y
@@ -58,7 +58,7 @@ index bac329c..e3aba1f
  CONFIG_WATCHDOG=y
  CONFIG_MEDIATEK_WATCHDOG=y
  CONFIG_MFD_MT6397=y
-@@ -177,6 +189,8 @@ CONFIG_LEDS_TRIGGER_HEARTBEAT=y
+@@ -196,6 +208,8 @@ CONFIG_LEDS_TRIGGER_HEARTBEAT=y
  CONFIG_LEDS_TRIGGER_CPU=y
  CONFIG_RTC_CLASS=y
  CONFIG_RTC_DRV_EFI=y
@@ -67,15 +67,15 @@ index bac329c..e3aba1f
  CONFIG_RTC_DRV_MT6397=y
  CONFIG_RTC_DRV_XGENE=y
  CONFIG_DMADEVICES=y
-@@ -184,6 +198,7 @@ CONFIG_QCOM_BAM_DMA=y
+@@ -205,6 +219,7 @@ CONFIG_TEGRA20_APB_DMA=y
  CONFIG_VIRTIO_PCI=y
  CONFIG_VIRTIO_BALLOON=y
  CONFIG_VIRTIO_MMIO=y
 +CONFIG_COMMON_CLK_SCPI=y
+ CONFIG_COMMON_CLK_CS2000_CP=y
  CONFIG_COMMON_CLK_QCOM=y
  CONFIG_MSM_GCC_8916=y
- CONFIG_HWSPINLOCK_QCOM=y
-@@ -196,6 +211,9 @@ CONFIG_QCOM_SMD_RPM=y
+@@ -218,6 +233,9 @@ CONFIG_QCOM_SMD_RPM=y
  CONFIG_PWM=y
  CONFIG_PWM_MTK_DISP=y
  CONFIG_PHY_XGENE=y
@@ -85,11 +85,10 @@ index bac329c..e3aba1f
  CONFIG_EXT2_FS=y
  CONFIG_EXT3_FS=y
  CONFIG_FANOTIFY=y
-@@ -217,8 +235,13 @@ CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
+@@ -240,8 +258,12 @@ CONFIG_NLS_ISO8859_1=y
  CONFIG_VIRTUALIZATION=y
  CONFIG_KVM=y
-+CONFIG_PRINTK_TIME=y
+ CONFIG_PRINTK_TIME=y
 +CONFIG_DYNAMIC_DEBUG=y
  CONFIG_DEBUG_INFO=y
 +CONFIG_DEBUG_INFO_REDUCED=y

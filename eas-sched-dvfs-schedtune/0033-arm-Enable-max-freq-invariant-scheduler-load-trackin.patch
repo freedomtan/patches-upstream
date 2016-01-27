@@ -1,4 +1,4 @@
-From e4d119b760f14361317e85a293ff34430d0a308e Mon Sep 17 00:00:00 2001
+From 097afb43f8dba03d393b08be0c097c4ae55ffcb7 Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Wed, 23 Sep 2015 17:59:55 +0100
 Subject: [PATCH 33/63] arm: Enable max freq invariant scheduler load-tracking

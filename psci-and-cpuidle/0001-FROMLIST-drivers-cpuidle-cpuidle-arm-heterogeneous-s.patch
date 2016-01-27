@@ -1,7 +1,7 @@
-From e70a2d526de8724fdc17d604c45982c362e45757 Mon Sep 17 00:00:00 2001
+From 9d436787dcc57fadb662501d59345822c1526ff6 Mon Sep 17 00:00:00 2001
 From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Date: Thu, 16 Apr 2015 17:10:17 +0100
-Subject: [PATCH 4/8] FROMLIST: drivers: cpuidle: cpuidle-arm: heterogeneous
+Subject: [PATCH 1/5] FROMLIST: drivers: cpuidle: cpuidle-arm: heterogeneous
  systems extension
 
 Some ARM systems (eg big.LITTLE ones) can be composed of CPUs having

@@ -1,4 +1,4 @@
-From 8590552eaa28dc35f93cac1bdfba0c0f4127757a Mon Sep 17 00:00:00 2001
+From 393351c7eaf5354adee4493bca9533b90d11fe32 Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Fri, 14 Nov 2014 16:25:50 +0000
 Subject: [PATCH 59/63] DEBUG: sched: add energy procfs interface
@@ -68,10 +68,10 @@ Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
  1 file changed, 65 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 4c29a30..a5e5f45 100644
+index 952acef..7e7ac97 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -5428,9 +5428,60 @@ set_table_entry(struct ctl_table *entry,
+@@ -5515,9 +5515,60 @@ set_table_entry(struct ctl_table *entry,
  }
  
  static struct ctl_table *
@@ -133,7 +133,7 @@ index 4c29a30..a5e5f45 100644
  
  	if (table == NULL)
  		return NULL;
-@@ -5463,7 +5514,19 @@ sd_alloc_ctl_domain_table(struct sched_domain *sd)
+@@ -5550,7 +5601,19 @@ sd_alloc_ctl_domain_table(struct sched_domain *sd)
  		sizeof(long), 0644, proc_doulongvec_minmax, false);
  	set_table_entry(&table[12], "name", sd->name,
  		CORENAME_MAX_SIZE, 0444, proc_dostring, false);

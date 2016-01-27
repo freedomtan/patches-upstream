@@ -1,4 +1,4 @@
-From 4836c964a097e7e838ac2d247034978aa15f08e6 Mon Sep 17 00:00:00 2001
+From 313cd66e13b165f3cb1ee29322027490a66db624 Mon Sep 17 00:00:00 2001
 From: Todd Poynor <toddpoynor@google.com>
 Date: Tue, 1 Dec 2015 15:42:16 -0800
 Subject: [PATCH 2/4] Move x86_64 idle notifiers to generic
@@ -92,12 +92,12 @@ index d2ca8c3..7c73824 100644
 +
  #endif /* _LINUX_CPU_H_ */
 diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 85ff5e2..74e411a 100644
+index 5b9d396..fef4a8e 100644
 --- a/kernel/cpu.c
 +++ b/kernel/cpu.c
-@@ -827,3 +827,23 @@ void init_cpu_online(const struct cpumask *src)
+@@ -789,3 +789,23 @@ void init_cpu_online(const struct cpumask *src)
  {
- 	cpumask_copy(to_cpumask(cpu_online_bits), src);
+ 	cpumask_copy(&__cpu_online_mask, src);
  }
 +
 +static ATOMIC_NOTIFIER_HEAD(idle_notifier);

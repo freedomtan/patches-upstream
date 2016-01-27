@@ -1,4 +1,4 @@
-From f2ef24fb9aade83166eca4953f4acb7ade997b81 Mon Sep 17 00:00:00 2001
+From 7566ae1bb6023261c24d7669d078c01fbd4c43ec Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Tue, 23 Jun 2015 09:17:54 +0100
 Subject: [PATCH 51/63] sched/tune: add initial support for CGroups based
@@ -53,10 +53,10 @@ Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
  4 files changed, 225 insertions(+)
 
 diff --git a/include/linux/cgroup_subsys.h b/include/linux/cgroup_subsys.h
-index 1a96fda..e133705 100644
+index 0df0336a..7f4a2a5 100644
 --- a/include/linux/cgroup_subsys.h
 +++ b/include/linux/cgroup_subsys.h
-@@ -26,6 +26,10 @@ SUBSYS(cpu)
+@@ -20,6 +20,10 @@ SUBSYS(cpu)
  SUBSYS(cpuacct)
  #endif
  
@@ -68,12 +68,12 @@ index 1a96fda..e133705 100644
  SUBSYS(io)
  #endif
 diff --git a/init/Kconfig b/init/Kconfig
-index 83d8c02..5d9097e 100644
+index 8b855a2..0781e90 100644
 --- a/init/Kconfig
 +++ b/init/Kconfig
-@@ -999,6 +999,23 @@ config CGROUP_CPUACCT
- 	  Provides a simple Resource Controller for monitoring the
- 	  total CPU consumed by the tasks in a cgroup.
+@@ -935,6 +935,23 @@ menuconfig CGROUPS
+ 
+ if CGROUPS
  
 +config CGROUP_SCHEDTUNE
 +	bool "CFS tasks boosting cgroup subsystem (EXPERIMENTAL)"
@@ -308,7 +308,7 @@ index 4c44b1a..a26295c 100644
  sysctl_sched_cfs_boost_handler(struct ctl_table *table, int write,
  			       void __user *buffer, size_t *lenp,
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 827ba25..98c0f6e 100644
+index 6792842..f5b7b63 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
 @@ -439,7 +439,11 @@ static struct ctl_table kern_table[] = {

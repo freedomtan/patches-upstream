@@ -1,4 +1,4 @@
-From 98ae7cf58a571b5a31b5b54f5323a7a524de4f9f Mon Sep 17 00:00:00 2001
+From 53422bdebcf8721d11fd45d27e3c8149da786846 Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Mon, 14 Dec 2015 12:45:14 +0000
 Subject: [PATCH 58/63] arm64: Make defconfig suitable for schedtest
@@ -19,11 +19,14 @@ Created with:
 
 Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
 ---
- arch/arm64/configs/defconfig | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ arch/arm64/configs/defconfig | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+ mode change 100755 => 100644 arch/arm64/configs/defconfig
 
 diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index e3aba1f..f90c304 100644
+old mode 100755
+new mode 100644
+index e4623a2..dcbb51d
 --- a/arch/arm64/configs/defconfig
 +++ b/arch/arm64/configs/defconfig
 @@ -14,14 +14,15 @@ CONFIG_TASK_IO_ACCOUNTING=y
@@ -43,20 +46,20 @@ index e3aba1f..f90c304 100644
  CONFIG_BLK_DEV_INITRD=y
  CONFIG_KALLSYMS_ALL=y
  # CONFIG_COMPAT_BRK is not set
-@@ -239,15 +240,17 @@ CONFIG_PRINTK_TIME=y
- CONFIG_DYNAMIC_DEBUG=y
+@@ -242,12 +243,19 @@ CONFIG_KVM=y
+ CONFIG_PRINTK_TIME=y
  CONFIG_DEBUG_INFO=y
- CONFIG_DEBUG_INFO_REDUCED=y
--CONFIG_DEBUG_FS=y
- CONFIG_HEADERS_CHECK=y
- CONFIG_DEBUG_SECTION_MISMATCH=y
+ CONFIG_DEBUG_FS=y
++CONFIG_HEADERS_CHECK=y
++CONFIG_DEBUG_SECTION_MISMATCH=y
  CONFIG_MAGIC_SYSRQ=y
  CONFIG_DEBUG_KERNEL=y
  CONFIG_LOCKUP_DETECTOR=y
--# CONFIG_SCHED_DEBUG is not set
+ # CONFIG_SCHED_DEBUG is not set
 +CONFIG_SCHEDSTATS=y
  # CONFIG_DEBUG_PREEMPT is not set
 -# CONFIG_FTRACE is not set
++CONFIG_FTRACE=y
 +CONFIG_FUNCTION_TRACER=y
 +CONFIG_IRQSOFF_TRACER=y
 +CONFIG_PREEMPT_TRACER=y

@@ -1,7 +1,7 @@
-From f55a3c554134f8cf3d5d9e290e3c5f7685b08fc9 Mon Sep 17 00:00:00 2001
+From c3d28bdf8ce52913d6595566347ccf3338f10cec Mon Sep 17 00:00:00 2001
 From: Weiyi Lu <weiyi.lu@mediatek.com>
 Date: Thu, 17 Dec 2015 10:57:25 +0800
-Subject: [PATCH 7/8] arm64: dts: mediatek: Add cluster sleep support on MT8173
+Subject: [PATCH 4/5] arm64: dts: mediatek: Add cluster sleep support on MT8173
 
 Enable cluster sleep state by adding cluster-sleep node to mt8173.dtsi
 
@@ -12,7 +12,7 @@ Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
  1 file changed, 13 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 9661d5a..b6fbb29 100644
+index ec135ea..3ccc577 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 @@ -54,7 +54,7 @@

@@ -1,4 +1,4 @@
-From 838ebdf40a49863329969448240835066ed577ea Mon Sep 17 00:00:00 2001
+From 7994ca9911fafe2ae439746d6d1a129a735c6ba4 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Tue, 14 Apr 2015 16:25:31 +0100
 Subject: [PATCH 03/63] arm: Update arch_scale_cpu_capacity() to reflect change

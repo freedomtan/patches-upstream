@@ -1,4 +1,4 @@
-From b0e60607b6e2c3b4d3461d42f83612222e3d883a Mon Sep 17 00:00:00 2001
+From 4d0051724f156c5cdacd0bb9cebf111a6579bab0 Mon Sep 17 00:00:00 2001
 From: Juri Lelli <juri.lelli@arm.com>
 Date: Fri, 26 Jun 2015 12:14:23 +0100
 Subject: [PATCH 38/63] sched/{core,fair}: trigger OPP change request on fork()
@@ -26,10 +26,10 @@ Signed-off-by: Steve Muckle <smuckle@linaro.org>
  3 files changed, 5 insertions(+), 7 deletions(-)
 
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 9997dc3..a3ef9f7 100644
+index 252ee90..6a6d1f3 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -2402,7 +2402,7 @@ void wake_up_new_task(struct task_struct *p)
+@@ -2487,7 +2487,7 @@ void wake_up_new_task(struct task_struct *p)
  #endif
  
  	rq = __task_rq_lock(p);
@@ -39,10 +39,10 @@ index 9997dc3..a3ef9f7 100644
  	trace_sched_wakeup_new(p);
  	check_preempt_curr(rq, p, WF_FORK);
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 6e04799..0cac9bf 100644
+index 6a606a2..bc58606 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -4226,7 +4226,8 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+@@ -4244,7 +4244,8 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
  {
  	struct cfs_rq *cfs_rq;
  	struct sched_entity *se = &p->se;
@@ -52,7 +52,7 @@ index 6e04799..0cac9bf 100644
  
  	for_each_sched_entity(se) {
  		if (se->on_rq)
-@@ -4270,12 +4271,8 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+@@ -4288,12 +4289,8 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
  		 * because we get here also during load balancing, but
  		 * in these cases it seems wise to trigger as single
  		 * request after load balancing is done.
@@ -67,7 +67,7 @@ index 6e04799..0cac9bf 100644
  	}
  	hrtick_update(rq);
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 6529325..dc186dd 100644
+index cf8f6fd..938aef9 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
 @@ -1155,6 +1155,7 @@ extern const u32 sched_prio_to_wmult[40];

@@ -1,7 +1,7 @@
-From c652b6dc40f95436a6e7264f25e42dda1f6c46e0 Mon Sep 17 00:00:00 2001
+From 061f4f7da6e69bd73e2b0a1196bf652108937059 Mon Sep 17 00:00:00 2001
 From: "yt.lee" <yt.lee@mediatek.com>
 Date: Fri, 23 Oct 2015 17:34:46 +0800
-Subject: [PATCH 6/8] soc: mediatek: To move power control logic to ARM TF
+Subject: [PATCH 3/5] soc: mediatek: To move power control logic to ARM TF
 
 Add an option to test if ARM TF supports non-cpus power
 control and do it in firmware. Otherwise, fallback to
@@ -15,12 +15,12 @@ Change-Id: Ia74ed5017c564b61872a585b93473da3dd54b79f
 Signed-off-by: yt.lee <yt.lee@mediatek.com>
 Signed-off-by: Fan Chen <fan.chen@mediatek.com>
 ---
- drivers/soc/mediatek/mtk-scpsys.c    | 122 ++++++++++++++++++++++-------------
+ drivers/soc/mediatek/mtk-scpsys.c    | 125 ++++++++++++++++++++++-------------
  include/linux/soc/mediatek/mtk-sip.h |   4 ++
- 2 files changed, 82 insertions(+), 44 deletions(-)
+ 2 files changed, 82 insertions(+), 47 deletions(-)
 
 diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index 4d4203c..cc8d0c8 100644
+index 0221387..301f660 100644
 --- a/drivers/soc/mediatek/mtk-scpsys.c
 +++ b/drivers/soc/mediatek/mtk-scpsys.c
 @@ -21,6 +21,7 @@
@@ -28,10 +28,10 @@ index 4d4203c..cc8d0c8 100644
  #include <linux/regmap.h>
  #include <linux/soc/mediatek/infracfg.h>
 +#include <linux/soc/mediatek/mtk-sip.h>
+ #include <linux/regulator/consumer.h>
  #include <dt-bindings/power/mt8173-power.h>
  
- #define SPM_VDE_PWR_CON			0x0210
-@@ -187,6 +188,7 @@ struct scp {
+@@ -189,6 +190,7 @@ struct scp {
  	struct device *dev;
  	void __iomem *base;
  	struct regmap *infracfg;
@@ -39,7 +39,7 @@ index 4d4203c..cc8d0c8 100644
  };
  
  static int scpsys_domain_is_on(struct scp_domain *scpd)
-@@ -209,9 +211,8 @@ static int scpsys_domain_is_on(struct scp_domain *scpd)
+@@ -211,9 +213,8 @@ static int scpsys_domain_is_on(struct scp_domain *scpd)
  	return -EINVAL;
  }
  
@@ -50,12 +50,18 @@ index 4d4203c..cc8d0c8 100644
  	struct scp *scp = scpd->scp;
  	unsigned long timeout;
  	bool expired;
-@@ -219,17 +220,6 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
+@@ -221,7 +222,6 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
  	u32 sram_pdn_ack = scpd->sram_pdn_ack_bits;
  	u32 val;
  	int ret;
 -	int i;
--
+ 
+ 	if (scpd->supply) {
+ 		ret = regulator_enable(scpd->supply);
+@@ -229,16 +229,6 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
+ 			return ret;
+ 	}
+ 
 -	for (i = 0; i < MAX_CLKS && scpd->clk[i]; i++) {
 -		ret = clk_prepare_enable(scpd->clk[i]);
 -		if (ret) {
@@ -65,10 +71,11 @@ index 4d4203c..cc8d0c8 100644
 -			goto err_clk;
 -		}
 -	}
- 
+-
  	val = readl(ctl_addr);
  	val |= PWR_ON_BIT;
-@@ -245,10 +235,8 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
+ 	writel(val, ctl_addr);
+@@ -253,10 +243,8 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
  		if (ret > 0)
  			break;
  
@@ -81,7 +88,7 @@ index 4d4203c..cc8d0c8 100644
  
  		cpu_relax();
  
-@@ -273,10 +261,8 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
+@@ -281,10 +269,8 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
  	expired = false;
  	while (sram_pdn_ack && (readl(ctl_addr) & sram_pdn_ack)) {
  
@@ -94,12 +101,12 @@ index 4d4203c..cc8d0c8 100644
  
  		cpu_relax();
  
-@@ -288,25 +274,14 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
+@@ -296,28 +282,14 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
  		ret = mtk_infracfg_clear_bus_protection(scp->infracfg,
  				scpd->bus_prot_mask);
  		if (ret)
 -			goto err_pwr_ack;
-+			return ret;
++			return (ret);
  	}
  
  	return 0;
@@ -110,6 +117,9 @@ index 4d4203c..cc8d0c8 100644
 -			clk_disable_unprepare(scpd->clk[i]);
 -	}
 -err_clk:
+-	if (scpd->supply)
+-		regulator_disable(scpd->supply);
+-
 -	dev_err(scp->dev, "Failed to power on domain %s\n", genpd->name);
 -
 -	return ret;
@@ -122,7 +132,7 @@ index 4d4203c..cc8d0c8 100644
  	struct scp *scp = scpd->scp;
  	unsigned long timeout;
  	bool expired;
-@@ -314,13 +289,12 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
+@@ -325,13 +297,12 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
  	u32 pdn_ack = scpd->sram_pdn_ack_bits;
  	u32 val;
  	int ret;
@@ -137,7 +147,7 @@ index 4d4203c..cc8d0c8 100644
  	}
  
  	val = readl(ctl_addr);
-@@ -331,10 +305,9 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
+@@ -342,10 +313,9 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
  	timeout = jiffies + HZ;
  	expired = false;
  	while (pdn_ack && (readl(ctl_addr) & pdn_ack) != pdn_ack) {
@@ -151,7 +161,7 @@ index 4d4203c..cc8d0c8 100644
  
  		cpu_relax();
  
-@@ -365,10 +338,8 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
+@@ -376,10 +346,8 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
  		if (ret == 0)
  			break;
  
@@ -164,7 +174,7 @@ index 4d4203c..cc8d0c8 100644
  
  		cpu_relax();
  
-@@ -376,6 +347,62 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
+@@ -387,6 +355,62 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
  			expired = true;
  	}
  
@@ -227,7 +237,7 @@ index 4d4203c..cc8d0c8 100644
  	for (i = 0; i < MAX_CLKS && scpd->clk[i]; i++)
  		clk_disable_unprepare(scpd->clk[i]);
  
-@@ -503,6 +530,13 @@ static int __init scpsys_probe(struct platform_device *pdev)
+@@ -530,6 +554,13 @@ static int __init scpsys_probe(struct platform_device *pdev)
  	if (ret)
  		dev_err(&pdev->dev, "Failed to add OF provider: %d\n", ret);
  

@@ -1,7 +1,7 @@
-From 1fa555a01883f321c4e8e0c42ef0c4e8d29c2e23 Mon Sep 17 00:00:00 2001
+From cc338b70b551f9f62bbe0bc9469d143c6d2aea9f Mon Sep 17 00:00:00 2001
 From: Weiyi Lu <weiyi.lu@mediatek.com>
 Date: Thu, 17 Dec 2015 11:02:32 +0800
-Subject: [PATCH 8/8] arm64: dts: mediatek: Improve cpuidle latency on MT8173
+Subject: [PATCH 5/5] arm64: dts: mediatek: Improve cpuidle latency on MT8173
 
 All according to the exact profiling result,
 1. Each CPU cluster needs its own nodes due to the latency gap
@@ -17,7 +17,7 @@ Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
  1 file changed, 26 insertions(+), 8 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index b6fbb29..09dafc0 100644
+index 3ccc577..4661236 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 @@ -70,7 +70,7 @@

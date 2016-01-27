@@ -1,4 +1,4 @@
-From e0887e6e1172e6b2667e59ee9a008cfc51b3fd80 Mon Sep 17 00:00:00 2001
+From 9f00ecd5fb56b48c2c4dd12d6bfa54372e05e2e1 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Sat, 9 May 2015 20:03:19 +0100
 Subject: [PATCH 27/63] sched: Energy-aware wake-up task placement
@@ -22,10 +22,10 @@ Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
  1 file changed, 86 insertions(+), 3 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 324f8fa..3e9cd1d 100644
+index 2ab366a..05e5b9f 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -5372,6 +5372,86 @@ done:
+@@ -5390,6 +5390,86 @@ done:
  	return target;
  }
  
@@ -112,7 +112,7 @@ index 324f8fa..3e9cd1d 100644
  /*
   * select_task_rq_fair: Select target runqueue for the waking task in domains
   * that have the 'sd_flag' flag set. In practice, this is SD_BALANCE_WAKE,
-@@ -5394,8 +5474,9 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
+@@ -5412,8 +5492,9 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
  	int sync = wake_flags & WF_SYNC;
  
  	if (sd_flag & SD_BALANCE_WAKE)
@@ -124,7 +124,7 @@ index 324f8fa..3e9cd1d 100644
  
  	rcu_read_lock();
  	for_each_domain(cpu, tmp) {
-@@ -5425,7 +5506,9 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
+@@ -5443,7 +5524,9 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
  	}
  
  	if (!sd) {

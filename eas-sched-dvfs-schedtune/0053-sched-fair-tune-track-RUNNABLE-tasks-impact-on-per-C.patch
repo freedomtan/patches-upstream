@@ -1,4 +1,4 @@
-From 5188fca3a021f7a6c3eaff68f15e0a886393a312 Mon Sep 17 00:00:00 2001
+From 4bf42263fef1f993ba21b188d8c03cba8e3531a1 Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Tue, 7 Jul 2015 15:33:20 +0100
 Subject: [PATCH 53/63] sched/{fair,tune}: track RUNNABLE tasks impact on per
@@ -40,7 +40,7 @@ Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
  create mode 100644 kernel/sched/tune.h
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 7212da6..4fa93d5 100644
+index d7710c7..7adf9ec 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -34,6 +34,7 @@
@@ -51,7 +51,7 @@ index 7212da6..4fa93d5 100644
  
  /*
   * Targeted preemption latency for CPU-bound tasks:
-@@ -4265,6 +4266,8 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+@@ -4283,6 +4284,8 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
  		    cpu_overutilized(rq->cpu))
  			rq->rd->overutilized = true;
  
@@ -60,7 +60,7 @@ index 7212da6..4fa93d5 100644
  		/*
  		 * We want to potentially trigger a freq switch
  		 * request only for tasks that are waking up; this is
-@@ -4334,6 +4337,7 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+@@ -4352,6 +4355,7 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
  
  	if (!se) {
  		sub_nr_running(rq, 1);
@@ -68,7 +68,7 @@ index 7212da6..4fa93d5 100644
  
  		/*
  		 * We want to potentially trigger a freq switch
-@@ -5199,10 +5203,15 @@ schedtune_margin(unsigned long signal, unsigned long boost)
+@@ -5217,10 +5221,15 @@ schedtune_margin(unsigned long signal, unsigned long boost)
  }
  
  static inline unsigned int
@@ -86,7 +86,7 @@ index 7212da6..4fa93d5 100644
  	if (boost == 0)
  		return 0;
  
-@@ -5212,7 +5221,7 @@ schedtune_cpu_margin(unsigned long util)
+@@ -5230,7 +5239,7 @@ schedtune_cpu_margin(unsigned long util)
  #else /* CONFIG_SCHED_TUNE */
  
  static inline unsigned int
@@ -95,7 +95,7 @@ index 7212da6..4fa93d5 100644
  {
  	return 0;
  }
-@@ -5223,7 +5232,7 @@ static inline unsigned long
+@@ -5241,7 +5250,7 @@ static inline unsigned long
  boosted_cpu_util(int cpu)
  {
  	unsigned long util = cpu_util(cpu);

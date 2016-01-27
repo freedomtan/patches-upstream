@@ -1,4 +1,4 @@
-From 75c63c0414d3c621d2ba4f18ab08cbda02974c39 Mon Sep 17 00:00:00 2001
+From ac9ad040873701e3a0e34a12216c772c0fee873c Mon Sep 17 00:00:00 2001
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 Date: Tue, 30 Jun 2015 12:03:26 +0100
 Subject: [PATCH 47/63] sched/tune: add detailed documentation

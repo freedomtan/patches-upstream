@@ -1,4 +1,4 @@
-From 7e59edfcf1d09d65e8b3e094b508e72f4da9fb75 Mon Sep 17 00:00:00 2001
+From b6b01adf0aba85d64fe720ef12287f29144a722e Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Thu, 11 Dec 2014 15:25:29 +0000
 Subject: [PATCH 19/63] sched: Relocated cpu_util() and change return type
@@ -16,10 +16,10 @@ Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
  1 file changed, 34 insertions(+), 36 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 547ad13..3b68ed8 100644
+index 2cb3c8b..ead78e5 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -4747,6 +4747,40 @@ static unsigned long capacity_curr_of(int cpu)
+@@ -4765,6 +4765,40 @@ static unsigned long capacity_curr_of(int cpu)
  	       >> SCHED_CAPACITY_SHIFT;
  }
  
@@ -60,7 +60,7 @@ index 547ad13..3b68ed8 100644
  static inline bool energy_aware(void)
  {
  	return sched_feat(ENERGY_AWARE);
-@@ -4873,8 +4907,6 @@ static inline bool task_fits_max(struct task_struct *p, int cpu)
+@@ -4891,8 +4925,6 @@ static inline bool task_fits_max(struct task_struct *p, int cpu)
  	return __task_fits(p, cpu, 0);
  }
  
@@ -69,7 +69,7 @@ index 547ad13..3b68ed8 100644
  static inline bool task_fits_spare(struct task_struct *p, int cpu)
  {
  	return __task_fits(p, cpu, cpu_util(cpu));
-@@ -5074,40 +5106,6 @@ done:
+@@ -5092,40 +5124,6 @@ done:
  }
  
  /*

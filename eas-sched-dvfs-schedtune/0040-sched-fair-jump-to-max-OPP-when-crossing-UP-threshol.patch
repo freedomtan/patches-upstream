@@ -1,4 +1,4 @@
-From 239841ae4606b4623f3f697ac578771844b26b2c Mon Sep 17 00:00:00 2001
+From 684b457609d8bde9137ea28ae18f7904183cb948 Mon Sep 17 00:00:00 2001
 From: Steve Muckle <smuckle@linaro.org>
 Date: Thu, 25 Jun 2015 14:12:33 +0100
 Subject: [PATCH 40/63] sched/fair: jump to max OPP when crossing UP threshold
@@ -24,10 +24,10 @@ Signed-off-by: Steve Muckle <smuckle@linaro.org>
  3 files changed, 109 insertions(+), 66 deletions(-)
 
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index a3ef9f7..803882d 100644
+index 6a6d1f3..b45a967 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -2869,6 +2869,45 @@ unsigned long long task_sched_runtime(struct task_struct *p)
+@@ -2954,6 +2954,45 @@ unsigned long long task_sched_runtime(struct task_struct *p)
  	return ns;
  }
  
@@ -73,7 +73,7 @@ index a3ef9f7..803882d 100644
  /*
   * This function gets called by the timer code, with HZ frequency.
   * We call it with interrupts disabled.
-@@ -2895,6 +2934,8 @@ void scheduler_tick(void)
+@@ -2980,6 +3019,8 @@ void scheduler_tick(void)
  	trigger_load_balance(rq);
  #endif
  	rq_last_tick_reset(rq);
@@ -83,10 +83,10 @@ index a3ef9f7..803882d 100644
  
  #ifdef CONFIG_NO_HZ_FULL
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index ee760c2..2a9ad98 100644
+index 638152e..7e26be3 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -4199,9 +4199,6 @@ static inline void hrtick_update(struct rq *rq)
+@@ -4217,9 +4217,6 @@ static inline void hrtick_update(struct rq *rq)
  }
  #endif
  
@@ -96,7 +96,7 @@ index ee760c2..2a9ad98 100644
  static void update_capacity_of(int cpu)
  {
  	unsigned long req_cap;
-@@ -4606,15 +4603,6 @@ static unsigned long target_load(int cpu, int type)
+@@ -4624,15 +4621,6 @@ static unsigned long target_load(int cpu, int type)
  	return max(rq->cpu_load[type-1], total);
  }
  
@@ -112,7 +112,7 @@ index ee760c2..2a9ad98 100644
  
  static unsigned long cpu_avg_load_per_task(int cpu)
  {
-@@ -4783,60 +4771,6 @@ static long effective_load(struct task_group *tg, int cpu, long wl, long wg)
+@@ -4801,60 +4789,6 @@ static long effective_load(struct task_group *tg, int cpu, long wl, long wg)
  
  #endif
  
@@ -174,7 +174,7 @@ index ee760c2..2a9ad98 100644
  {
  	return sched_feat(ENERGY_AWARE);
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index dc186dd..e388ebf 100644
+index 938aef9..fa7e14c 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
 @@ -1422,7 +1422,75 @@ unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)

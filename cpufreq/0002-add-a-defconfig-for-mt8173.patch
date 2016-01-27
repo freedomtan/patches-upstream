@@ -1,7 +1,7 @@
-From 344b0a5e7921816dd295902cc33fddb384d80074 Mon Sep 17 00:00:00 2001
+From 9a99c5fb8c96919e2643c6a0ead1884433a4ae8b Mon Sep 17 00:00:00 2001
 From: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
 Date: Sun, 27 Dec 2015 13:48:04 +0800
-Subject: [PATCH 6/9] add a defconfig for mt8173
+Subject: [PATCH 2/3] add a defconfig for mt8173
 
 Change-Id: Ic578902a5213f2dc5f8cd5bdc7ec733c34a4b66c
 Signed-off-by: Fan Chen <fan.chen@mediatek.com>
@@ -15,10 +15,10 @@ Signed-off-by: Fan Chen <fan.chen@mediatek.com>
 diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
 old mode 100644
 new mode 100755
-index 4432950..0e05560
+index c0f8eb5..1295dfa
 --- a/arch/arm64/configs/defconfig
 +++ b/arch/arm64/configs/defconfig
-@@ -62,6 +62,12 @@ CONFIG_CMDLINE="console=ttyAMA0"
+@@ -66,6 +66,12 @@ CONFIG_CMDLINE="console=ttyAMA0"
  CONFIG_COMPAT=y
  CONFIG_CPU_IDLE=y
  CONFIG_ARM_CPUIDLE=y
@@ -31,7 +31,7 @@ index 4432950..0e05560
  CONFIG_NET=y
  CONFIG_PACKET=y
  CONFIG_UNIX=y
-@@ -137,6 +143,8 @@ CONFIG_MEDIATEK_WATCHDOG=y
+@@ -150,6 +156,8 @@ CONFIG_MEDIATEK_WATCHDOG=y
  CONFIG_MFD_MT6397=y
  CONFIG_REGULATOR=y
  CONFIG_REGULATOR_FIXED_VOLTAGE=y

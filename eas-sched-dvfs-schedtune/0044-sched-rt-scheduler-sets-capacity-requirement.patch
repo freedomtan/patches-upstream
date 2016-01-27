@@ -1,4 +1,4 @@
-From 6ec8e853895d9f3834f2f7f76737c7934a30cc0b Mon Sep 17 00:00:00 2001
+From d0fb3455b596dc46666a18c2d8749e9c10194d3b Mon Sep 17 00:00:00 2001
 From: Vincent Guittot <vincent.guittot@linaro.org>
 Date: Mon, 26 Oct 2015 18:14:50 +0100
 Subject: [PATCH 44/63] sched: rt scheduler sets capacity requirement

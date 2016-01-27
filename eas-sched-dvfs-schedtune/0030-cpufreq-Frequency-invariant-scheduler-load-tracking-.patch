@@ -1,4 +1,4 @@
-From eb7c91cfc32fd8649d4979c7e3c57b329f899a25 Mon Sep 17 00:00:00 2001
+From be63bda40211e6e50abdb61bfd0c59e4ab0c48c2 Mon Sep 17 00:00:00 2001
 From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Date: Thu, 17 Sep 2015 16:10:56 +0100
 Subject: [PATCH 30/63] cpufreq: Frequency invariant scheduler load-tracking
@@ -23,7 +23,7 @@ Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
  2 files changed, 32 insertions(+)
 
 diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 8412ce5..46a7d62 100644
+index c35e7da..7a07fda 100644
 --- a/drivers/cpufreq/cpufreq.c
 +++ b/drivers/cpufreq/cpufreq.c
 @@ -347,6 +347,31 @@ static void adjust_jiffies(unsigned long val, struct cpufreq_freqs *ci)
@@ -77,10 +77,10 @@ index 8412ce5..46a7d62 100644
  	policy->max = new_policy->max;
  
 diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-index 177c768..11c65f5 100644
+index 88a4215..131b7a5 100644
 --- a/include/linux/cpufreq.h
 +++ b/include/linux/cpufreq.h
-@@ -616,4 +616,7 @@ unsigned int cpufreq_generic_get(unsigned int cpu);
+@@ -610,4 +610,7 @@ unsigned int cpufreq_generic_get(unsigned int cpu);
  int cpufreq_generic_init(struct cpufreq_policy *policy,
  		struct cpufreq_frequency_table *table,
  		unsigned int transition_latency);

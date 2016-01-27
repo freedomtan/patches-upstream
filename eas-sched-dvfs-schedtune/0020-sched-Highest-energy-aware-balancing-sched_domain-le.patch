@@ -1,4 +1,4 @@
-From 544ae9dda2a5eb81073c78a016c11eccd0fd1804 Mon Sep 17 00:00:00 2001
+From 05ab1c98940b43c6681003994446b9059db4a2f7 Mon Sep 17 00:00:00 2001
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 Date: Fri, 2 Jan 2015 17:08:52 +0000
 Subject: [PATCH 20/63] sched: Highest energy aware balancing sched_domain
@@ -25,10 +25,10 @@ Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
  2 files changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index e1d134e..8bedfdd 100644
+index 27cbbbe..7aa5c57 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -6008,11 +6008,12 @@ DEFINE_PER_CPU(int, sd_llc_id);
+@@ -6095,11 +6095,12 @@ DEFINE_PER_CPU(int, sd_llc_id);
  DEFINE_PER_CPU(struct sched_domain *, sd_numa);
  DEFINE_PER_CPU(struct sched_domain *, sd_busy);
  DEFINE_PER_CPU(struct sched_domain *, sd_asym);
@@ -42,7 +42,7 @@ index e1d134e..8bedfdd 100644
  	int id = cpu;
  	int size = 1;
  
-@@ -6033,6 +6034,14 @@ static void update_top_cache_domain(int cpu)
+@@ -6120,6 +6121,14 @@ static void update_top_cache_domain(int cpu)
  
  	sd = highest_flag_domain(cpu, SD_ASYM_PACKING);
  	rcu_assign_pointer(per_cpu(sd_asym, cpu), sd);
@@ -58,7 +58,7 @@ index e1d134e..8bedfdd 100644
  
  /*
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 97c1231..34384e1 100644
+index 0c32dec..9b3918d 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
 @@ -852,6 +852,7 @@ DECLARE_PER_CPU(int, sd_llc_id);

@@ -1,4 +1,4 @@
-From 1d67a4710dec1fecdb253c5fb49a3f8ffbc1c4ac Mon Sep 17 00:00:00 2001
+From 8687b2e04db7a4eb06f279cc9ddb6c521591a6f5 Mon Sep 17 00:00:00 2001
 From: Juri Lelli <juri.lelli@arm.com>
 Date: Mon, 9 Nov 2015 12:07:48 +0000
 Subject: [PATCH 56/63] DEBUG: sched: add tracepoint for CPU load/util signals
@@ -46,7 +46,7 @@ index 99f3e64..f58760c 100644
  
  /* This part must be outside protection */
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 58d8b8c..e3fd4e0 100644
+index 3850e1b..18cf597 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -2825,6 +2825,7 @@ static inline void update_load_avg(struct sched_entity *se, int update_tg)

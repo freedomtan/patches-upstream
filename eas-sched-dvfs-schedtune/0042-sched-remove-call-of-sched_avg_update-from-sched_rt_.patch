@@ -1,4 +1,4 @@
-From 9b2b49f3bcfa8f41403429eaac6704c0a5bd5bc0 Mon Sep 17 00:00:00 2001
+From cd0507fb06426107e64e7dfc61f3f4e9887a9119 Mon Sep 17 00:00:00 2001
 From: Vincent Guittot <vincent.guittot@linaro.org>
 Date: Tue, 20 Oct 2015 10:46:26 +0200
 Subject: [PATCH 42/63] sched: remove call of sched_avg_update from
@@ -18,7 +18,7 @@ Signed-off-by: Steve Muckle <smuckle@linaro.org>
  1 file changed, 1 deletion(-)
 
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index e388ebf..266e878 100644
+index fa7e14c..fcbc7d5 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
 @@ -1544,7 +1544,6 @@ static inline void set_dl_cpu_capacity(int cpu, bool request,

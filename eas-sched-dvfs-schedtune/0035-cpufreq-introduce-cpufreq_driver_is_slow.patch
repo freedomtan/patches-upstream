@@ -1,4 +1,4 @@
-From 291e32ff7802c1db5d1c8edd936778df471af042 Mon Sep 17 00:00:00 2001
+From cc09d8df6d7f15af2db4647ce753918090bd83e5 Mon Sep 17 00:00:00 2001
 From: Michael Turquette <mturquette@baylibre.com>
 Date: Tue, 30 Jun 2015 12:45:27 +0100
 Subject: [PATCH 35/63] cpufreq: introduce cpufreq_driver_is_slow
@@ -29,7 +29,7 @@ Signed-off-by: Steve Muckle <smuckle@linaro.org>
  2 files changed, 15 insertions(+)
 
 diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 96f1a88..5ca8e95 100644
+index 87819da..f1922c1 100644
 --- a/drivers/cpufreq/cpufreq.c
 +++ b/drivers/cpufreq/cpufreq.c
 @@ -154,6 +154,12 @@ bool have_governor_per_policy(void)
@@ -46,7 +46,7 @@ index 96f1a88..5ca8e95 100644
  {
  	if (have_governor_per_policy())
 diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-index 9b1d61e..b5ef79a 100644
+index 38ba3e1..caf5e41 100644
 --- a/include/linux/cpufreq.h
 +++ b/include/linux/cpufreq.h
 @@ -160,6 +160,7 @@ u64 get_cpu_idle_time(unsigned int cpu, u64 *wall, int io_busy);
@@ -57,7 +57,7 @@ index 9b1d61e..b5ef79a 100644
  struct kobject *get_governor_parent_kobj(struct cpufreq_policy *policy);
  #else
  static inline unsigned int cpufreq_get(unsigned int cpu)
-@@ -317,6 +318,14 @@ struct cpufreq_driver {
+@@ -316,6 +317,14 @@ struct cpufreq_driver {
   */
  #define CPUFREQ_NEED_INITIAL_FREQ_CHECK	(1 << 5)
  
