@@ -1,4 +1,4 @@
-From 549133f8ff2764c0698c503fccf15dfc13c4be42 Mon Sep 17 00:00:00 2001
+From 8f150be4fd8d758886c7788efcaeb70595bc4c06 Mon Sep 17 00:00:00 2001
 From: Weiyi Lu <weiyi.lu@mediatek.com>
 Date: Thu, 17 Dec 2015 10:57:25 +0800
 Subject: [PATCH 4/5] arm64: dts: mediatek: Add cluster sleep support on MT8173

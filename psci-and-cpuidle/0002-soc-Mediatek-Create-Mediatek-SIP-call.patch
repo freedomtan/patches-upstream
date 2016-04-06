@@ -1,4 +1,4 @@
-From 4c568fbbdb4330d55b25df6856be6975cba56fad Mon Sep 17 00:00:00 2001
+From c74bb1c0dbb6f2152ceb50b7a38f17db066cb0ae Mon Sep 17 00:00:00 2001
 From: Fan Chen <fan.chen@mediatek.com>
 Date: Mon, 30 Nov 2015 21:45:35 +0800
 Subject: [PATCH 2/5] soc: Mediatek: Create Mediatek SIP call
@@ -8,20 +8,21 @@ which are specified in ARM SMC CALLING CONVENTION.
 
 Change-Id: Idb3c60884f2f4a4283e4883c32ea18741a8b4e74
 Signed-off-by: Fan Chen <fan.chen@mediatek.com>
+Modified-by: Koan-Sin Tan <freedom.tan@mediatek.com>
 ---
- drivers/soc/mediatek/Kconfig         |  8 ++++++++
+ drivers/soc/mediatek/Kconfig         |  7 +++++++
  drivers/soc/mediatek/Makefile        |  1 +
  drivers/soc/mediatek/mtk-sip.c       | 28 ++++++++++++++++++++++++++++
  include/linux/soc/mediatek/mtk-sip.h | 17 +++++++++++++++++
- 4 files changed, 54 insertions(+)
+ 4 files changed, 53 insertions(+)
  create mode 100644 drivers/soc/mediatek/mtk-sip.c
  create mode 100644 include/linux/soc/mediatek/mtk-sip.h
 
 diff --git a/drivers/soc/mediatek/Kconfig b/drivers/soc/mediatek/Kconfig
-index 0a4ea80..fcd2d2f 100644
+index 0a4ea80..93fdb8e 100644
 --- a/drivers/soc/mediatek/Kconfig
 +++ b/drivers/soc/mediatek/Kconfig
-@@ -30,3 +30,11 @@ config MTK_SCPSYS
+@@ -30,3 +30,10 @@ config MTK_SCPSYS
  	help
  	  Say yes here to add support for the MediaTek SCPSYS power domain
  	  driver.
@@ -29,10 +30,9 @@ index 0a4ea80..fcd2d2f 100644
 +config MTK_SIP
 +        bool "Mediatek SIP Support"
 +	depends on ARCH_MEDIATEK || COMPILE_TEST
-+	depends on HAVE_SMCCC
++	depends on HAVE_ARM_SMCCC
 +	help
 +	Say yes here to add support for the MediaTek SIP call.
-+
 diff --git a/drivers/soc/mediatek/Makefile b/drivers/soc/mediatek/Makefile
 index 12998b0..67077dc 100644
 --- a/drivers/soc/mediatek/Makefile
@@ -44,7 +44,7 @@ index 12998b0..67077dc 100644
 +obj-$(CONFIG_MTK_SIP) += mtk-sip.o
 diff --git a/drivers/soc/mediatek/mtk-sip.c b/drivers/soc/mediatek/mtk-sip.c
 new file mode 100644
-index 0000000..882617f
+index 0000000..3b7e76f
 --- /dev/null
 +++ b/drivers/soc/mediatek/mtk-sip.c
 @@ -0,0 +1,28 @@
@@ -69,9 +69,9 @@ index 0000000..882617f
 +			unsigned long a2,
 +			unsigned long a3)
 +{
-+	struct smccc_res res;
++	struct arm_smccc_res res;
 +
-+	smccc_smc(func_id, a1, a2, a3, 0, 0, 0, 0, &res);
++	arm_smccc_smc(func_id, a1, a2, a3, 0, 0, 0, 0, &res);
 +
 +	return res.a0;
 +}

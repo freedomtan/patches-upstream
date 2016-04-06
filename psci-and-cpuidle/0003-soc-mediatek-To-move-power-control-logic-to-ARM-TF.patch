@@ -1,4 +1,4 @@
-From c678c5473643a6ca83203fce6e97d3a04991c3f9 Mon Sep 17 00:00:00 2001
+From 1f6f212e49a3b9499fc751e552c8220d57393705 Mon Sep 17 00:00:00 2001
 From: "yt.lee" <yt.lee@mediatek.com>
 Date: Fri, 23 Oct 2015 17:34:46 +0800
 Subject: [PATCH 3/5] soc: mediatek: To move power control logic to ARM TF

@@ -1,4 +1,4 @@
-From 4a9d7db30e6256945318b7015215b064c1e5491e Mon Sep 17 00:00:00 2001
+From 9308cab039d57d039ba026fb08e510df79a108f4 Mon Sep 17 00:00:00 2001
 From: Weiyi Lu <weiyi.lu@mediatek.com>
 Date: Thu, 17 Dec 2015 11:02:32 +0800
 Subject: [PATCH 5/5] arm64: dts: mediatek: Improve cpuidle latency on MT8173
