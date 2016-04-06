@@ -1,0 +1,35 @@
+From 4b7895eb67a04995b93e6e4225160ed27ce3237a Mon Sep 17 00:00:00 2001
+From: Koan-Sin Tan <koansin.tan@gmail.com>
+Date: Wed, 23 Mar 2016 13:44:22 +0800
+Subject: [PATCH] reserve memory region for ARM Trusted Firmware (ATF)
+
+ATF runs at 0x43100000 to 0x43100000+0x20000 on MT8173 EVB. We
+should reserve the region to avoid memory corruption.
+---
+ arch/arm64/boot/dts/mediatek/mt8173-evb.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt8173-evb.dts b/arch/arm64/boot/dts/mediatek/mt8173-evb.dts
+index abe9799..07bc131 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8173-evb.dts
++++ b/arch/arm64/boot/dts/mediatek/mt8173-evb.dts
+@@ -32,6 +32,16 @@
+ 		reg = <0 0x40000000 0 0x80000000>;
+ 	};
+ 
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		atf_reserverd: atf@43100000 {
++			reg = <0 0x43100000 0 0x20000>;
++		};
++	};
++
+ 	chosen { };
+ 
+ 	usb_p1_vbus: regulator@0 {
+-- 
+2.7.4
+
