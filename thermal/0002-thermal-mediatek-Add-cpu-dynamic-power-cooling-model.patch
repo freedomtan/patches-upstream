@@ -1,7 +1,7 @@
-From f562c4f35186bd82b7e165cf6f2347127384fb36 Mon Sep 17 00:00:00 2001
+From 65d20c15cf0f3e1bc0b904dd95dd89a578b7b5b0 Mon Sep 17 00:00:00 2001
 From: "dawei.chien@mediatek.com" <dawei.chien@mediatek.com>
 Date: Wed, 16 Dec 2015 21:29:14 +0800
-Subject: [PATCH 4/9] thermal: mediatek: Add cpu dynamic power cooling model.
+Subject: [PATCH 2/7] thermal: mediatek: Add cpu dynamic power cooling model.
 
 MT8173 cpufreq driver select of_cpufreq_power_cooling_register registering
 cooling devices with dynamic power coefficient.
@@ -12,10 +12,10 @@ Signed-off-by: Dawei Chien <dawei.chien@mediatek.com>
  1 file changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/cpufreq/mt8173-cpufreq.c b/drivers/cpufreq/mt8173-cpufreq.c
-index 1efba34..d8ad406 100644
+index 2058e6d..6e44651 100644
 --- a/drivers/cpufreq/mt8173-cpufreq.c
 +++ b/drivers/cpufreq/mt8173-cpufreq.c
-@@ -309,17 +309,24 @@ static int mtk_cpufreq_set_target(struct cpufreq_policy *policy,
+@@ -310,17 +310,24 @@ static int mtk_cpufreq_set_target(struct cpufreq_policy *policy,
  	return 0;
  }
  
@@ -43,5 +43,5 @@ index 1efba34..d8ad406 100644
  		if (IS_ERR(info->cdev)) {
  			dev_err(info->cpu_dev,
 -- 
-1.9.1
+2.7.4
 

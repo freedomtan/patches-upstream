@@ -1,4 +1,4 @@
-From 9a99c5fb8c96919e2643c6a0ead1884433a4ae8b Mon Sep 17 00:00:00 2001
+From 2e92fe1eff70c2c5697306a3eaa386f544130590 Mon Sep 17 00:00:00 2001
 From: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
 Date: Sun, 27 Dec 2015 13:48:04 +0800
 Subject: [PATCH 2/3] add a defconfig for mt8173
@@ -15,10 +15,10 @@ Signed-off-by: Fan Chen <fan.chen@mediatek.com>
 diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
 old mode 100644
 new mode 100755
-index c0f8eb5..1295dfa
+index f7fc327..3d8dd3a
 --- a/arch/arm64/configs/defconfig
 +++ b/arch/arm64/configs/defconfig
-@@ -66,6 +66,12 @@ CONFIG_CMDLINE="console=ttyAMA0"
+@@ -73,6 +73,12 @@ CONFIG_CMDLINE_FORCE=y
  CONFIG_COMPAT=y
  CONFIG_CPU_IDLE=y
  CONFIG_ARM_CPUIDLE=y
@@ -31,15 +31,15 @@ index c0f8eb5..1295dfa
  CONFIG_NET=y
  CONFIG_PACKET=y
  CONFIG_UNIX=y
-@@ -150,6 +156,8 @@ CONFIG_MEDIATEK_WATCHDOG=y
- CONFIG_MFD_MT6397=y
+@@ -181,6 +187,8 @@ CONFIG_MFD_SPMI_PMIC=y
+ CONFIG_MFD_SEC_CORE=y
  CONFIG_REGULATOR=y
  CONFIG_REGULATOR_FIXED_VOLTAGE=y
 +CONFIG_REGULATOR_DA9211=y
 +CONFIG_REGULATOR_MT6311=y
  CONFIG_REGULATOR_MT6397=y
  CONFIG_REGULATOR_QCOM_SMD_RPM=y
- CONFIG_FB=y
+ CONFIG_REGULATOR_QCOM_SPMI=y
 diff --git a/arch/arm64/configs/mt8173_defconfig b/arch/arm64/configs/mt8173_defconfig
 new file mode 100644
 index 0000000..37138d0
@@ -225,5 +225,5 @@ index 0000000..37138d0
 +CONFIG_CRYPTO_AES_ARM64_CE_BLK=y
 +CONFIG_CRYPTO_AES_ARM64_NEON_BLK=y
 -- 
-1.9.1
+2.7.4
 

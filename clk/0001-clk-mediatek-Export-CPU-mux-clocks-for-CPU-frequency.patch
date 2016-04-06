@@ -1,4 +1,4 @@
-From f43b3ad06e810a641a3027326e92ca2c7e38c0fd Mon Sep 17 00:00:00 2001
+From 76ff512289ceffa2860cac9f603e6725d4a84e52 Mon Sep 17 00:00:00 2001
 From: "pi-cheng.chen" <pi-cheng.chen@linaro.org>
 Date: Mon, 14 Sep 2015 19:27:52 +0800
 Subject: [PATCH] clk: mediatek: Export CPU mux clocks for CPU frequency
@@ -8,13 +8,14 @@ This patch adds CPU mux clocks which are used by Mediatek cpufreq driver
 for intermediate clock source switching.
 
 Signed-off-by: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
+Modifed-by: Koan-Sin Tan <freedom.tan@linaro.org>
 ---
  drivers/clk/mediatek/Makefile          |   2 +-
- drivers/clk/mediatek/clk-cpumux.c      | 127 +++++++++++++++++++++++++++++++++
+ drivers/clk/mediatek/clk-cpumux.c      | 122 +++++++++++++++++++++++++++++++++
  drivers/clk/mediatek/clk-cpumux.h      |  22 ++++++
- drivers/clk/mediatek/clk-mt8173.c      |  23 ++++++
+ drivers/clk/mediatek/clk-mt8173.c      |  23 +++++++
  include/dt-bindings/clock/mt8173-clk.h |   4 +-
- 5 files changed, 176 insertions(+), 2 deletions(-)
+ 5 files changed, 171 insertions(+), 2 deletions(-)
  create mode 100644 drivers/clk/mediatek/clk-cpumux.c
  create mode 100644 drivers/clk/mediatek/clk-cpumux.h
 
@@ -30,10 +31,10 @@ index 95fdfac..c97b67b 100644
  obj-y += clk-mt8173.o
 diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
 new file mode 100644
-index 0000000..91b5238
+index 0000000..e0207f3
 --- /dev/null
 +++ b/drivers/clk/mediatek/clk-cpumux.c
-@@ -0,0 +1,127 @@
+@@ -0,0 +1,122 @@
 +/*
 + * Copyright (c) 2015 Linaro Ltd.
 + * Author: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
@@ -63,14 +64,9 @@ index 0000000..91b5238
 +	u8		shift;
 +};
 +
-+static inline struct mtk_clk_cpumux *to_clk_mux(struct clk_hw *_hw)
-+{
-+	return container_of(_hw, struct mtk_clk_cpumux, hw);
-+}
-+
 +static u8 clk_cpumux_get_parent(struct clk_hw *hw)
 +{
-+	struct mtk_clk_cpumux *mux = to_clk_mux(hw);
++	struct mtk_clk_cpumux *mux = (struct mtk_clk_cpumux *) to_clk_mux(hw);
 +	int num_parents = clk_hw_get_num_parents(hw);
 +	unsigned int val;
 +
@@ -87,7 +83,7 @@ index 0000000..91b5238
 +
 +static int clk_cpumux_set_parent(struct clk_hw *hw, u8 index)
 +{
-+	struct mtk_clk_cpumux *mux = to_clk_mux(hw);
++	struct mtk_clk_cpumux *mux = (struct mtk_clk_cpumux *) to_clk_mux(hw);
 +	u32 mask, val;
 +
 +	val = index << mux->shift;
@@ -253,5 +249,5 @@ index 7956ba1..c82ed7c 100644
  /* PERI_SYS */
  
 -- 
-1.9.1
+2.7.4
 

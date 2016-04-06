@@ -1,17 +1,17 @@
-From 15339dbd6f52e5f7f46a91815e48eec6914ae8c1 Mon Sep 17 00:00:00 2001
+From d6cb8c2c05b31ca00fa4b7353f309d27dc649352 Mon Sep 17 00:00:00 2001
 From: "freedom.tan" <freedom.tan@mediatek.com>
 Date: Wed, 27 Jan 2016 15:56:01 +0800
-Subject: [PATCH 7/9] add 4 thermal zones for MT8173
+Subject: [PATCH 5/7] add 4 thermal zones for MT8173
 
 ---
  arch/arm64/boot/dts/mediatek/mt8173.dtsi | 95 ++++++++++++++++++++++++++++++--
  1 file changed, 91 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 9c599b1..99a4cbd 100644
+index 6e3300a..39e648e 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -255,12 +255,12 @@
+@@ -256,12 +256,12 @@
  	};
  
  	thermal-zones {
@@ -27,7 +27,7 @@ index 9c599b1..99a4cbd 100644
  
  			trips {
  				threshold: trip-point@0 {
-@@ -288,13 +288,100 @@
+@@ -289,13 +289,100 @@
  					cooling-device = <&cpu0 0 0>;
  					contribution = <1024>;
  				};
@@ -130,5 +130,5 @@ index 9c599b1..99a4cbd 100644
  
  	timer {
 -- 
-1.9.1
+2.7.4
 

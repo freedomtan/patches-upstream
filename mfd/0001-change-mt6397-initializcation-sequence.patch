@@ -1,0 +1,45 @@
+From f82dabeb66bd5fa5b70eb1a2d2df84ef96e4ad34 Mon Sep 17 00:00:00 2001
+From: Koan-Sin Tan <koansin.tan@gmail.com>
+Date: Fri, 1 Apr 2016 09:58:43 +0800
+Subject: [PATCH] change mt6397 initializcation sequence
+
+irq initialization should be done before calling mfd_add_devices()
+---
+ drivers/mfd/mt6397-core.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/mfd/mt6397-core.c b/drivers/mfd/mt6397-core.c
+index 8e8d932..8ec1fbb3 100644
+--- a/drivers/mfd/mt6397-core.c
++++ b/drivers/mfd/mt6397-core.c
+@@ -270,6 +270,13 @@ static int mt6397_probe(struct platform_device *pdev)
+ 		goto fail_irq;
+ 	}
+ 
++	pmic->irq = platform_get_irq(pdev, 0);
++	if (pmic->irq > 0) {
++		ret = mt6397_irq_init(pmic);
++		if (ret)
++			return ret;
++	}
++
+ 	switch (id & 0xff) {
+ 	case MT6323_CID_CODE:
+ 		pmic->int_con[0] = MT6323_INT_CON0;
+@@ -296,13 +303,6 @@ static int mt6397_probe(struct platform_device *pdev)
+ 		break;
+ 	}
+ 
+-	pmic->irq = platform_get_irq(pdev, 0);
+-	if (pmic->irq > 0) {
+-		ret = mt6397_irq_init(pmic);
+-		if (ret)
+-			return ret;
+-	}
+-
+ fail_irq:
+ 	if (ret) {
+ 		irq_domain_remove(pmic->irq_domain);
+-- 
+2.7.4
+

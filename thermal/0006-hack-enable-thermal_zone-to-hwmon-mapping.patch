@@ -1,17 +1,17 @@
-From df7c484b078aa7186e4e008e5f7d15ddc2b426be Mon Sep 17 00:00:00 2001
+From f579dea0a32c8933b3f397bddc32dbe5a01edb7a Mon Sep 17 00:00:00 2001
 From: Koan-Sin Tan <koansin.tan@gmail.com>
 Date: Wed, 22 Jul 2015 14:19:05 +0800
-Subject: [PATCH 8/9] hack: enable thermal_zone to hwmon mapping
+Subject: [PATCH 6/7] hack: enable thermal_zone to hwmon mapping
 
 ---
  drivers/thermal/of-thermal.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
-index be4eedc..658e9d5 100644
+index 49ac23d..66e7a13 100644
 --- a/drivers/thermal/of-thermal.c
 +++ b/drivers/thermal/of-thermal.c
-@@ -910,7 +910,7 @@ int __init of_parse_thermal_zones(void)
+@@ -983,7 +983,7 @@ int __init of_parse_thermal_zones(void)
  		}
  
  		/* No hwmon because there might be hwmon drivers registering */
@@ -21,5 +21,5 @@ index be4eedc..658e9d5 100644
  		if (!of_property_read_u32(child, "sustainable-power", &prop))
  			tzp->sustainable_power = prop;
 -- 
-1.9.1
+2.7.4
 

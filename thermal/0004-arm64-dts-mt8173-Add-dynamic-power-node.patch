@@ -1,7 +1,7 @@
-From 15061d2941c6073a4c63763fca69778acd34d808 Mon Sep 17 00:00:00 2001
+From 01f8c9678e6fbeda66044fa73bfb8e5689995b21 Mon Sep 17 00:00:00 2001
 From: "dawei.chien@mediatek.com" <dawei.chien@mediatek.com>
 Date: Wed, 16 Dec 2015 21:29:16 +0800
-Subject: [PATCH 6/9] arm64: dts: mt8173: Add dynamic power node.
+Subject: [PATCH 4/7] arm64: dts: mt8173: Add dynamic power node.
 
 This device node is for calculating dynamic power in mW.
 Since mt8173 has two clusters, there are two dynamic power
@@ -13,10 +13,10 @@ Signed-off-by: Dawei Chien <dawei.chien@mediatek.com>
  1 file changed, 13 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 6899c3c..9c599b1 100644
+index beed588..6e3300a 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -133,6 +133,10 @@
+@@ -134,6 +134,10 @@
  				 <&apmixedsys CLK_APMIXED_MAINPLL>;
  			clock-names = "cpu", "intermediate";
  			operating-points-v2 = <&cluster0_opp>;
@@ -27,7 +27,7 @@ index 6899c3c..9c599b1 100644
  		};
  
  		cpu1: cpu@1 {
-@@ -145,6 +149,9 @@
+@@ -146,6 +150,9 @@
                                   <&apmixedsys CLK_APMIXED_MAINPLL>;
                          clock-names = "cpu", "intermediate";
                          operating-points-v2 = <&cluster0_opp>;
@@ -37,7 +37,7 @@ index 6899c3c..9c599b1 100644
  		};
  
  		cpu2: cpu@100 {
-@@ -157,6 +164,9 @@
+@@ -158,6 +165,9 @@
  				 <&apmixedsys CLK_APMIXED_MAINPLL>;
  			clock-names = "cpu", "intermediate";
  			operating-points-v2 = <&cluster1_opp>;
@@ -47,7 +47,7 @@ index 6899c3c..9c599b1 100644
  		};
  
  		cpu3: cpu@101 {
-@@ -169,6 +179,9 @@
+@@ -170,6 +180,9 @@
                                   <&apmixedsys CLK_APMIXED_MAINPLL>;
                          clock-names = "cpu", "intermediate";
                          operating-points-v2 = <&cluster1_opp>;
@@ -58,5 +58,5 @@ index 6899c3c..9c599b1 100644
  
  		idle-states {
 -- 
-1.9.1
+2.7.4
 

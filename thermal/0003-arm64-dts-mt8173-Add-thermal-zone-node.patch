@@ -1,7 +1,7 @@
-From da5dfe3ebae1acd70884967c6ab83065b1ec39fa Mon Sep 17 00:00:00 2001
+From 9512ef7deb7d002c88fbd7ad29cee5e2fe15aaa2 Mon Sep 17 00:00:00 2001
 From: "dawei.chien@mediatek.com" <dawei.chien@mediatek.com>
 Date: Wed, 16 Dec 2015 21:29:15 +0800
-Subject: [PATCH 5/9] arm64: dts: mt8173: Add thermal zone node.
+Subject: [PATCH 3/7] arm64: dts: mt8173: Add thermal zone node.
 
 This adds thermal zone node to Mediatek MT8173 dtsi file.
 
@@ -11,10 +11,10 @@ Signed-off-by: Dawei Chien <dawei.chien@mediatek.com>
  1 file changed, 43 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index bbde6be..6899c3c 100644
+index 7286716..beed588 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -241,6 +241,49 @@
+@@ -242,6 +242,49 @@
  		clock-output-names = "cpum_ck";
  	};
  
@@ -65,5 +65,5 @@ index bbde6be..6899c3c 100644
  		compatible = "arm,armv8-timer";
  		interrupt-parent = <&gic>;
 -- 
-1.9.1
+2.7.4
 
