@@ -1,0 +1,38 @@
+From 1ca682e0d774df65f8c7289c1528ad1ded87f117 Mon Sep 17 00:00:00 2001
+From: Koan-Sin Tan <koansin.tan@gmail.com>
+Date: Fri, 15 Apr 2016 12:46:34 +0800
+Subject: [PATCH] Revert "soc: mediatek: SCPSYS: Fix double enabling of
+ regulators"
+
+This reverts commit cc8ed76938b5cf6a54ab3d60edabaf808dc960d1.
+---
+ drivers/soc/mediatek/mtk-scpsys.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index 7ebe1d0..481b368 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -517,13 +517,14 @@ static int scpsys_probe(struct platform_device *pdev)
+ 		genpd->dev_ops.active_wakeup = scpsys_active_wakeup;
+ 
+ 		/*
+-		 * With CONFIG_PM disabled turn on all domains to make the
+-		 * hardware usable.
++		 * Initially turn on all domains to make the domains usable
++		 * with !CONFIG_PM and to get the hardware in sync with the
++		 * software.  The unused domains will be switched off during
++		 * late_init time.
+ 		 */
+-		if (!IS_ENABLED(CONFIG_PM))
+-			genpd->power_on(genpd);
++		genpd->power_on(genpd);
+ 
+-		pm_genpd_init(genpd, NULL, true);
++		pm_genpd_init(genpd, NULL, false);
+ 	}
+ 
+ 	/*
+-- 
+2.7.4
+

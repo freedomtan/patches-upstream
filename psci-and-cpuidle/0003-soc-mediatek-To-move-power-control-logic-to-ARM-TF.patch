@@ -1,4 +1,4 @@
-From 1f6f212e49a3b9499fc751e552c8220d57393705 Mon Sep 17 00:00:00 2001
+From e76f8a1b8f161d2393663ebdc1a9d1b640736fe7 Mon Sep 17 00:00:00 2001
 From: "yt.lee" <yt.lee@mediatek.com>
 Date: Fri, 23 Oct 2015 17:34:46 +0800
 Subject: [PATCH 3/5] soc: mediatek: To move power control logic to ARM TF
@@ -269,5 +269,5 @@ index dce1818..c803490 100644
  int mtk_sip_simple_call(unsigned long func_id,
  			unsigned long a1,
 -- 
-2.7.4
+2.8.1
 

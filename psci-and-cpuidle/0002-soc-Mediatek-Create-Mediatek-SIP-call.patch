@@ -1,4 +1,4 @@
-From c74bb1c0dbb6f2152ceb50b7a38f17db066cb0ae Mon Sep 17 00:00:00 2001
+From c7c9d40122239c13e1b34636be78ebf4a65406af Mon Sep 17 00:00:00 2001
 From: Fan Chen <fan.chen@mediatek.com>
 Date: Mon, 30 Nov 2015 21:45:35 +0800
 Subject: [PATCH 2/5] soc: Mediatek: Create Mediatek SIP call
@@ -12,9 +12,9 @@ Modified-by: Koan-Sin Tan <freedom.tan@mediatek.com>
 ---
  drivers/soc/mediatek/Kconfig         |  7 +++++++
  drivers/soc/mediatek/Makefile        |  1 +
- drivers/soc/mediatek/mtk-sip.c       | 28 ++++++++++++++++++++++++++++
+ drivers/soc/mediatek/mtk-sip.c       | 27 +++++++++++++++++++++++++++
  include/linux/soc/mediatek/mtk-sip.h | 17 +++++++++++++++++
- 4 files changed, 53 insertions(+)
+ 4 files changed, 52 insertions(+)
  create mode 100644 drivers/soc/mediatek/mtk-sip.c
  create mode 100644 include/linux/soc/mediatek/mtk-sip.h
 
@@ -44,10 +44,10 @@ index 12998b0..67077dc 100644
 +obj-$(CONFIG_MTK_SIP) += mtk-sip.o
 diff --git a/drivers/soc/mediatek/mtk-sip.c b/drivers/soc/mediatek/mtk-sip.c
 new file mode 100644
-index 0000000..3b7e76f
+index 0000000..6d6b478
 --- /dev/null
 +++ b/drivers/soc/mediatek/mtk-sip.c
-@@ -0,0 +1,28 @@
+@@ -0,0 +1,27 @@
 +/*
 + * Copyright (c) 2015 MediaTek Inc.
 + *
@@ -75,7 +75,6 @@ index 0000000..3b7e76f
 +
 +	return res.a0;
 +}
-+
 diff --git a/include/linux/soc/mediatek/mtk-sip.h b/include/linux/soc/mediatek/mtk-sip.h
 new file mode 100644
 index 0000000..dce1818
@@ -100,5 +99,5 @@ index 0000000..dce1818
 +
 +#endif /*__SOC_MEDIATEK_MTKSIP_H*/
 -- 
-2.7.4
+2.8.1
 

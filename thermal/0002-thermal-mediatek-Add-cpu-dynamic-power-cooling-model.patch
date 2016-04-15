@@ -1,4 +1,4 @@
-From 65d20c15cf0f3e1bc0b904dd95dd89a578b7b5b0 Mon Sep 17 00:00:00 2001
+From 22db86e8a66d8d94f543ff8c4bea93b0ec23daba Mon Sep 17 00:00:00 2001
 From: "dawei.chien@mediatek.com" <dawei.chien@mediatek.com>
 Date: Wed, 16 Dec 2015 21:29:14 +0800
 Subject: [PATCH 2/7] thermal: mediatek: Add cpu dynamic power cooling model.
