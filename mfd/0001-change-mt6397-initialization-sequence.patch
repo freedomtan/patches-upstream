@@ -1,7 +1,7 @@
-From f82dabeb66bd5fa5b70eb1a2d2df84ef96e4ad34 Mon Sep 17 00:00:00 2001
+From d979b0d6ca2bed872fcef6492cdf4e74b8fd9649 Mon Sep 17 00:00:00 2001
 From: Koan-Sin Tan <koansin.tan@gmail.com>
 Date: Fri, 1 Apr 2016 09:58:43 +0800
-Subject: [PATCH] change mt6397 initializcation sequence
+Subject: [PATCH] change mt6397 initialization sequence
 
 irq initialization should be done before calling mfd_add_devices()
 ---

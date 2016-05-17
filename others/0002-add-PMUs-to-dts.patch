@@ -1,7 +1,7 @@
-From 2a04db62366d106c29e9ba9f82163a12cad4d1e9 Mon Sep 17 00:00:00 2001
+From 10a98166c8e572d3bdd951f452af0d56ca143f20 Mon Sep 17 00:00:00 2001
 From: "freedom.tan" <freedom.tan@mediatek.com>
 Date: Wed, 16 Sep 2015 14:20:06 +0800
-Subject: [PATCH 2/3] add PMUs to dts
+Subject: [PATCH 2/4] add PMUs to dts
 
 ---
  arch/arm64/boot/dts/mediatek/mt8173.dtsi | 14 ++++++++++++++

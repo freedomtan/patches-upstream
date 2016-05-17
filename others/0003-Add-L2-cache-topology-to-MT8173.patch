@@ -1,7 +1,7 @@
-From 50f8d305f81e79e67821c3d3b9a042d79697d9b2 Mon Sep 17 00:00:00 2001
+From 953fca504e724f7f22b491af16f919b407722789 Mon Sep 17 00:00:00 2001
 From: Koan-Sin Tan <koansin.tan@gmail.com>
 Date: Fri, 15 Apr 2016 09:01:44 +0800
-Subject: [PATCH 3/3] Add L2 cache topology to MT8173
+Subject: [PATCH 3/4] Add L2 cache topology to MT8173
 
 ---
  arch/arm64/boot/dts/mediatek/mt8173.dtsi | 12 ++++++++++++
