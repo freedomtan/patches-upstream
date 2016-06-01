@@ -1,17 +1,17 @@
-From b9fc16c5f783f84332c401eeea3a4c9d8699a992 Mon Sep 17 00:00:00 2001
+From a98083df905b23ebd4f355961d8a25462ebdd2c7 Mon Sep 17 00:00:00 2001
 From: Koan-Sin Tan <koansin.tan@gmail.com>
 Date: Wed, 22 Jul 2015 14:19:05 +0800
-Subject: [PATCH 6/7] hack: enable thermal_zone to hwmon mapping
+Subject: [PATCH 3/4] hack: enable thermal_zone to hwmon mapping
 
 ---
  drivers/thermal/of-thermal.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
-index 49ac23d..66e7a13 100644
+index b8e509c..e0c202e 100644
 --- a/drivers/thermal/of-thermal.c
 +++ b/drivers/thermal/of-thermal.c
-@@ -983,7 +983,7 @@ int __init of_parse_thermal_zones(void)
+@@ -991,7 +991,7 @@ int __init of_parse_thermal_zones(void)
  		}
  
  		/* No hwmon because there might be hwmon drivers registering */

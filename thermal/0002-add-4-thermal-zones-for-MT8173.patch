@@ -1,14 +1,14 @@
-From 34d13e699744efdda9fd9944c2305ee14e63562f Mon Sep 17 00:00:00 2001
+From 36fdd68bb631c505a3eb11bdf5b77f3eb7ae18a6 Mon Sep 17 00:00:00 2001
 From: "freedom.tan" <freedom.tan@mediatek.com>
 Date: Wed, 27 Jan 2016 15:56:01 +0800
-Subject: [PATCH 5/7] add 4 thermal zones for MT8173
+Subject: [PATCH 2/4] add 4 thermal zones for MT8173
 
 ---
  arch/arm64/boot/dts/mediatek/mt8173.dtsi | 95 ++++++++++++++++++++++++++++++--
  1 file changed, 91 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index ef1f019..271567f 100644
+index 091270c..9af62af 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 @@ -268,12 +268,12 @@
