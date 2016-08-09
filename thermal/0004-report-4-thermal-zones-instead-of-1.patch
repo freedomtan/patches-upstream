@@ -1,4 +1,4 @@
-From 9cefe7d486462de3a7ad458966c20ef30fd0d2a7 Mon Sep 17 00:00:00 2001
+From 116fbcc2d201d9487afadf335a98726ffe6aa614 Mon Sep 17 00:00:00 2001
 From: "freedom.tan" <freedom.tan@mediatek.com>
 Date: Wed, 11 Nov 2015 17:20:56 +0800
 Subject: [PATCH 4/4] report 4 thermal zones instead of 1
@@ -10,10 +10,10 @@ a thermal zone for each bank makes more sense to me
  2 files changed, 11 insertions(+), 17 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 9af62af..29ebf03 100644
+index 2a3804d..6ab0ed2 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -714,7 +714,7 @@
+@@ -774,7 +774,7 @@
  		};
  
  		thermal: thermal@1100b000 {

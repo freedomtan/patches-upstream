@@ -1,4 +1,4 @@
-From 5917b2a87c811f5aa948c3827a793df32da3fca7 Mon Sep 17 00:00:00 2001
+From 563bfa7e2a24a8ed23fabcca23ebf0cfe9e3c09f Mon Sep 17 00:00:00 2001
 From: Weiyi Lu <weiyi.lu@mediatek.com>
 Date: Thu, 17 Dec 2015 11:02:32 +0800
 Subject: [PATCH 5/5] arm64: dts: mediatek: Improve cpuidle latency on MT8173
@@ -17,10 +17,10 @@ Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
  1 file changed, 26 insertions(+), 8 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index f9ca6b9..11d5fa8 100644
+index 959a012..16a2932 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -71,7 +71,7 @@
+@@ -88,7 +88,7 @@
  			compatible = "arm,cortex-a57";
  			reg = <0x100>;
  			enable-method = "psci";
@@ -29,7 +29,7 @@ index f9ca6b9..11d5fa8 100644
  		};
  
  		cpu3: cpu@101 {
-@@ -79,7 +79,7 @@
+@@ -96,7 +96,7 @@
  			compatible = "arm,cortex-a57";
  			reg = <0x101>;
  			enable-method = "psci";
@@ -38,7 +38,7 @@ index f9ca6b9..11d5fa8 100644
  		};
  
  		idle-states {
-@@ -88,18 +88,36 @@
+@@ -105,18 +105,36 @@
  			CPU_SLEEP_0: cpu-sleep-0 {
  				compatible = "arm,idle-state";
  				local-timer-stop;
@@ -82,5 +82,5 @@ index f9ca6b9..11d5fa8 100644
  			};
  		};
 -- 
-2.8.1
+2.7.4
 

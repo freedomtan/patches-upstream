@@ -1,4 +1,4 @@
-From 2ffcc7547c7865b7c03422937722f47d20b5a3cc Mon Sep 17 00:00:00 2001
+From 28cb5d6beef29ebe0fdaee8e358ac6846aecd319 Mon Sep 17 00:00:00 2001
 From: Koan-Sin Tan <koansin.tan@gmail.com>
 Date: Tue, 28 Jun 2016 11:10:39 +0800
 Subject: [PATCH] device nodes for CCI
@@ -8,10 +8,10 @@ Subject: [PATCH] device nodes for CCI
  1 file changed, 42 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 30d7638..3278cae 100644
+index e7be41c..cea3b61 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -127,6 +127,7 @@
+@@ -144,6 +144,7 @@
  		cpu0: cpu@0 {
  			device_type = "cpu";
  			compatible = "arm,cortex-a53";
@@ -19,7 +19,7 @@ index 30d7638..3278cae 100644
  			reg = <0x000>;
  			enable-method = "psci";
  			next-level-cache = <&L2_0>;
-@@ -144,6 +145,7 @@
+@@ -161,6 +162,7 @@
  		cpu1: cpu@1 {
  			device_type = "cpu";
  			compatible = "arm,cortex-a53";
@@ -27,7 +27,7 @@ index 30d7638..3278cae 100644
  			reg = <0x001>;
  			enable-method = "psci";
  			next-level-cache = <&L2_0>;
-@@ -160,6 +162,7 @@
+@@ -177,6 +179,7 @@
  		cpu2: cpu@100 {
  			device_type = "cpu";
  			compatible = "arm,cortex-a57";
@@ -35,7 +35,7 @@ index 30d7638..3278cae 100644
  			reg = <0x100>;
  			enable-method = "psci";
  			next-level-cache = <&L2_1>;
-@@ -176,6 +179,7 @@
+@@ -193,6 +196,7 @@
  		cpu3: cpu@101 {
  			device_type = "cpu";
  			compatible = "arm,cortex-a57";
@@ -43,7 +43,7 @@ index 30d7638..3278cae 100644
  			reg = <0x101>;
  			enable-method = "psci";
  			next-level-cache = <&L2_1>;
-@@ -418,7 +422,8 @@
+@@ -447,7 +451,8 @@
  	};
  
  	pmu_a57 {
@@ -52,8 +52,8 @@ index 30d7638..3278cae 100644
 +		compatible = "arm,cortex-a72-pmu";
  		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
  			<GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt_affinity = <&cpu2>, <&cpu3>;
-@@ -649,6 +654,42 @@
+ 		interrupt-affinity = <&cpu2>, <&cpu3>;
+@@ -667,6 +672,42 @@
  				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
  		};
  

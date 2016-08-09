@@ -1,4 +1,4 @@
-From e76f8a1b8f161d2393663ebdc1a9d1b640736fe7 Mon Sep 17 00:00:00 2001
+From 9f8443a3988f88dc5f15aeff8092a9589735ba1c Mon Sep 17 00:00:00 2001
 From: "yt.lee" <yt.lee@mediatek.com>
 Date: Fri, 23 Oct 2015 17:34:46 +0800
 Subject: [PATCH 3/5] soc: mediatek: To move power control logic to ARM TF
@@ -20,7 +20,7 @@ Signed-off-by: Fan Chen <fan.chen@mediatek.com>
  2 files changed, 84 insertions(+), 47 deletions(-)
 
 diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index 57e781c..7ebe1d0 100644
+index 837effe..481b368 100644
 --- a/drivers/soc/mediatek/mtk-scpsys.c
 +++ b/drivers/soc/mediatek/mtk-scpsys.c
 @@ -21,6 +21,7 @@
@@ -239,7 +239,7 @@ index 57e781c..7ebe1d0 100644
  	for (i = 0; i < MAX_CLKS && scpd->clk[i]; i++)
  		clk_disable_unprepare(scpd->clk[i]);
  
-@@ -520,6 +546,13 @@ static int scpsys_probe(struct platform_device *pdev)
+@@ -521,6 +547,13 @@ static int scpsys_probe(struct platform_device *pdev)
  	if (ret)
  		dev_err(&pdev->dev, "Failed to add OF provider: %d\n", ret);
  
@@ -269,5 +269,5 @@ index dce1818..c803490 100644
  int mtk_sip_simple_call(unsigned long func_id,
  			unsigned long a1,
 -- 
-2.8.1
+2.7.4
 

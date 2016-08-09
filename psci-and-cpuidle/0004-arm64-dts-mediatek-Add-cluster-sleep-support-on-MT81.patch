@@ -1,4 +1,4 @@
-From 17240624db382c168d96f59b03c20d65a7882fa9 Mon Sep 17 00:00:00 2001
+From 6ea8986d57b8af59fbda4c2021407ff7fbccd50c Mon Sep 17 00:00:00 2001
 From: Weiyi Lu <weiyi.lu@mediatek.com>
 Date: Thu, 17 Dec 2015 10:57:25 +0800
 Subject: [PATCH 4/5] arm64: dts: mediatek: Add cluster sleep support on MT8173
@@ -12,10 +12,10 @@ Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
  1 file changed, 13 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index eab7efc..f9ca6b9 100644
+index 10f638f..959a012 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -55,7 +55,7 @@
+@@ -72,7 +72,7 @@
  			compatible = "arm,cortex-a53";
  			reg = <0x000>;
  			enable-method = "psci";
@@ -24,7 +24,7 @@ index eab7efc..f9ca6b9 100644
  		};
  
  		cpu1: cpu@1 {
-@@ -63,7 +63,7 @@
+@@ -80,7 +80,7 @@
  			compatible = "arm,cortex-a53";
  			reg = <0x001>;
  			enable-method = "psci";
@@ -33,7 +33,7 @@ index eab7efc..f9ca6b9 100644
  		};
  
  		cpu2: cpu@100 {
-@@ -71,7 +71,7 @@
+@@ -88,7 +88,7 @@
  			compatible = "arm,cortex-a57";
  			reg = <0x100>;
  			enable-method = "psci";
@@ -42,7 +42,7 @@ index eab7efc..f9ca6b9 100644
  		};
  
  		cpu3: cpu@101 {
-@@ -79,7 +79,7 @@
+@@ -96,7 +96,7 @@
  			compatible = "arm,cortex-a57";
  			reg = <0x101>;
  			enable-method = "psci";
@@ -51,7 +51,7 @@ index eab7efc..f9ca6b9 100644
  		};
  
  		idle-states {
-@@ -93,6 +93,15 @@
+@@ -110,6 +110,15 @@
  				min-residency-us = <1088>;
  				arm,psci-suspend-param = <0x0010000>;
  			};
@@ -68,5 +68,5 @@ index eab7efc..f9ca6b9 100644
  	};
  
 -- 
-2.8.1
+2.7.4
 

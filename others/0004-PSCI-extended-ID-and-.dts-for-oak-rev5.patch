@@ -1,4 +1,4 @@
-From e7f55620392109bb6b28062159610a054fde152e Mon Sep 17 00:00:00 2001
+From c56b34f4271004a5c0f86b57a317b7c936ce120d Mon Sep 17 00:00:00 2001
 From: "freedom.tan" <freedom.tan@mediatek.com>
 Date: Wed, 11 May 2016 16:50:52 +0800
 Subject: [PATCH 4/4] PSCI extended ID and .dts for oak-rev5
@@ -13,10 +13,10 @@ Subject: [PATCH 4/4] PSCI extended ID and .dts for oak-rev5
  create mode 100644 arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi
 
 diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-index db51cba..3a93d6f 100644
+index 94cdb07..a19fb46 100644
 --- a/arch/arm64/boot/dts/mediatek/Makefile
 +++ b/arch/arm64/boot/dts/mediatek/Makefile
-@@ -1,6 +1,7 @@
+@@ -2,6 +2,7 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6755-evb.dtb
  dtb-$(CONFIG_ARCH_MEDIATEK) += mt6795-evb.dtb
  dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-evb.dtb
  dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-oak-rev1.dtb
@@ -1037,10 +1037,10 @@ index 0000000..0f29e66
 +
 +#include "../../../../arm/boot/dts/cros-ec-keyboard.dtsi"
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 7cbd412..ff8774f 100644
+index 657bb6a..5f285f4 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -193,7 +193,7 @@
+@@ -210,7 +210,7 @@
  				entry-latency-us = <72>;
  				exit-latency-us = <66>;
  				min-residency-us = <458>;
@@ -1049,7 +1049,7 @@ index 7cbd412..ff8774f 100644
  			};
  
  			CLUSTER_SLEEP_0: cluster-sleep-0 {
-@@ -202,7 +202,7 @@
+@@ -219,7 +219,7 @@
  				entry-latency-us = <145>;
  				exit-latency-us = <60>;
  				min-residency-us = <331>;
@@ -1058,7 +1058,7 @@ index 7cbd412..ff8774f 100644
  			};
  
  			CPU_SLEEP_1: cpu-sleep-1 {
-@@ -211,7 +211,7 @@
+@@ -228,7 +228,7 @@
  				entry-latency-us = <72>;
  				exit-latency-us = <66>;
  				min-residency-us = <516>;
@@ -1067,7 +1067,7 @@ index 7cbd412..ff8774f 100644
  			};
  
  			CLUSTER_SLEEP_1: cluster-sleep-1 {
-@@ -220,7 +220,7 @@
+@@ -237,7 +237,7 @@
  				entry-latency-us = <287>;
  				exit-latency-us = <62>;
  				min-residency-us = <1423>;
@@ -1076,8 +1076,8 @@ index 7cbd412..ff8774f 100644
  			};
  		};
  	};
-@@ -412,6 +412,14 @@
- 			clock-names = "spi", "wrap";
+@@ -495,6 +495,14 @@
+ 			memory-region = <&vpu_dma_reserved>;
  		};
  
 +		cec: cec@10013000 {

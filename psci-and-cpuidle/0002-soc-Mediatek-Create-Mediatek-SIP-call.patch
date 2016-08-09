@@ -1,4 +1,4 @@
-From c7c9d40122239c13e1b34636be78ebf4a65406af Mon Sep 17 00:00:00 2001
+From af3cd6f0d4f6d946cef56cdae493c73e6ab1a447 Mon Sep 17 00:00:00 2001
 From: Fan Chen <fan.chen@mediatek.com>
 Date: Mon, 30 Nov 2015 21:45:35 +0800
 Subject: [PATCH 2/5] soc: Mediatek: Create Mediatek SIP call
@@ -99,5 +99,5 @@ index 0000000..dce1818
 +
 +#endif /*__SOC_MEDIATEK_MTKSIP_H*/
 -- 
-2.8.1
+2.7.4
 
