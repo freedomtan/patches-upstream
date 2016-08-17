@@ -1,0 +1,32 @@
+From a678fcd0cdbafc67721d9dcdc674a327ba012d8b Mon Sep 17 00:00:00 2001
+From: Morten Rasmussen <morten.rasmussen@arm.com>
+Date: Mon, 21 Dec 2015 14:32:53 +0000
+Subject: [PATCH 01/31] sched: Fix power to capacity renaming in comment
+
+It is seems that this one escaped Nico's renaming of cpu_power to
+cpu_capacity a while back.
+
+cc: Ingo Molnar <mingo@redhat.com>
+cc: Peter Zijlstra <peterz@infradead.org>
+
+Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
+---
+ include/linux/sched.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 62c68e5..f3db596 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1022,7 +1022,7 @@ extern void wake_up_q(struct wake_q_head *head);
+ #define SD_BALANCE_FORK		0x0008	/* Balance on fork, clone */
+ #define SD_BALANCE_WAKE		0x0010  /* Balance on wakeup */
+ #define SD_WAKE_AFFINE		0x0020	/* Wake task to waking CPU */
+-#define SD_SHARE_CPUCAPACITY	0x0080	/* Domain members share cpu power */
++#define SD_SHARE_CPUCAPACITY	0x0080	/* Domain members share cpu capacity */
+ #define SD_SHARE_POWERDOMAIN	0x0100	/* Domain members share power domain */
+ #define SD_SHARE_PKG_RESOURCES	0x0200	/* Domain members share cpu pkg resources */
+ #define SD_SERIALIZE		0x0400	/* Only a single load balancing instance */
+-- 
+2.7.4
+

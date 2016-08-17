@@ -1,0 +1,76 @@
+From faa34a0a567101eb558e19147a223fa2b4c2e09e Mon Sep 17 00:00:00 2001
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Date: Thu, 7 May 2015 18:46:15 +0100
+Subject: [PATCH 08/31] sched: Store maximum per-cpu capacity in root domain
+
+To be able to compare the capacity of the target cpu with the highest
+available cpu capacity, store the maximum per-cpu capacity in the root
+domain.
+
+The max per-cpu capacity should be 1024 for all systems except SMT,
+where the capacity is currently based on smt_gain and the number of
+hardware threads and is <1024. If SMT can be brought to work with a
+per-thread capacity of 1024, this patch can be dropped and replaced by a
+hard-coded max capacity of 1024 (=SCHED_CAPACITY_SCALE).
+
+cc: Ingo Molnar <mingo@redhat.com>
+cc: Peter Zijlstra <peterz@infradead.org>
+
+Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
+---
+ kernel/sched/core.c  | 12 ++++++++++++
+ kernel/sched/sched.h |  2 ++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index ba50897..31e8867 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -6894,6 +6894,7 @@ static int build_sched_domains(const struct cpumask *cpu_map,
+ 	enum s_alloc alloc_state;
+ 	struct sched_domain *sd;
+ 	struct s_data d;
++	struct rq *rq = NULL;
+ 	int i, ret = -ENOMEM;
+ 
+ 	alloc_state = __visit_domain_allocation_hell(&d, cpu_map);
+@@ -6944,11 +6945,22 @@ static int build_sched_domains(const struct cpumask *cpu_map,
+ 	/* Attach the domains */
+ 	rcu_read_lock();
+ 	for_each_cpu(i, cpu_map) {
++		rq = cpu_rq(i);
+ 		sd = *per_cpu_ptr(d.sd, i);
++
++		/* Use READ_ONCE/WRITE_ONCE to avoid load/store tearing */
++		if (rq->cpu_capacity_orig > READ_ONCE(d.rd->max_cpu_capacity))
++			d.rd->max_cpu_capacity = rq->cpu_capacity_orig;
++
+ 		cpu_attach_domain(sd, d.rd, i);
+ 	}
+ 	rcu_read_unlock();
+ 
++	if (rq) {
++		pr_info("span: %*pbl (max cpu_capacity = %lu)\n",
++			cpumask_pr_args(cpu_map), rq->rd->max_cpu_capacity);
++	}
++
+ 	ret = 0;
+ error:
+ 	__free_domain_allocs(&d, alloc_state, cpu_map);
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index c64fc51..890a8af 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -565,6 +565,8 @@ struct root_domain {
+ 	 */
+ 	cpumask_var_t rto_mask;
+ 	struct cpupri cpupri;
++
++	unsigned long max_cpu_capacity;
+ };
+ 
+ extern struct root_domain def_root_domain;
+-- 
+2.7.4
+

@@ -1,0 +1,104 @@
+From 2fc59346d9c03de7e893e2ba60f4dac2a472bb01 Mon Sep 17 00:00:00 2001
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Date: Fri, 14 Nov 2014 16:25:50 +0000
+Subject: [PATCH 27/31] sched/debug: Add capacity procfs interface
+
+This patch makes the capacity data available via procfs. The related files
+are placed as sub-directory named 'capacity' inside the
+/proc/sys/kernel/sched_domain/cpuX/domainY/groupZ directory for those
+cpu/domain/group tuples which have energy information.
+
+This is same implementation as Dietmar's "sched/debug: Add energy procfs
+interface" (i.e., I stole his patch).
+
+Stolen-from: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Signed-off-by: Juri Lelli <juri.lelli@arm.com>
+---
+ kernel/sched/debug.c | 62 ++++++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 60 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index 2a0a999..e7c4081 100644
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -261,9 +261,55 @@ set_table_entry(struct ctl_table *entry,
+ }
+ 
+ static struct ctl_table *
++sd_alloc_ctl_capacity_table(struct sched_group_capacity *sgc)
++{
++	struct ctl_table *table = sd_alloc_ctl_entry(2);
++
++	if (table == NULL)
++		return NULL;
++
++	set_table_entry(&table[0], "capacity", &sgc->capacity,
++			sizeof(int), 0644, proc_dointvec_minmax, false);
++
++	return table;
++}
++
++static struct ctl_table *
++sd_alloc_ctl_group_table(struct sched_group *sg)
++{
++	struct ctl_table *table = NULL;
++	int idx = 0;
++
++	table = sd_alloc_ctl_entry(2);
++
++	if (table == NULL)
++		return NULL;
++
++	table[idx].procname = kstrdup("capacity", GFP_KERNEL);
++	table[idx].mode = 0555;
++	table[idx].child = sd_alloc_ctl_capacity_table(sg->sgc);
++
++	return table;
++}
++
++static struct ctl_table *
+ sd_alloc_ctl_domain_table(struct sched_domain *sd)
+ {
+-	struct ctl_table *table = sd_alloc_ctl_entry(14);
++	struct ctl_table *table;
++	unsigned int nr_entries = 14;
++
++	int i = 0;
++	struct sched_group *sg = sd->groups;
++
++	if (sg->sgc) {
++		int nr_sgs = 0;
++
++		do {} while (nr_sgs++, sg = sg->next, sg != sd->groups);
++
++		nr_entries += nr_sgs;
++	}
++
++	table = sd_alloc_ctl_entry(nr_entries);
+ 
+ 	if (table == NULL)
+ 		return NULL;
+@@ -296,7 +342,19 @@ sd_alloc_ctl_domain_table(struct sched_domain *sd)
+ 		sizeof(long), 0644, proc_doulongvec_minmax, false);
+ 	set_table_entry(&table[12], "name", sd->name,
+ 		CORENAME_MAX_SIZE, 0444, proc_dostring, false);
+-	/* &table[13] is terminator */
++	sg = sd->groups;
++	if (sg->sgc) {
++		char buf[32];
++		struct ctl_table *entry = &table[13];
++
++		do {
++			snprintf(buf, 32, "group%d", i);
++			entry->procname = kstrdup(buf, GFP_KERNEL);
++			entry->mode = 0555;
++			entry->child = sd_alloc_ctl_group_table(sg);
++		} while (entry++, i++, sg = sg->next, sg != sd->groups);
++	}
++	/* &table[nr_entries-1] is terminator */
+ 
+ 	return table;
+ }
+-- 
+2.7.4
+

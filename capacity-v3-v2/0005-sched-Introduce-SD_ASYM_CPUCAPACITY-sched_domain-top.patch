@@ -1,0 +1,92 @@
+From 4c0c5e7536b5df04c2e683dc8b7e9a2702e49424 Mon Sep 17 00:00:00 2001
+From: Morten Rasmussen <morten.rasmussen@arm.com>
+Date: Mon, 21 Dec 2015 14:28:00 +0000
+Subject: [PATCH 05/31] sched: Introduce SD_ASYM_CPUCAPACITY sched_domain
+ topology flag
+
+Add a topology flag to the sched_domain hierarchy indicating the lowest
+domain level where the full range of cpu capacities is represented by
+the domain members for asymmetric capacity topologies (e.g. ARM
+big.LITTLE).
+
+The flag is intended to indicate that extra care should be taken when
+placing tasks on cpus and this level spans all the different types of
+cpus found in the system (no need to look further up the domain
+hierarchy). This information is currently only available through
+iterating through the capacities of all the cpus at parent levels in the
+sched_domain hierarchy.
+
+SD 2      [  0      1      2      3]  SD_ASYM_CPUCAPACITY
+
+SD 1      [  0      1] [   2      3]  !SD_ASYM_CPUCAPACITY
+
+cpu:         0      1      2      3
+capacity:  756    756   1024   1024
+
+If the topology in the example above is duplicated to create an eight
+cpu example with third sched_domain level on top (SD 3), this level
+should not have the flag set (!SD_ASYM_CPUCAPACITY) as its two group
+would both have all cpu capacities represented within them.
+
+cc: Ingo Molnar <mingo@redhat.com>
+cc: Peter Zijlstra <peterz@infradead.org>
+
+Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
+---
+ include/linux/sched.h | 1 +
+ kernel/sched/core.c   | 6 +++++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index f3db596..9c188dd 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1022,6 +1022,7 @@ extern void wake_up_q(struct wake_q_head *head);
+ #define SD_BALANCE_FORK		0x0008	/* Balance on fork, clone */
+ #define SD_BALANCE_WAKE		0x0010  /* Balance on wakeup */
+ #define SD_WAKE_AFFINE		0x0020	/* Wake task to waking CPU */
++#define SD_ASYM_CPUCAPACITY	0x0040  /* Groups have different max cpu capacities */
+ #define SD_SHARE_CPUCAPACITY	0x0080	/* Domain members share cpu capacity */
+ #define SD_SHARE_POWERDOMAIN	0x0100	/* Domain members share power domain */
+ #define SD_SHARE_PKG_RESOURCES	0x0200	/* Domain members share cpu pkg resources */
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 70ef9fd..7a9222d 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5713,6 +5713,7 @@ static int sd_degenerate(struct sched_domain *sd)
+ 			 SD_BALANCE_FORK |
+ 			 SD_BALANCE_EXEC |
+ 			 SD_SHARE_CPUCAPACITY |
++			 SD_ASYM_CPUCAPACITY |
+ 			 SD_SHARE_PKG_RESOURCES |
+ 			 SD_SHARE_POWERDOMAIN)) {
+ 		if (sd->groups != sd->groups->next)
+@@ -5743,6 +5744,7 @@ sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
+ 				SD_BALANCE_NEWIDLE |
+ 				SD_BALANCE_FORK |
+ 				SD_BALANCE_EXEC |
++				SD_ASYM_CPUCAPACITY |
+ 				SD_SHARE_CPUCAPACITY |
+ 				SD_SHARE_PKG_RESOURCES |
+ 				SD_PREFER_SIBLING |
+@@ -6357,14 +6359,16 @@ static int sched_domains_curr_level;
+  * SD_NUMA                - describes NUMA topologies
+  * SD_SHARE_POWERDOMAIN   - describes shared power domain
+  *
+- * Odd one out:
++ * Odd ones out:
+  * SD_ASYM_PACKING        - describes SMT quirks
++ * SD_ASYM_CPUCAPACITY    - describes mixed capacity topologies
+  */
+ #define TOPOLOGY_SD_FLAGS		\
+ 	(SD_SHARE_CPUCAPACITY |		\
+ 	 SD_SHARE_PKG_RESOURCES |	\
+ 	 SD_NUMA |			\
+ 	 SD_ASYM_PACKING |		\
++	 SD_ASYM_CPUCAPACITY |		\
+ 	 SD_SHARE_POWERDOMAIN)
+ 
+ static struct sched_domain *
+-- 
+2.7.4
+

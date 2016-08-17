@@ -1,0 +1,58 @@
+From cb47ea6220937757593aadd58eda82a8a690e1c4 Mon Sep 17 00:00:00 2001
+From: Morten Rasmussen <morten.rasmussen@arm.com>
+Date: Tue, 12 Jul 2016 10:16:50 +0100
+Subject: [PATCH 06/31] sched/core: Pass child domain into sd_init
+
+If behavioural sched_domain flags depend on topology flags set at higher
+domain levels we need a way to update the child domain flags. Moving the
+child pointer assignment inside sd_init() should make that possible.
+
+cc: Ingo Molnar <mingo@redhat.com>
+cc: Peter Zijlstra <peterz@infradead.org>
+
+Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
+---
+ kernel/sched/core.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 7a9222d..284af39 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -6372,7 +6372,8 @@ static int sched_domains_curr_level;
+ 	 SD_SHARE_POWERDOMAIN)
+ 
+ static struct sched_domain *
+-sd_init(struct sched_domain_topology_level *tl, int cpu)
++sd_init(struct sched_domain_topology_level *tl,
++	struct sched_domain *child, int cpu)
+ {
+ 	struct sched_domain *sd = *per_cpu_ptr(tl->data.sd, cpu);
+ 	int sd_weight, sd_flags = 0;
+@@ -6424,6 +6425,7 @@ sd_init(struct sched_domain_topology_level *tl, int cpu)
+ 		.smt_gain		= 0,
+ 		.max_newidle_lb_cost	= 0,
+ 		.next_decay_max_lb_cost	= jiffies,
++		.child			= child,
+ #ifdef CONFIG_SCHED_DEBUG
+ 		.name			= tl->name,
+ #endif
+@@ -6848,14 +6850,13 @@ struct sched_domain *build_sched_domain(struct sched_domain_topology_level *tl,
+ 		const struct cpumask *cpu_map, struct sched_domain_attr *attr,
+ 		struct sched_domain *child, int cpu)
+ {
+-	struct sched_domain *sd = sd_init(tl, cpu);
++	struct sched_domain *sd = sd_init(tl, child, cpu);
+ 
+ 	cpumask_and(sched_domain_span(sd), cpu_map, tl->mask(cpu));
+ 	if (child) {
+ 		sd->level = child->level + 1;
+ 		sched_domain_level_max = max(sched_domain_level_max, sd->level);
+ 		child->parent = sd;
+-		sd->child = child;
+ 
+ 		if (!cpumask_subset(sched_domain_span(child),
+ 				    sched_domain_span(sd))) {
+-- 
+2.7.4
+
