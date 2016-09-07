@@ -1,0 +1,101 @@
+From 3273163c6775c4c21823985304c2364b08ca6ea2 Mon Sep 17 00:00:00 2001
+From: Morten Rasmussen <morten.rasmussen@arm.com>
+Date: Mon, 25 Jul 2016 14:34:26 +0100
+Subject: [PATCH 18/78] sched/fair: Let asymmetric CPU configurations balance
+ at wake-up
+
+Currently, SD_WAKE_AFFINE always takes priority over wakeup balancing if
+SD_BALANCE_WAKE is set on the sched_domains. For asymmetric
+configurations SD_WAKE_AFFINE is only desirable if the waking task's
+compute demand (utilization) is suitable for the waking CPU and the
+previous CPU, and all CPUs within their respective
+SD_SHARE_PKG_RESOURCES domains (sd_llc). If not, let wakeup balancing
+take over (find_idlest_{group, cpu}()).
+
+This patch makes affine wake-ups conditional on whether both the waker
+CPU and the previous CPU has sufficient capacity for the waking task,
+or not, assuming that the CPU capacities within an SD_SHARE_PKG_RESOURCES
+domain (sd_llc) are homogeneous.
+
+Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: dietmar.eggemann@arm.com
+Cc: freedom.tan@mediatek.com
+Cc: keita.kobayashi.ym@renesas.com
+Cc: mgalbraith@suse.de
+Cc: sgurrappadi@nvidia.com
+Cc: yuyang.du@intel.com
+Link: http://lkml.kernel.org/r/1469453670-2660-10-git-send-email-morten.rasmussen@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/sched/fair.c | 35 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 34 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index acdc351..61d4854 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -114,6 +114,12 @@ unsigned int __read_mostly sysctl_sched_shares_window = 10000000UL;
+ unsigned int sysctl_sched_cfs_bandwidth_slice = 5000UL;
+ #endif
+ 
++/*
++ * The margin used when comparing utilization with CPU capacity:
++ * util * 1024 < capacity * margin
++ */
++unsigned int capacity_margin = 1280; /* ~20% */
++
+ static inline void update_load_add(struct load_weight *lw, unsigned long inc)
+ {
+ 	lw->weight += inc;
+@@ -5376,6 +5382,32 @@ static int cpu_util(int cpu)
+ 	return (util >= capacity) ? capacity : util;
+ }
+ 
++static inline int task_util(struct task_struct *p)
++{
++	return p->se.avg.util_avg;
++}
++
++/*
++ * Disable WAKE_AFFINE in the case where task @p doesn't fit in the
++ * capacity of either the waking CPU @cpu or the previous CPU @prev_cpu.
++ *
++ * In that case WAKE_AFFINE doesn't make sense and we'll let
++ * BALANCE_WAKE sort things out.
++ */
++static int wake_cap(struct task_struct *p, int cpu, int prev_cpu)
++{
++	long min_cap, max_cap;
++
++	min_cap = min(capacity_orig_of(prev_cpu), capacity_orig_of(cpu));
++	max_cap = cpu_rq(cpu)->rd->max_cpu_capacity;
++
++	/* Minimum capacity is close to max, no need to abort wake_affine */
++	if (max_cap - min_cap < max_cap >> 3)
++		return 0;
++
++	return min_cap * 1024 < task_util(p) * capacity_margin;
++}
++
+ /*
+  * select_task_rq_fair: Select target runqueue for the waking task in domains
+  * that have the 'sd_flag' flag set. In practice, this is SD_BALANCE_WAKE,
+@@ -5399,7 +5431,8 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
+ 
+ 	if (sd_flag & SD_BALANCE_WAKE) {
+ 		record_wakee(p);
+-		want_affine = !wake_wide(p) && cpumask_test_cpu(cpu, tsk_cpus_allowed(p));
++		want_affine = !wake_wide(p) && !wake_cap(p, cpu, prev_cpu)
++			      && cpumask_test_cpu(cpu, tsk_cpus_allowed(p));
+ 	}
+ 
+ 	rcu_read_lock();
+-- 
+2.7.4
+
