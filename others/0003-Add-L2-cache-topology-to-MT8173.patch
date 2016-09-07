@@ -1,4 +1,4 @@
-From ac796ba59cadd4f7c55b7a650c94b57805c3309e Mon Sep 17 00:00:00 2001
+From b569888ef3c63d81b8e8f3269447c5eaf31c5a1f Mon Sep 17 00:00:00 2001
 From: Koan-Sin Tan <koansin.tan@gmail.com>
 Date: Fri, 15 Apr 2016 09:01:44 +0800
 Subject: [PATCH 3/4] Add L2 cache topology to MT8173
@@ -8,43 +8,43 @@ Subject: [PATCH 3/4] Add L2 cache topology to MT8173
  1 file changed, 12 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 84611fe..657bb6a 100644
+index fe1224c..2ddb8f1 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -146,6 +146,7 @@
+@@ -145,6 +145,7 @@
+ 			device_type = "cpu";
  			compatible = "arm,cortex-a53";
  			reg = <0x000>;
- 			enable-method = "psci";
 +			next-level-cache = <&L2_0>;
- 			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
  			clocks = <&infracfg CLK_INFRA_CA53SEL>,
- 				 <&apmixedsys CLK_APMIXED_MAINPLL>;
+ 				<&apmixedsys CLK_APMIXED_MAINPLL>;
+ 			clock-names = "cpu", "intermediate";
 @@ -158,6 +159,7 @@
+ 			device_type = "cpu";
  			compatible = "arm,cortex-a53";
  			reg = <0x001>;
- 			enable-method = "psci";
 +			next-level-cache = <&L2_0>;
- 			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
  			clocks = <&infracfg CLK_INFRA_CA53SEL>,
- 				 <&apmixedsys CLK_APMIXED_MAINPLL>;
-@@ -170,6 +172,7 @@
+ 				<&apmixedsys CLK_APMIXED_MAINPLL>;
+ 			clock-names = "cpu", "intermediate";
+@@ -171,6 +173,7 @@
+ 			device_type = "cpu";
  			compatible = "arm,cortex-a57";
  			reg = <0x100>;
- 			enable-method = "psci";
-+			next-level-cache = <&L2_1>;
- 			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
++			next-level-cache = <&L2_0>;
  			clocks = <&infracfg CLK_INFRA_CA57SEL>,
- 				 <&apmixedsys CLK_APMIXED_MAINPLL>;
-@@ -182,6 +185,7 @@
+ 				<&apmixedsys CLK_APMIXED_MAINPLL>;
+ 			clock-names = "cpu", "intermediate";
+@@ -184,6 +187,7 @@
+ 			device_type = "cpu";
  			compatible = "arm,cortex-a57";
  			reg = <0x101>;
- 			enable-method = "psci";
-+			next-level-cache = <&L2_1>;
- 			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
++			next-level-cache = <&L2_0>;
  			clocks = <&infracfg CLK_INFRA_CA57SEL>,
- 				 <&apmixedsys CLK_APMIXED_MAINPLL>;
-@@ -189,6 +193,14 @@
- 			operating-points-v2 = <&cluster1_opp>;
+ 				<&apmixedsys CLK_APMIXED_MAINPLL>;
+ 			clock-names = "cpu", "intermediate";
+@@ -193,6 +197,14 @@
+ 			power-domains = <&CPU_PD1>;
  		};
  
 +		L2_0: l2-cache0 {

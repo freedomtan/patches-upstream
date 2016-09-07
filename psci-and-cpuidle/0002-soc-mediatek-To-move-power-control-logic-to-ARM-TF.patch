@@ -1,7 +1,7 @@
-From 9f8443a3988f88dc5f15aeff8092a9589735ba1c Mon Sep 17 00:00:00 2001
+From 966e4680fa8749b722c0988ca25a61fd8bc262f7 Mon Sep 17 00:00:00 2001
 From: "yt.lee" <yt.lee@mediatek.com>
 Date: Fri, 23 Oct 2015 17:34:46 +0800
-Subject: [PATCH 3/5] soc: mediatek: To move power control logic to ARM TF
+Subject: [PATCH 2/2] soc: mediatek: To move power control logic to ARM TF
 
 Add an option to test if ARM TF supports non-cpus power
 control and do it in firmware. Otherwise, fallback to

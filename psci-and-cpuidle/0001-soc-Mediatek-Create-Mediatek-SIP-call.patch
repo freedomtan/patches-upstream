@@ -1,7 +1,7 @@
-From af3cd6f0d4f6d946cef56cdae493c73e6ab1a447 Mon Sep 17 00:00:00 2001
+From 89557f435c25dc15db07449706a7e6d3a591e967 Mon Sep 17 00:00:00 2001
 From: Fan Chen <fan.chen@mediatek.com>
 Date: Mon, 30 Nov 2015 21:45:35 +0800
-Subject: [PATCH 2/5] soc: Mediatek: Create Mediatek SIP call
+Subject: [PATCH 1/2] soc: Mediatek: Create Mediatek SIP call
 
 Create a generic interface for issuing SIP Service calls
 which are specified in ARM SMC CALLING CONVENTION.

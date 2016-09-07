@@ -1,4 +1,4 @@
-From a418a904420dafb4300d1dd9afe5b85e410019ff Mon Sep 17 00:00:00 2001
+From eeb6c971d131346ad058d79162fe802b064f3ae1 Mon Sep 17 00:00:00 2001
 From: "freedom.tan" <freedom.tan@mediatek.com>
 Date: Wed, 16 Sep 2015 14:12:29 +0800
 Subject: [PATCH 1/4] add .dts for oak-rev1 board
