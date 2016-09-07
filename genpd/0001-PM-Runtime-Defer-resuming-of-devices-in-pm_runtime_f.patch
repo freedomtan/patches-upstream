@@ -1,0 +1,59 @@
+From ba5b36b46c1efbcec0c0c8e6e98f05fe0901db02 Mon Sep 17 00:00:00 2001
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 30 May 2016 11:33:15 +0200
+Subject: [PATCH 01/34] PM / Runtime: Defer resuming of devices in
+ pm_runtime_force_resume()
+
+When the pm_runtime_force_suspend|resume() helpers were invented, we
+still had CONFIG_PM_RUNTIME and CONFIG_PM_SLEEP as separate Kconfig
+options.
+
+To make sure these helpers worked for all combinations and without
+introducing too much of complexity, the device was always resumed
+in pm_runtime_force_resume().
+
+More precisely, when CONFIG_PM_SLEEP was set and CONFIG_PM_RUNTIME
+was unset, we needed to resume the device as the subsystem/driver
+couldn't rely on using runtime PM to do it.
+
+As the CONFIG_PM_RUNTIME option was merged into CONFIG_PM a while
+ago, it removed this combination, of using CONFIG_PM_SLEEP without
+the earlier CONFIG_PM_RUNTIME.
+
+For this reason we can now rely on the subsystem/driver to use
+runtime PM to resume the device, instead of forcing that to be done
+in all cases. In other words, defer the runtime resume to a later
+point when it's actually needed.
+
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/base/power/runtime.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+index 17995fa..8b5657c 100644
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -1513,6 +1513,17 @@ int pm_runtime_force_resume(struct device *dev)
+ 	if (!pm_runtime_status_suspended(dev))
+ 		goto out;
+ 
++	/*
++	 * The PM core increases the runtime PM usage count in the system PM
++	 * prepare phase. If the count is greater than 1 at this point, a real
++	 * user (such as a subsystem, driver, userspace, etc.) has also
++	 * increased it, indicating that the device was used when system suspend
++	 * was invoked. In this case, the device is expected to be used on
++	 * system resume as well, so invoke the ->runtime_resume() callback.
++	 */
++	if (atomic_read(&dev->power.usage_count) < 2)
++		goto out;
++
+ 	ret = pm_runtime_set_active(dev);
+ 	if (ret)
+ 		goto out;
+-- 
+2.7.4
+

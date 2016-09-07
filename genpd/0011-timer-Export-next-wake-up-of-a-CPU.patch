@@ -1,0 +1,75 @@
+From c4e60e02e446bd1c836c4ae0ff91897031123f4e Mon Sep 17 00:00:00 2001
+From: Lina Iyer <lina.iyer@linaro.org>
+Date: Fri, 26 Aug 2016 14:17:52 -0600
+Subject: [PATCH 11/34] timer: Export next wake up of a CPU
+
+Knowing the sleep length of the CPU is useful for the power state
+determination on idle. The value is relative to the time when the call
+was invoked by the CPU. This doesn't work well when there is a need to
+know when the actual wakeup is.
+
+By reading the next wake up event of a CPU, governors can determine the
+first CPU to wake up (due to timer) amongst a cluster of CPUs and the
+sleep time available between the last CPU to idle and the first CPU to
+resume. This information is useful to determine if the caches and other
+common hardware blocks can also be put in idle during this common period
+of inactivity.
+
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
+[Ulf: Renamed API and made it compile when NO_HZ_COMMON is unset
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+ include/linux/tick.h      |  2 ++
+ kernel/time/tick-common.c | 16 ++++++++++++++++
+ 2 files changed, 18 insertions(+)
+
+diff --git a/include/linux/tick.h b/include/linux/tick.h
+index 62be0786..2532789 100644
+--- a/include/linux/tick.h
++++ b/include/linux/tick.h
+@@ -19,12 +19,14 @@ extern void tick_suspend_local(void);
+ extern void tick_resume_local(void);
+ extern void tick_handover_do_timer(void);
+ extern void tick_cleanup_dead_cpu(int cpu);
++extern ktime_t tick_get_next_wakeup(int cpu);
+ #else /* CONFIG_GENERIC_CLOCKEVENTS */
+ static inline void tick_init(void) { }
+ static inline void tick_suspend_local(void) { }
+ static inline void tick_resume_local(void) { }
+ static inline void tick_handover_do_timer(void) { }
+ static inline void tick_cleanup_dead_cpu(int cpu) { }
++static inline ktime_t tick_get_next_wakeup(int cpu) { return ktime_set(0, 0); };
+ #endif /* !CONFIG_GENERIC_CLOCKEVENTS */
+ 
+ #if defined(CONFIG_GENERIC_CLOCKEVENTS) && defined(CONFIG_SUSPEND)
+diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
+index 4fcd99e..c124810 100644
+--- a/kernel/time/tick-common.c
++++ b/kernel/time/tick-common.c
+@@ -93,6 +93,22 @@ static void tick_periodic(int cpu)
+ 	profile_tick(CPU_PROFILING);
+ }
+ 
++/**
++ * tick_get_next_wakeup - return the next wake up of the CPU
++ */
++ktime_t tick_get_next_wakeup(int cpu)
++{
++#ifdef CONFIG_NO_HZ_COMMON
++	struct clock_event_device *dev =
++			per_cpu(tick_cpu_device.evtdev, cpu);
++
++	return dev->next_event;
++#else
++
++	return tick_next_period;
++#endif
++}
++
+ /*
+  * Event handler for periodic ticks
+  */
+-- 
+2.7.4
+
