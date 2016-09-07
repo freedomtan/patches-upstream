@@ -1,0 +1,74 @@
+From 5138bb47d8a9951dd809e4d23451d72f844918ce Mon Sep 17 00:00:00 2001
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Date: Fri, 10 Jul 2015 13:57:19 +0100
+Subject: [PATCH 68/78] arm: Cpu invariant scheduler load-tracking and capacity
+ support
+
+Provides the scheduler with a cpu scaling correction factor for more
+accurate load-tracking and cpu capacity handling.
+
+The Energy Model (EM) (in fact the capacity value of the last element
+of the capacity states vector of the core (MC) level sched_group_energy
+structure) is used instead of the arm arch specific cpu_efficiency and
+dtb property 'clock-frequency' values as the source for this cpu
+scaling factor.
+
+The cpu capacity value depends on the micro-architecture and the
+maximum frequency of the cpu.
+
+The maximum frequency part should not be confused with the frequency
+invariant scheduler load-tracking support which deals with frequency
+related scaling due to DFVS functionality.
+
+Signed-off-by: Juri Lelli <juri.lelli@arm.com>
+Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+---
+ arch/arm/kernel/topology.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/kernel/topology.c b/arch/arm/kernel/topology.c
+index f26b5ae..bc7b22e 100644
+--- a/arch/arm/kernel/topology.c
++++ b/arch/arm/kernel/topology.c
+@@ -217,12 +217,17 @@ static int __init parse_cpu_capacity(struct device_node *cpu_node, int cpu)
+ 	return !ret;
+ }
+ 
++static const struct sched_group_energy * const cpu_core_energy(int cpu);
++
+ static void normalize_cpu_capacity(void)
+ {
+ 	u64 capacity;
+ 	int cpu;
+ 	bool asym = false;
+ 
++	if (cpu_core_energy(0))
++		return;
++
+ 	if (!raw_capacity || cap_parsing_failed)
+ 		return;
+ 
+@@ -432,10 +437,17 @@ static void __init parse_dt_topology(void)
+  */
+ static void update_cpu_capacity(unsigned int cpu)
+ {
+-	if (!cpu_capacity(cpu) || cap_from_dt)
+-		return;
++	if (cpu_core_energy(cpu)) {
++		unsigned long capacity;
++		int max_cap_idx = cpu_core_energy(cpu)->nr_cap_states - 1;
++		capacity = cpu_core_energy(cpu)->cap_states[max_cap_idx].cap;
++		set_capacity_scale(cpu, capacity);
++	} else {
++		if (!cpu_capacity(cpu) || cap_from_dt)
++			return;
+ 
+-	set_capacity_scale(cpu, cpu_capacity(cpu) / middle_capacity);
++		set_capacity_scale(cpu, cpu_capacity(cpu) / middle_capacity);
++	}
+ 
+ 	if (scale_cpu_capacity(NULL, cpu) < SCHED_CAPACITY_SCALE)
+ 		asym_cpucap = true;
+-- 
+2.7.4
+

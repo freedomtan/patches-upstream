@@ -1,0 +1,74 @@
+From 2b8420efa6e8cc50c58f835d9a1ebc04983252fa Mon Sep 17 00:00:00 2001
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Date: Sun, 7 Aug 2016 11:13:06 +0100
+Subject: [PATCH 66/78] ARM64: Tweak defconfig for EAS platforms
+
+Add CpuFreq governors and make performance default
+Add Sched Debug
+Add Ftrace
+Add Generic DT based CpuFreq driver - for hikey
+Add USB Net AX8817X                 - for hikey
+Add HI6220 stub clock               - for hikey
+
+Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+---
+ arch/arm64/configs/defconfig | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index eadf485..18e7cd9 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -82,6 +82,19 @@ CONFIG_COMPAT=y
+ CONFIG_CPU_IDLE=y
+ CONFIG_ARM_CPUIDLE=y
+ CONFIG_CPU_FREQ=y
++CONFIG_CPU_FREQ_GOV_ATTR_SET=y
++CONFIG_CPU_FREQ_GOV_COMMON=y
++CONFIG_CPU_FREQ_STAT=y
++CONFIG_CPU_FREQ_STAT_DETAILS=y
++CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE=y
++CONFIG_CPU_FREQ_GOV_PERFORMANCE=y
++CONFIG_CPU_FREQ_GOV_POWERSAVE=y
++CONFIG_CPU_FREQ_GOV_USERSPACE=y
++CONFIG_CPU_FREQ_GOV_ONDEMAND=y
++CONFIG_CPU_FREQ_GOV_CONSERVATIVE=y
++CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
++CONFIG_CPUFREQ_DT=y
++CONFIG_CPUFREQ_DT_PLATDEV=y
+ CONFIG_ARM_BIG_LITTLE_CPUFREQ=y
+ CONFIG_ARM_SCPI_CPUFREQ=y
+ CONFIG_NET=y
+@@ -173,7 +186,8 @@ CONFIG_MICREL_PHY=y
+ CONFIG_USB_PEGASUS=m
+ CONFIG_USB_RTL8150=m
+ CONFIG_USB_RTL8152=m
+-CONFIG_USB_USBNET=m
++CONFIG_USB_USBNET=y
++CONFIG_USB_NET_AX8817X=y
+ CONFIG_USB_NET_DM9601=m
+ CONFIG_USB_NET_SR9800=m
+ CONFIG_USB_NET_SMSC75XX=m
+@@ -356,6 +370,7 @@ CONFIG_XEN_GRANT_DEV_ALLOC=y
+ CONFIG_COMMON_CLK_SCPI=y
+ CONFIG_COMMON_CLK_CS2000_CP=y
+ CONFIG_COMMON_CLK_S2MPS11=y
++CONFIG_STUB_CLK_HI6220=y
+ CONFIG_CLK_QORIQ=y
+ CONFIG_COMMON_CLK_QCOM=y
+ CONFIG_MSM_GCC_8916=y
+@@ -417,9 +432,9 @@ CONFIG_DEBUG_FS=y
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_DEBUG_KERNEL=y
+ CONFIG_LOCKUP_DETECTOR=y
+-# CONFIG_SCHED_DEBUG is not set
++CONFIG_SCHED_DEBUG=y
+ # CONFIG_DEBUG_PREEMPT is not set
+-# CONFIG_FTRACE is not set
++CONFIG_FTRACE=y
+ CONFIG_MEMTEST=y
+ CONFIG_SECURITY=y
+ CONFIG_CRYPTO_ECHAINIV=y
+-- 
+2.7.4
+

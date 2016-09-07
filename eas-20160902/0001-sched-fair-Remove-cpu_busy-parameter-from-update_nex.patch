@@ -1,0 +1,73 @@
+From 31851a9874d63dbb532910a86b2be49c15997ea3 Mon Sep 17 00:00:00 2001
+From: Leo Yan <leo.yan@linaro.org>
+Date: Fri, 5 Aug 2016 14:31:29 +0800
+Subject: [PATCH 01/78] sched/fair: Remove 'cpu_busy' parameter from
+ update_next_balance()
+
+The update_next_balance() function is only used by idle balancing, so its
+'cpu_busy' parameter is always 0.
+
+Open code it instead of passing it around.
+
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
+Link: http://lkml.kernel.org/r/1470378689-14892-1-git-send-email-leo.yan@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/sched/fair.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 039de34..d300536 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7704,11 +7704,12 @@ get_sd_balance_interval(struct sched_domain *sd, int cpu_busy)
+ }
+ 
+ static inline void
+-update_next_balance(struct sched_domain *sd, int cpu_busy, unsigned long *next_balance)
++update_next_balance(struct sched_domain *sd, unsigned long *next_balance)
+ {
+ 	unsigned long interval, next;
+ 
+-	interval = get_sd_balance_interval(sd, cpu_busy);
++	/* used by idle balance, so cpu_busy = 0 */
++	interval = get_sd_balance_interval(sd, 0);
+ 	next = sd->last_balance + interval;
+ 
+ 	if (time_after(*next_balance, next))
+@@ -7738,7 +7739,7 @@ static int idle_balance(struct rq *this_rq)
+ 		rcu_read_lock();
+ 		sd = rcu_dereference_check_sched_domain(this_rq->sd);
+ 		if (sd)
+-			update_next_balance(sd, 0, &next_balance);
++			update_next_balance(sd, &next_balance);
+ 		rcu_read_unlock();
+ 
+ 		goto out;
+@@ -7756,7 +7757,7 @@ static int idle_balance(struct rq *this_rq)
+ 			continue;
+ 
+ 		if (this_rq->avg_idle < curr_cost + sd->max_newidle_lb_cost) {
+-			update_next_balance(sd, 0, &next_balance);
++			update_next_balance(sd, &next_balance);
+ 			break;
+ 		}
+ 
+@@ -7774,7 +7775,7 @@ static int idle_balance(struct rq *this_rq)
+ 			curr_cost += domain_cost;
+ 		}
+ 
+-		update_next_balance(sd, 0, &next_balance);
++		update_next_balance(sd, &next_balance);
+ 
+ 		/*
+ 		 * Stop searching for tasks to pull if there are
+-- 
+2.7.4
+
