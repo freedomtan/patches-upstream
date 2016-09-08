@@ -1,4 +1,4 @@
-From e90ca73c759c35f95c6a949328a80901ee442ef6 Mon Sep 17 00:00:00 2001
+From 6f51a25aebcfaf3b1f6caff9f9627e087584c07c Mon Sep 17 00:00:00 2001
 From: Koan-Sin Tan <koansin.tan@gmail.com>
 Date: Thu, 21 Apr 2016 14:53:17 +0800
 Subject: [PATCH] ARM64: dts: Define CPU power domain for MT8173
@@ -9,11 +9,11 @@ initiated method is needed.
 
 Signed-off-by: Koan-Sin Tan <freedom.tan@linaro.org>
 ---
- arch/arm64/boot/dts/mediatek/mt8173.dtsi | 54 +++++++++++++++++++++++++++++---
- 1 file changed, 50 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi | 58 +++++++++++++++++++++++++++++---
+ 1 file changed, 54 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 41645ba..9ded552 100644
+index 41645ba..9b08e5e 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 @@ -151,6 +151,7 @@
@@ -48,7 +48,7 @@ index 41645ba..9ded552 100644
  		};
  
  		idle-states {
-@@ -195,14 +199,56 @@
+@@ -195,20 +199,66 @@
  			CPU_SLEEP_0: cpu-sleep-0 {
  				compatible = "arm,idle-state";
  				local-timer-stop;
@@ -56,59 +56,69 @@ index 41645ba..9ded552 100644
 -				exit-latency-us = <680>;
 -				min-residency-us = <1088>;
 -				arm,psci-suspend-param = <0x0010000>;
-+				entry-latency-us = <72>;
-+				exit-latency-us = <66>;
-+				min-residency-us = <458>;
++				entry-latency-us = <100>;
++				exit-latency-us = <800>;
++				min-residency-us = <2000>;
 +				arm,psci-suspend-param = <0x40000002>;
  			};
  		};
  	};
  
-+	CPU_PD0: cpu-pd@0 {
-+		compatible = "arm,pd","arm,cortex-a53";
-+		#power-domain-cells = <0>;
-+		power-states = <&CLUSTER0_RET>;
-+	};
-+
-+	CPU_PD1: cpu-pd@1 {
-+		compatible = "arm,pd","arm,cortex-a57";
-+		#power-domain-cells = <0>;
-+		power-states = <&CLUSTER1_RET>;
-+	};
-+
 +	pd-power-states {
 +		CLUSTER0_RET: power-state1@1 {
-+			state-param = <0x40000022>;
-+			entry-latency-us = <145>;
-+			exit-latency-us = <60>;
-+			residency-us = <331>;
++			compatible = "arm,idle-state";
++			arm,psci-suspend-param = <0x40000022>;
++			entry-latency-us = <350>;
++			exit-latency-us = <80>;
++			min-residency-us = <3000>;
 +		};
 +
 +		CLUSTER0_PWR_DWN: power-state1@2 {
-+			state-param = <0x40000033>;
++			compatible = "arm,idle-state";
++			arm,psci-suspend-param = <0x40000033>;
 +			entry-latency-us = <300>;
 +			exit-latency-us = <120>;
-+			residency-us = <600>;
++			min-residency-us = <600>;
 +		};
 +
 +		CLUSTER1_RET: power-state2@1 {
-+			state-param = <0x40000022>;
-+			entry-latency-us = <287>;
-+			exit-latency-us = <62>;
-+			residency-us = <1423>;
++			compatible = "arm,idle-state";
++			arm,psci-suspend-param = <0x40000022>;
++			entry-latency-us = <350>;
++			exit-latency-us = <80>;
++			min-residency-us = <3000>;
 +		};
 +
 +		CLUSTER1_PWR_DWN: power-state2@2 {
-+			state-param = <0x40000033>;
++			compatible = "arm,idle-state";
++			arm,psci-suspend-param = <0x40000033>;
 +			entry-latency-us = <500>;
 +			exit-latency-us = <150>;
-+			residency-us = <600>;
++			min-residency-us = <600>;
 +		};
 +        };
 +
  	psci {
  		compatible = "arm,psci-1.0", "arm,psci-0.2", "arm,psci";
  		method = "smc";
+ 		cpu_suspend   = <0x84000001>;
+ 		cpu_off	      = <0x84000002>;
+ 		cpu_on	      = <0x84000003>;
++
++		CPU_PD0: cpu-pd@0 {
++			compatible = "arm,pd","arm,cortex-a53";
++			#power-domain-cells = <0>;
++			domain-idle-states = <&CLUSTER0_RET>;
++		};
++
++		CPU_PD1: cpu-pd@1 {
++			compatible = "arm,pd","arm,cortex-a57";
++			#power-domain-cells = <0>;
++			domain-idle-states = <&CLUSTER1_RET>;
++		};
+ 	};
+ 
+ 	clk26m: oscillator@0 {
 -- 
 2.7.4
 

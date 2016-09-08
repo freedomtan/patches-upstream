@@ -1,12 +1,11 @@
-From f7e383ab7eb5b5f8b6fc3f3f5986fd4154c7089f Mon Sep 17 00:00:00 2001
+From af947205578c443a1253f2d5268c96aadad8faf9 Mon Sep 17 00:00:00 2001
 From: "freedom.tan" <freedom.tan@mediatek.com>
 Date: Fri, 3 Jun 2016 09:21:10 +0800
-Subject: [PATCH 1/2] some parameter changes
+Subject: [PATCH] some parameter changes
 
 ---
- arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi |  4 ++--
- arch/arm64/boot/dts/mediatek/mt8173.dtsi     | 19 ++++++++++---------
- 2 files changed, 12 insertions(+), 11 deletions(-)
+ arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi b/arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi
 index 0f29e66..071f7c3 100644
@@ -23,50 +22,6 @@ index 0f29e66..071f7c3 100644
  				regulator-enable-ramp-delay = <218>;
  			};
  
-diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index e9f62db..080fd1a 100644
---- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -224,9 +224,9 @@
- 			CPU_SLEEP_0: cpu-sleep-0 {
- 				compatible = "arm,idle-state";
- 				local-timer-stop;
--				entry-latency-us = <72>;
--				exit-latency-us = <66>;
--				min-residency-us = <458>;
-+				entry-latency-us = <100>;
-+				exit-latency-us = <800>;
-+				min-residency-us = <2000>;
- 				arm,psci-suspend-param = <0x40000002>;
- 			};
- 		};
-@@ -247,9 +247,10 @@
- 	pd-power-states {
- 		CLUSTER0_RET: power-state1@1 {
- 			state-param = <0x40000022>;
--			entry-latency-us = <145>;
--			exit-latency-us = <60>;
--			residency-us = <331>;
-+			entry-latency-us = <350>;
-+			exit-latency-us = <80>;
-+			residency-us = <3000>;
-+
- 		};
- 
- 		CLUSTER0_PWR_DWN: power-state1@2 {
-@@ -261,9 +262,9 @@
- 
- 		CLUSTER1_RET: power-state2@1 {
- 			state-param = <0x40000022>;
--			entry-latency-us = <287>;
--			exit-latency-us = <62>;
--			residency-us = <1423>;
-+			entry-latency-us = <350>;
-+			exit-latency-us = <80>;
-+			residency-us = <3000>;
- 		};
- 
- 		CLUSTER1_PWR_DWN: power-state2@2 {
 -- 
 2.7.4
 

@@ -1,7 +1,7 @@
-From e2f457753dc43df513e59959903aaeb9b7909ba1 Mon Sep 17 00:00:00 2001
+From 387e2b43935d5fc2217c660ea94701e753991174 Mon Sep 17 00:00:00 2001
 From: "freedom.tan" <freedom.tan@mediatek.com>
 Date: Wed, 11 May 2016 16:50:52 +0800
-Subject: [PATCH 4/4] PSCI extended ID and .dts for oak-rev5
+Subject: [PATCH 4/4] add .dts for oak-rev5
 
 ---
  arch/arm64/boot/dts/mediatek/Makefile            |   1 +
@@ -1037,10 +1037,10 @@ index 0000000..0f29e66
 +
 +#include "../../../../arm/boot/dts/cros-ec-keyboard.dtsi"
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 2ddb8f1..ccff00b 100644
+index 713ed58..d35e003 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -514,6 +514,14 @@
+@@ -518,6 +518,14 @@
  			memory-region = <&vpu_dma_reserved>;
  		};
  
