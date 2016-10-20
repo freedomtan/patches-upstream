@@ -1,4 +1,4 @@
-From 3f51c6a2a91fc5ec2d323db9353864fe992558d0 Mon Sep 17 00:00:00 2001
+From 8997d0d8e7f7663864b7c079d81cc5f73a1e11a6 Mon Sep 17 00:00:00 2001
 From: "dawei.chien@mediatek.com" <dawei.chien@mediatek.com>
 Date: Wed, 16 Dec 2015 21:29:16 +0800
 Subject: [PATCH 1/4] arm64: dts: mt8173: Add dynamic power node.
@@ -13,7 +13,7 @@ Signed-off-by: Dawei Chien <dawei.chien@mediatek.com>
  1 file changed, 13 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index bf4c182..e94bf43 100644
+index c3fee8a..7a0a717 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 @@ -152,6 +152,10 @@
