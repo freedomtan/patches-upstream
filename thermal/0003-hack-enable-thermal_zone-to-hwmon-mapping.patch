@@ -1,4 +1,4 @@
-From c905b8aac4d53075a78f4b9e0996a0d13249e73d Mon Sep 17 00:00:00 2001
+From 6a52c351c921852b9ce76b71460cb68669366b22 Mon Sep 17 00:00:00 2001
 From: Koan-Sin Tan <koansin.tan@gmail.com>
 Date: Wed, 22 Jul 2015 14:19:05 +0800
 Subject: [PATCH 3/4] hack: enable thermal_zone to hwmon mapping

@@ -1,4 +1,4 @@
-From 582d0c708b801a6c7d3075a58007a50ce92a5e06 Mon Sep 17 00:00:00 2001
+From cc2ca7343ad405e6a22552fb8fb554b04465eff1 Mon Sep 17 00:00:00 2001
 From: "pi-cheng.chen" <pi-cheng.chen@linaro.org>
 Date: Mon, 14 Sep 2015 19:27:52 +0800
 Subject: [PATCH] clk: mediatek: Export CPU mux clocks for CPU frequency
@@ -20,15 +20,15 @@ Modifed-by: Koan-Sin Tan <freedom.tan@linaro.org>
  create mode 100644 drivers/clk/mediatek/clk-cpumux.h
 
 diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 32e7222..022cf99 100644
+index 19ae7ef..ef6c481 100644
 --- a/drivers/clk/mediatek/Makefile
 +++ b/drivers/clk/mediatek/Makefile
 @@ -1,4 +1,4 @@
 -obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
 +obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o clk-cpumux.o
  obj-$(CONFIG_RESET_CONTROLLER) += reset.o
- obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
- obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
+ obj-$(CONFIG_COMMON_CLK_MT2701) += clk-mt2701.o
+ obj-$(CONFIG_COMMON_CLK_MT2701_BDPSYS) += clk-mt2701-bdp.o
 diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
 new file mode 100644
 index 0000000..e0207f3

@@ -1,4 +1,4 @@
-From b51f731cdddc49fb46ea44fc8244ed2c0bf10397 Mon Sep 17 00:00:00 2001
+From 5a4211d2e047eb8c819c2b5a2b216b3046dcce74 Mon Sep 17 00:00:00 2001
 From: Koan-Sin Tan <koansin.tan@gmail.com>
 Date: Fri, 15 Apr 2016 09:01:44 +0800
 Subject: [PATCH 3/4] Add L2 cache topology to MT8173
@@ -8,10 +8,10 @@ Subject: [PATCH 3/4] Add L2 cache topology to MT8173
  1 file changed, 12 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index fed0aeb..e5d02e2 100644
+index 2ef7501..a1e6359 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -146,6 +146,7 @@
+@@ -154,6 +154,7 @@
  			compatible = "arm,cortex-a53";
  			reg = <0x000>;
  			enable-method = "psci";
@@ -19,7 +19,7 @@ index fed0aeb..e5d02e2 100644
  			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
  			clocks = <&infracfg CLK_INFRA_CA53SEL>,
  				 <&apmixedsys CLK_APMIXED_MAINPLL>;
-@@ -158,6 +159,7 @@
+@@ -166,6 +167,7 @@
  			compatible = "arm,cortex-a53";
  			reg = <0x001>;
  			enable-method = "psci";
@@ -27,7 +27,7 @@ index fed0aeb..e5d02e2 100644
  			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
  			clocks = <&infracfg CLK_INFRA_CA53SEL>,
  				 <&apmixedsys CLK_APMIXED_MAINPLL>;
-@@ -170,6 +172,7 @@
+@@ -178,6 +180,7 @@
  			compatible = "arm,cortex-a57";
  			reg = <0x100>;
  			enable-method = "psci";
@@ -35,7 +35,7 @@ index fed0aeb..e5d02e2 100644
  			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
  			clocks = <&infracfg CLK_INFRA_CA57SEL>,
  				 <&apmixedsys CLK_APMIXED_MAINPLL>;
-@@ -182,6 +185,7 @@
+@@ -190,6 +193,7 @@
  			compatible = "arm,cortex-a57";
  			reg = <0x101>;
  			enable-method = "psci";
@@ -43,7 +43,7 @@ index fed0aeb..e5d02e2 100644
  			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
  			clocks = <&infracfg CLK_INFRA_CA57SEL>,
  				 <&apmixedsys CLK_APMIXED_MAINPLL>;
-@@ -189,6 +193,14 @@
+@@ -197,6 +201,14 @@
  			operating-points-v2 = <&cluster1_opp>;
  		};
  

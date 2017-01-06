@@ -1,4 +1,4 @@
-From 218c8abfcfaeb046cec48fd761b7f9adace397e5 Mon Sep 17 00:00:00 2001
+From 7d2d135d84c07d3126ab30c5c12e3bb1987f8703 Mon Sep 17 00:00:00 2001
 From: "freedom.tan" <freedom.tan@mediatek.com>
 Date: Wed, 11 May 2016 16:50:52 +0800
 Subject: [PATCH 4/4] PSCI extended ID and .dts for oak-rev5
@@ -78,7 +78,7 @@ index 0000000..4bc095f
 \ No newline at end of file
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi b/arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi
 new file mode 100644
-index 0000000..0f29e66
+index 0000000..e8208abd
 --- /dev/null
 +++ b/arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi
 @@ -0,0 +1,954 @@
@@ -1028,7 +1028,7 @@ index 0000000..0f29e66
 +	status = "okay";
 +};
 +
-+&usb30 {
++&ssusb {
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&usb_pins>;
 +	vusb33-supply = <&mt6397_vusb_reg>;
@@ -1037,10 +1037,10 @@ index 0000000..0f29e66
 +
 +#include "../../../../arm/boot/dts/cros-ec-keyboard.dtsi"
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index e5d02e2..c3fee8a 100644
+index a1e6359..34878a6 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -210,7 +210,7 @@
+@@ -218,7 +218,7 @@
  				entry-latency-us = <72>;
  				exit-latency-us = <66>;
  				min-residency-us = <458>;
@@ -1049,7 +1049,7 @@ index e5d02e2..c3fee8a 100644
  			};
  
  			CLUSTER_SLEEP_0: cluster-sleep-0 {
-@@ -219,7 +219,7 @@
+@@ -227,7 +227,7 @@
  				entry-latency-us = <145>;
  				exit-latency-us = <60>;
  				min-residency-us = <331>;
@@ -1058,7 +1058,7 @@ index e5d02e2..c3fee8a 100644
  			};
  
  			CPU_SLEEP_1: cpu-sleep-1 {
-@@ -228,7 +228,7 @@
+@@ -236,7 +236,7 @@
  				entry-latency-us = <72>;
  				exit-latency-us = <66>;
  				min-residency-us = <516>;
@@ -1067,7 +1067,7 @@ index e5d02e2..c3fee8a 100644
  			};
  
  			CLUSTER_SLEEP_1: cluster-sleep-1 {
-@@ -237,7 +237,7 @@
+@@ -245,7 +245,7 @@
  				entry-latency-us = <287>;
  				exit-latency-us = <62>;
  				min-residency-us = <1423>;

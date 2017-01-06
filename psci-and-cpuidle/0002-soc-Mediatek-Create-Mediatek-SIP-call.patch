@@ -1,4 +1,4 @@
-From af3cd6f0d4f6d946cef56cdae493c73e6ab1a447 Mon Sep 17 00:00:00 2001
+From b31e4b7dca51f5993f91a804a8211934b1a33b63 Mon Sep 17 00:00:00 2001
 From: Fan Chen <fan.chen@mediatek.com>
 Date: Mon, 30 Nov 2015 21:45:35 +0800
 Subject: [PATCH 2/5] soc: Mediatek: Create Mediatek SIP call
@@ -19,7 +19,7 @@ Modified-by: Koan-Sin Tan <freedom.tan@mediatek.com>
  create mode 100644 include/linux/soc/mediatek/mtk-sip.h
 
 diff --git a/drivers/soc/mediatek/Kconfig b/drivers/soc/mediatek/Kconfig
-index 0a4ea80..93fdb8e 100644
+index 609bb34..a805b14 100644
 --- a/drivers/soc/mediatek/Kconfig
 +++ b/drivers/soc/mediatek/Kconfig
 @@ -30,3 +30,10 @@ config MTK_SCPSYS

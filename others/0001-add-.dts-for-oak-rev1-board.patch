@@ -1,4 +1,4 @@
-From ee5689475cf9757c069242b2d5766638b2ba3698 Mon Sep 17 00:00:00 2001
+From 4d4ba92a8aa592d01b78f439bcd1aacbbc935d71 Mon Sep 17 00:00:00 2001
 From: "freedom.tan" <freedom.tan@mediatek.com>
 Date: Wed, 16 Sep 2015 14:12:29 +0800
 Subject: [PATCH 1/4] add .dts for oak-rev1 board
@@ -23,7 +23,7 @@ index 9fbfd32..94cdb07 100644
  subdir-y	:= $(dts-dirs)
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173-oak-rev1.dts b/arch/arm64/boot/dts/mediatek/mt8173-oak-rev1.dts
 new file mode 100644
-index 0000000..2bb5a9b
+index 0000000..67313e0
 --- /dev/null
 +++ b/arch/arm64/boot/dts/mediatek/mt8173-oak-rev1.dts
 @@ -0,0 +1,741 @@
@@ -762,7 +762,7 @@ index 0000000..2bb5a9b
 +	p1-gpio = <&pio 3 GPIO_ACTIVE_HIGH>;
 +};
 +
-+&usb30 {
++&ssusb {
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&usb_pins>;
 +	vusb33-supply = <&mt6397_vusb_reg>;

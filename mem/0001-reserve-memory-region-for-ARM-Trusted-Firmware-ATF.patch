@@ -1,4 +1,4 @@
-From 4b7895eb67a04995b93e6e4225160ed27ce3237a Mon Sep 17 00:00:00 2001
+From 4ca448a01a6dd8849e664e8d407ba7ab5babbc49 Mon Sep 17 00:00:00 2001
 From: Koan-Sin Tan <koansin.tan@gmail.com>
 Date: Wed, 23 Mar 2016 13:44:22 +0800
 Subject: [PATCH] reserve memory region for ARM Trusted Firmware (ATF)
@@ -10,7 +10,7 @@ should reserve the region to avoid memory corruption.
  1 file changed, 10 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173-evb.dts b/arch/arm64/boot/dts/mediatek/mt8173-evb.dts
-index abe9799..07bc131 100644
+index 0ee23a5..7740c85 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173-evb.dts
 +++ b/arch/arm64/boot/dts/mediatek/mt8173-evb.dts
 @@ -32,6 +32,16 @@
@@ -29,7 +29,7 @@ index abe9799..07bc131 100644
 +
  	chosen { };
  
- 	usb_p1_vbus: regulator@0 {
+ 	connector {
 -- 
 2.7.4
 

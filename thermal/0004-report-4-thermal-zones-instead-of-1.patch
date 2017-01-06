@@ -1,4 +1,4 @@
-From e59963f66313f49a1e2d087dab979fea2ee6c96f Mon Sep 17 00:00:00 2001
+From 3dbdb6f13f26596adee5ab906758a5ad8283bcfa Mon Sep 17 00:00:00 2001
 From: "freedom.tan" <freedom.tan@mediatek.com>
 Date: Wed, 11 Nov 2015 17:20:56 +0800
 Subject: [PATCH 4/4] report 4 thermal zones instead of 1
@@ -6,14 +6,14 @@ Subject: [PATCH 4/4] report 4 thermal zones instead of 1
 a thermal zone for each bank makes more sense to me
 ---
  arch/arm64/boot/dts/mediatek/mt8173.dtsi |  2 +-
- drivers/thermal/mtk_thermal.c            | 40 +++++++++++++-------------------
- 2 files changed, 17 insertions(+), 25 deletions(-)
+ drivers/thermal/mtk_thermal.c            | 36 +++++++++++++-------------------
+ 2 files changed, 15 insertions(+), 23 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 70c32ef..c95eafe 100644
+index 0120c30..0f19b23 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -797,7 +797,7 @@
+@@ -808,7 +808,7 @@
  		};
  
  		thermal: thermal@1100b000 {
@@ -23,7 +23,7 @@ index 70c32ef..c95eafe 100644
  			reg = <0 0x1100b000 0 0x1000>;
  			interrupts = <0 70 IRQ_TYPE_LEVEL_LOW>;
 diff --git a/drivers/thermal/mtk_thermal.c b/drivers/thermal/mtk_thermal.c
-index 34169c3..738cc2a 100644
+index 34169c3..5fd614e 100644
 --- a/drivers/thermal/mtk_thermal.c
 +++ b/drivers/thermal/mtk_thermal.c
 @@ -150,6 +150,7 @@ struct thermal_bank_cfg {
@@ -34,7 +34,7 @@ index 34169c3..738cc2a 100644
  	int id;
  };
  
-@@ -371,22 +372,12 @@ static int mtk_thermal_bank_temperature(struct mtk_thermal_bank *bank)
+@@ -371,21 +372,11 @@ static int mtk_thermal_bank_temperature(struct mtk_thermal_bank *bank)
  
  static int mtk_read_temp(void *data, int *temperature)
  {
@@ -51,18 +51,15 @@ index 34169c3..738cc2a 100644
 -
 -		mtk_thermal_put_bank(bank);
 -	}
--
--	*temperature = tempmax;
--
 +	struct mtk_thermal_bank *bank = data;
-+	
+ 
+-	*temperature = tempmax;
 +	mtk_thermal_get_bank(bank);
 +	*temperature = mtk_thermal_bank_temperature(bank);
 +	mtk_thermal_put_bank(bank);
-+	
+ 
  	return 0;
  }
- 
 @@ -584,7 +575,6 @@ static int mtk_thermal_probe(struct platform_device *pdev)
  	struct resource *res;
  	const struct of_device_id *of_id;
