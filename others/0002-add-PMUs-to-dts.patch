@@ -1,4 +1,4 @@
-From 3273bdd0b0ab4d3d1f2dc82aad76864ed4cfe598 Mon Sep 17 00:00:00 2001
+From 3dc1892c391463b80b98c32fd6615216059c4d70 Mon Sep 17 00:00:00 2001
 From: "freedom.tan" <freedom.tan@mediatek.com>
 Date: Wed, 16 Sep 2015 14:20:06 +0800
 Subject: [PATCH 2/4] add PMUs to dts
@@ -8,10 +8,10 @@ Subject: [PATCH 2/4] add PMUs to dts
  1 file changed, 14 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 843aa0b..2ef7501 100644
+index bb73991..a49e41e 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -335,6 +335,20 @@
+@@ -374,6 +374,20 @@
  			      (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
  	};
  

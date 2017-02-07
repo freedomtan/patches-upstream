@@ -1,0 +1,53 @@
+From 31641cda53dd71c0447fca5e6d42e0e3e8391733 Mon Sep 17 00:00:00 2001
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Date: Mon, 23 Jan 2017 10:11:44 +0530
+Subject: [PATCH 41/83] PM / OPP: Take reference of the OPP table while
+ adding/removing OPPs
+
+Take reference of the OPP table while adding and removing OPPs, that
+helps us remove special checks in _remove_opp_table().
+
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/base/power/opp/core.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/base/power/opp/core.c b/drivers/base/power/opp/core.c
+index 1af349a..1a38b5d 100644
+--- a/drivers/base/power/opp/core.c
++++ b/drivers/base/power/opp/core.c
+@@ -971,9 +971,6 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_put_opp_table);
+  */
+ static void _remove_opp_table(struct opp_table *opp_table)
+ {
+-	if (!list_empty(&opp_table->opp_list))
+-		return;
+-
+ 	dev_pm_opp_put_opp_table_unlocked(opp_table);
+ }
+ 
+@@ -1018,8 +1015,7 @@ static void _opp_remove(struct opp_table *opp_table, struct dev_pm_opp *opp)
+ 	call_srcu(&opp_table->srcu_head.srcu, &opp->rcu_head, _kfree_opp_rcu);
+ 
+ 	mutex_unlock(&opp_table->lock);
+-
+-	_remove_opp_table(opp_table);
++	dev_pm_opp_put_opp_table(opp_table);
+ }
+ 
+ /**
+@@ -1170,6 +1166,9 @@ int _opp_add(struct device *dev, struct dev_pm_opp *new_opp,
+ 
+ 	new_opp->opp_table = opp_table;
+ 
++	/* Get a reference to the OPP table */
++	_get_opp_table_kref(opp_table);
++
+ 	ret = opp_debug_create_one(new_opp, opp_table);
+ 	if (ret)
+ 		dev_err(dev, "%s: Failed to register opp to debugfs (%d)\n",
+-- 
+2.7.4
+

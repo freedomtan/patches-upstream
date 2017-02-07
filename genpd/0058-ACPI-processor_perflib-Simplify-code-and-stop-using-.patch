@@ -1,0 +1,42 @@
+From 7cb88d68eec1732e0b6bcdb92e8f46f424b69560 Mon Sep 17 00:00:00 2001
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Date: Mon, 30 Jan 2017 09:59:57 +0530
+Subject: [PATCH 58/83] ACPI: processor_perflib: Simplify code and stop using
+ CPUFREQ_START
+
+acpi_processor_ppc_notifier() can live without using CPUFREQ_START
+(which is gonna be removed soon), as it is only used while setting
+ignore_ppc to 0. This can be done with the help of "ignore_ppc < 0"
+check alone. The notifier function anyway ignores all events except
+CPUFREQ_ADJUST and dropping CPUFREQ_START wouldn't harm at all.
+
+Once CPUFREQ_START event is removed from the cpufreq core,
+acpi_processor_ppc_notifier() will get called only for CPUFREQ_NOTIFY or
+CPUFREQ_ADJUST event. Drop the return statement from the first if block
+to make sure we don't ignore any such events.
+
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/acpi/processor_perflib.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
+index f0b4a98..18b72ee 100644
+--- a/drivers/acpi/processor_perflib.c
++++ b/drivers/acpi/processor_perflib.c
+@@ -75,10 +75,8 @@ static int acpi_processor_ppc_notifier(struct notifier_block *nb,
+ 	struct acpi_processor *pr;
+ 	unsigned int ppc = 0;
+ 
+-	if (event == CPUFREQ_START && ignore_ppc <= 0) {
++	if (ignore_ppc < 0)
+ 		ignore_ppc = 0;
+-		return 0;
+-	}
+ 
+ 	if (ignore_ppc)
+ 		return 0;
+-- 
+2.7.4
+

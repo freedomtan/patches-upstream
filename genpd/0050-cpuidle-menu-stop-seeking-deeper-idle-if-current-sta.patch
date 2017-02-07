@@ -1,0 +1,41 @@
+From 8e37e1a2a3295f5d99e6dbe99eca24eca7a034ef Mon Sep 17 00:00:00 2001
+From: Alex Shi <alex.shi@linaro.org>
+Date: Thu, 12 Jan 2017 21:27:02 +0800
+Subject: [PATCH 50/83] cpuidle/menu: stop seeking deeper idle if current state
+ is deep enough
+
+Obsolete commit 71abbbf856a0 (cpuidle: extend cpuidle and menu governor
+to handle dynamic states) wanted to introduce dynamic C-states, but that
+idea was dropped long ago.  The nonsense deeper C-state checking
+remained, though.
+
+Since both target_residency and exit_latency are longer for deeper
+idle state, there's no need to waste CPU time on useless checks.
+
+Signed-off-by: Alex Shi <alex.shi@linaro.org>
+Acked-by: Rik van Riel <riel@redhat.com>
+[ rjw: Subject & changelog ]
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpuidle/governors/menu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
+index d9b5b93..07e36bb 100644
+--- a/drivers/cpuidle/governors/menu.c
++++ b/drivers/cpuidle/governors/menu.c
+@@ -357,9 +357,9 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
+ 		if (s->disabled || su->disable)
+ 			continue;
+ 		if (s->target_residency > data->predicted_us)
+-			continue;
++			break;
+ 		if (s->exit_latency > latency_req)
+-			continue;
++			break;
+ 
+ 		data->last_state_idx = i;
+ 	}
+-- 
+2.7.4
+

@@ -1,0 +1,40 @@
+From 0822d4f4f8db98c4619e6136fc375d4324eff788 Mon Sep 17 00:00:00 2001
+From: Lv Zheng <lv.zheng@intel.com>
+Date: Wed, 28 Dec 2016 15:29:03 +0800
+Subject: [PATCH 09/83] ACPICA: MSVC: Fix MSVC6 build issues
+
+ACPICA commit fa0680030a2969e1085563da633713e1c321637c
+
+Build environment has changed because of new improvements:
+
+ 1. New files are split
+ 2. New inclusion order
+
+This patch updates MSVC project files accordingly.
+
+Linux is not affected by this patch.
+
+Link: https://github.com/acpica/acpica/commit/fa068003
+Signed-off-by: Lv Zheng <lv.zheng@intel.com>
+Signed-off-by: Bob Moore <robert.moore@intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ include/acpi/platform/acenv.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/acpi/platform/acenv.h b/include/acpi/platform/acenv.h
+index 34cce72..cf93b66 100644
+--- a/include/acpi/platform/acenv.h
++++ b/include/acpi/platform/acenv.h
+@@ -357,7 +357,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <ctype.h>
+-#ifdef ACPI_APPLICATION
++#if defined (ACPI_APPLICATION) || defined(ACPI_LIBRARY)
+ #include <stdio.h>
+ #include <fcntl.h>
+ #include <errno.h>
+-- 
+2.7.4
+

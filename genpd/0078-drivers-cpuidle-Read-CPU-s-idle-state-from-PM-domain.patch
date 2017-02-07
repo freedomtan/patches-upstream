@@ -1,0 +1,95 @@
+From 8b1917e856c2afe36cff39d88cda3bd05daa0bb2 Mon Sep 17 00:00:00 2001
+From: Lina Iyer <lina.iyer@linaro.org>
+Date: Fri, 4 Nov 2016 13:43:04 -0700
+Subject: [PATCH 78/83] drivers: cpuidle: Read CPU's idle state from PM domain
+
+Currently CPUs idle states and idle states of its parent are represented
+in a flattened model by the cpu-dile-states property of the CPU node.
+The CPUs idle states are followed by its cluster idle states. With the
+introduction of CPU PM domains, the CPUs and domain idle states may be
+represented hierarchically as part of the domain DT definition. This
+would mean presenting idle state information in 2 places - CPU nodes for
+the CPU and the cluster's with the PM domains.
+
+Also, it makes sense to define domains around each individual CPU since
+each of them is a power domain in its own right. The CPU idle states can
+now be represented as its domain's idle state, defined by the
+domain-idle-states property. This avoids presenting idle states in
+multiple places in the DT.
+
+Modify the DT-based cpuidle driver to check for the presence of a CPU's
+domain and if present read the domain-idle-states of the PM domain and
+if the CPU's domain is absent, revert to reading in the cpu-idle-states
+property of the CPU DT node.
+
+Suggested-by: Sudeep Holla <sudeep.holla@qrm.com>
+Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
+---
+ drivers/cpuidle/dt_idle_states.c | 37 ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 34 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/cpuidle/dt_idle_states.c b/drivers/cpuidle/dt_idle_states.c
+index ffca4fc..4849331 100644
+--- a/drivers/cpuidle/dt_idle_states.c
++++ b/drivers/cpuidle/dt_idle_states.c
+@@ -98,6 +98,38 @@ static int init_state_node(struct cpuidle_state *idle_state,
+ }
+ 
+ /*
++ * Get the state node at @idx. State node may be defined as domain's idle state
++ * if the CPU has its own domain or defined as CPU's idle state if it doesnt
++ * have a domain provider.
++ */
++static struct device_node* get_state_node(struct device_node *cpu_node,
++				unsigned int idx)
++{
++	struct device_node *dn;
++	bool cpu_has_domain;
++	struct of_phandle_args args;
++	const char *property;
++	int err;
++
++	err = of_parse_phandle_with_args(cpu_node, "power-domains",
++					"#power-domain-cells", 0, &args);
++	if (!err) {
++		dn = args.np;
++		err = of_count_phandle_with_args(dn, "domain-idle-states", NULL);
++		cpu_has_domain = (err > 0);
++	}
++
++	if (cpu_has_domain) {
++		property = "domain-idle-states";
++	} else {
++		property = "cpu-idle-states";
++		dn = cpu_node;
++	}
++
++	return of_parse_phandle(dn, property, idx);
++}
++
++/*
+  * Check that the idle state is uniform across all CPUs in the CPUidle driver
+  * cpumask
+  */
+@@ -118,8 +150,7 @@ static bool idle_state_valid(struct device_node *state_node, unsigned int idx,
+ 	for (cpu = cpumask_next(cpumask_first(cpumask), cpumask);
+ 	     cpu < nr_cpu_ids; cpu = cpumask_next(cpu, cpumask)) {
+ 		cpu_node = of_cpu_device_node_get(cpu);
+-		curr_state_node = of_parse_phandle(cpu_node, "cpu-idle-states",
+-						   idx);
++		curr_state_node = get_state_node(cpu_node, idx);
+ 		if (state_node != curr_state_node)
+ 			valid = false;
+ 
+@@ -176,7 +207,7 @@ int dt_init_idle_driver(struct cpuidle_driver *drv,
+ 	cpu_node = of_cpu_device_node_get(cpumask_first(cpumask));
+ 
+ 	for (i = 0; ; i++) {
+-		state_node = of_parse_phandle(cpu_node, "cpu-idle-states", i);
++		state_node = get_state_node(cpu_node, i);
+ 		if (!state_node)
+ 			break;
+ 
+-- 
+2.7.4
+

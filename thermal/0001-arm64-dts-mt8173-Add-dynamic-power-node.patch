@@ -1,4 +1,4 @@
-From 8da020202315bf8c900b0240a3f38e909b5a6fe8 Mon Sep 17 00:00:00 2001
+From 41be4d6742cfd7c35c558bed3aab9ed0e6448b51 Mon Sep 17 00:00:00 2001
 From: "dawei.chien@mediatek.com" <dawei.chien@mediatek.com>
 Date: Wed, 16 Dec 2015 21:29:16 +0800
 Subject: [PATCH 1/4] arm64: dts: mt8173: Add dynamic power node.
@@ -13,11 +13,11 @@ Signed-off-by: Dawei Chien <dawei.chien@mediatek.com>
  1 file changed, 13 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 34878a6..b51e8ee 100644
+index 6d54bd8..05aae59 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 @@ -160,6 +160,10 @@
- 				 <&apmixedsys CLK_APMIXED_MAINPLL>;
+ 					<&apmixedsys CLK_APMIXED_MAINPLL>;
  			clock-names = "cpu", "intermediate";
  			operating-points-v2 = <&cluster0_opp>;
 +			#cooling-cells = <2>;
@@ -28,7 +28,7 @@ index 34878a6..b51e8ee 100644
  
  		cpu1: cpu@1 {
 @@ -173,6 +177,9 @@
- 				 <&apmixedsys CLK_APMIXED_MAINPLL>;
+ 					<&apmixedsys CLK_APMIXED_MAINPLL>;
  			clock-names = "cpu", "intermediate";
  			operating-points-v2 = <&cluster0_opp>;
 +			#cooling-cells = <2>;
@@ -38,7 +38,7 @@ index 34878a6..b51e8ee 100644
  
  		cpu2: cpu@100 {
 @@ -186,6 +193,9 @@
- 				 <&apmixedsys CLK_APMIXED_MAINPLL>;
+ 					<&apmixedsys CLK_APMIXED_MAINPLL>;
  			clock-names = "cpu", "intermediate";
  			operating-points-v2 = <&cluster1_opp>;
 +			#cooling-cells = <2>;
@@ -48,8 +48,8 @@ index 34878a6..b51e8ee 100644
  
  		cpu3: cpu@101 {
 @@ -199,6 +209,9 @@
- 				 <&apmixedsys CLK_APMIXED_MAINPLL>;
- 			lock-names = "cpu", "intermediate";
+ 					<&apmixedsys CLK_APMIXED_MAINPLL>;
+ 			clock-names = "cpu", "intermediate";
  			operating-points-v2 = <&cluster1_opp>;
 +			#cooling-cells = <2>;
 +			#cooling-min-level = <0>;

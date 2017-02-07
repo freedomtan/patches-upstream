@@ -1,0 +1,29 @@
+From 4f497a4310646f14ab518ab6108dbef07f4606af Mon Sep 17 00:00:00 2001
+From: Corentin LABBE <clabbe.montjoie@gmail.com>
+Date: Thu, 15 Dec 2016 11:15:25 +0100
+Subject: [PATCH 25/83] PM / QoS: Remove unneeded linux/miscdevice.h include
+
+pm_qos.h does not use any miscdevice, so this patch
+remove this unnecessary inclusion.
+
+Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ include/linux/pm_qos.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/include/linux/pm_qos.h b/include/linux/pm_qos.h
+index 0f65d36..d4d3479 100644
+--- a/include/linux/pm_qos.h
++++ b/include/linux/pm_qos.h
+@@ -6,7 +6,6 @@
+  */
+ #include <linux/plist.h>
+ #include <linux/notifier.h>
+-#include <linux/miscdevice.h>
+ #include <linux/device.h>
+ #include <linux/workqueue.h>
+ 
+-- 
+2.7.4
+

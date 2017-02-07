@@ -1,0 +1,24 @@
+From 0c7735ffd826b695468d46dcc65c62530ad4df8f Mon Sep 17 00:00:00 2001
+From: Koan-Sin Tan <koansin.tan@gmail.com>
+Date: Tue, 7 Feb 2017 16:57:05 +0800
+Subject: [PATCH] trivial bug
+
+---
+ drivers/soc/mediatek/mtk-scpsys.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index 00e107f..4094c37 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -582,6 +582,7 @@ static const struct scp_domain_data scp_domain_data_mt2701[] = {
+ static int __init scpsys_probe_mt2701(struct platform_device *pdev)
+ {
+ 	struct scp *scp;
++	int ret;
+ 
+ 	scp = init_scp(pdev, scp_domain_data_mt2701, NUM_DOMAINS_MT2701);
+ 	if (IS_ERR(scp))
+-- 
+2.7.4
+

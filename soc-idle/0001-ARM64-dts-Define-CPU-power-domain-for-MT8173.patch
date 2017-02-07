@@ -1,0 +1,145 @@
+From ed44b70a82a12fc7b5907bed5edb068513fdcacb Mon Sep 17 00:00:00 2001
+From: Koan-Sin Tan <koansin.tan@gmail.com>
+Date: Thu, 21 Apr 2016 14:53:17 +0800
+Subject: [PATCH] ARM64: dts: Define CPU power domain for MT8173
+
+Define power domain and the power states for the domain as defined by
+the PSCI firmware. Experimental MT8173 ATF firmware that supports OS
+initiated method is needed.
+
+Signed-off-by: Koan-Sin Tan <freedom.tan@linaro.org>
+---
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi | 82 ++++++++++++++++++++++++++++----
+ 1 file changed, 74 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+index 12e7027..f6294d9 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+@@ -80,7 +80,7 @@
+ 			compatible = "arm,cortex-a53";
+ 			reg = <0x000>;
+ 			enable-method = "psci";
+-			cpu-idle-states = <&CPU_SLEEP_0>;
++			power-domains = <&CPU_PD0>;
+ 		};
+ 
+ 		cpu1: cpu@1 {
+@@ -88,7 +88,7 @@
+ 			compatible = "arm,cortex-a53";
+ 			reg = <0x001>;
+ 			enable-method = "psci";
+-			cpu-idle-states = <&CPU_SLEEP_0>;
++			power-domains = <&CPU_PD1>;
+ 		};
+ 
+ 		cpu2: cpu@100 {
+@@ -96,7 +96,7 @@
+ 			compatible = "arm,cortex-a57";
+ 			reg = <0x100>;
+ 			enable-method = "psci";
+-			cpu-idle-states = <&CPU_SLEEP_0>;
++			power-domains = <&CPU_PD2>;
+ 		};
+ 
+ 		cpu3: cpu@101 {
+@@ -104,7 +104,7 @@
+ 			compatible = "arm,cortex-a57";
+ 			reg = <0x101>;
+ 			enable-method = "psci";
+-			cpu-idle-states = <&CPU_SLEEP_0>;
++			power-domains = <&CPU_PD3>;
+ 		};
+ 
+ 		idle-states {
+@@ -113,10 +113,42 @@
+ 			CPU_SLEEP_0: cpu-sleep-0 {
+ 				compatible = "arm,idle-state";
+ 				local-timer-stop;
+-				entry-latency-us = <639>;
+-				exit-latency-us = <680>;
+-				min-residency-us = <1088>;
+-				arm,psci-suspend-param = <0x0010000>;
++				entry-latency-us = <100>;
++				exit-latency-us = <800>;
++				min-residency-us = <2000>;
++				arm,psci-suspend-param = <0x40000002>;
++			};
++
++			CLUSTER0_RET: power-state1@1 {
++				compatible = "domain-idle-state";
++				arm,psci-suspend-param = <0x40000022>;
++				entry-latency-us = <350>;
++				exit-latency-us = <80>;
++				min-residency-us = <3000>;
++			};
++
++			CLUSTER0_PWR_DWN: power-state1@2 {
++				compatible = "domain-idle-state";
++				arm,psci-suspend-param = <0x40000033>;
++				entry-latency-us = <300>;
++				exit-latency-us = <120>;
++				min-residency-us = <600>;
++			};
++
++			CLUSTER1_RET: power-state2@1 {
++				compatible = "domain-idle-state";
++				arm,psci-suspend-param = <0x40000022>;
++				entry-latency-us = <350>;
++				exit-latency-us = <80>;
++				min-residency-us = <3000>;
++			};
++
++			CLUSTER1_PWR_DWN: power-state2@2 {
++				compatible = "domain-idle-state";
++				arm,psci-suspend-param = <0x40000033>;
++				entry-latency-us = <500>;
++				exit-latency-us = <150>;
++				min-residency-us = <600>;
+ 			};
+ 		};
+ 	};
+@@ -127,6 +159,40 @@
+ 		cpu_suspend   = <0x84000001>;
+ 		cpu_off	      = <0x84000002>;
+ 		cpu_on	      = <0x84000003>;
++
++		CPU_PD0: cpu-pd@0 {
++			#power-domain-cells = <0>;
++			domain-idle-states = <&CPU_SLEEP_0>;
++			power-domains = <&CLUSTER0_PD>;
++		};
++
++		CPU_PD1: cpu-pd@1 {
++			#power-domain-cells = <0>;
++			domain-idle-states = <&CPU_SLEEP_0>;
++			power-domains = <&CLUSTER0_PD>;
++		};
++
++		CPU_PD2: cpu-pd@2 {
++			#power-domain-cells = <0>;
++			domain-idle-states = <&CPU_SLEEP_0>;
++			power-domains = <&CLUSTER1_PD>;
++		};
++
++		CPU_PD3: cpu-pd@3 {
++			#power-domain-cells = <0>;
++			domain-idle-states = <&CPU_SLEEP_0>;
++			power-domains = <&CLUSTER1_PD>;
++		};
++
++		CLUSTER0_PD: cluster0_pd {
++			#power-domain-cells = <0>;
++			domain-idle-states = <&CLUSTER0_PD>;
++		};
++
++		CLUSTER1_PD: cluster1_pd {
++			#power-domain-cells = <0>;
++			domain-idle-states = <&CLUSTER1_RET>;
++		};
+ 	};
+ 
+ 	clk26m: oscillator@0 {
+-- 
+2.7.4
+

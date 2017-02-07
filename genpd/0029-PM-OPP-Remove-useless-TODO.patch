@@ -1,0 +1,31 @@
+From 1715371ddd5affdd63c7cb5220d104062c74ad66 Mon Sep 17 00:00:00 2001
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Date: Mon, 2 Jan 2017 14:40:56 +0530
+Subject: [PATCH 29/83] PM / OPP: Remove useless TODO
+
+This TODO doesn't make sense anymore as we have all the information in a
+single OPP table. Remove it.
+
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/base/power/opp/of.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/base/power/opp/of.c b/drivers/base/power/opp/of.c
+index 356c75e..996ca3b 100644
+--- a/drivers/base/power/opp/of.c
++++ b/drivers/base/power/opp/of.c
+@@ -246,8 +246,6 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_of_remove_table);
+ static struct device_node *_of_get_opp_desc_node(struct device *dev)
+ {
+ 	/*
+-	 * TODO: Support for multiple OPP tables.
+-	 *
+ 	 * There should be only ONE phandle present in "operating-points-v2"
+ 	 * property.
+ 	 */
+-- 
+2.7.4
+

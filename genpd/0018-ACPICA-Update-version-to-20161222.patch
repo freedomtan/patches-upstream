@@ -1,0 +1,35 @@
+From e9ca038a94f5a41c0689c5f441fd9c5a567e6f39 Mon Sep 17 00:00:00 2001
+From: Bob Moore <robert.moore@intel.com>
+Date: Wed, 28 Dec 2016 15:30:02 +0800
+Subject: [PATCH 18/83] ACPICA: Update version to 20161222
+
+ACPICA commit 0d5a056877c2e37e0bfce8d262cec339dc8d55fd
+ACPICA commit 5bea13a9e1eb2a0da99600d181afbc5fa075a9eb
+
+Version 20161222
+
+Link: https://github.com/acpica/acpica/commit/0d5a0568
+Link: https://github.com/acpica/acpica/commit/5bea13a9
+Signed-off-by: Bob Moore <robert.moore@intel.com>
+Signed-off-by: Lv Zheng <lv.zheng@intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ include/acpi/acpixf.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/acpi/acpixf.h b/include/acpi/acpixf.h
+index f5e10dd..12f4266 100644
+--- a/include/acpi/acpixf.h
++++ b/include/acpi/acpixf.h
+@@ -46,7 +46,7 @@
+ 
+ /* Current ACPICA subsystem version in YYYYMMDD format */
+ 
+-#define ACPI_CA_VERSION                 0x20160930
++#define ACPI_CA_VERSION                 0x20161222
+ 
+ #include <acpi/acconfig.h>
+ #include <acpi/actypes.h>
+-- 
+2.7.4
+

@@ -1,4 +1,4 @@
-From 5a4211d2e047eb8c819c2b5a2b216b3046dcce74 Mon Sep 17 00:00:00 2001
+From 91925a47e362fd0a77b530150e0a6cb1a9febf27 Mon Sep 17 00:00:00 2001
 From: Koan-Sin Tan <koansin.tan@gmail.com>
 Date: Fri, 15 Apr 2016 09:01:44 +0800
 Subject: [PATCH 3/4] Add L2 cache topology to MT8173
@@ -8,7 +8,7 @@ Subject: [PATCH 3/4] Add L2 cache topology to MT8173
  1 file changed, 12 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 2ef7501..a1e6359 100644
+index a49e41e..6d54bd8 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 @@ -154,6 +154,7 @@
@@ -16,33 +16,33 @@ index 2ef7501..a1e6359 100644
  			reg = <0x000>;
  			enable-method = "psci";
 +			next-level-cache = <&L2_0>;
- 			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
+ 			power-domains = <&CPU_PD0>;
  			clocks = <&infracfg CLK_INFRA_CA53SEL>,
- 				 <&apmixedsys CLK_APMIXED_MAINPLL>;
+ 					<&apmixedsys CLK_APMIXED_MAINPLL>;
 @@ -166,6 +167,7 @@
  			compatible = "arm,cortex-a53";
  			reg = <0x001>;
  			enable-method = "psci";
 +			next-level-cache = <&L2_0>;
- 			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
+ 			power-domains = <&CPU_PD1>;
  			clocks = <&infracfg CLK_INFRA_CA53SEL>,
- 				 <&apmixedsys CLK_APMIXED_MAINPLL>;
+ 					<&apmixedsys CLK_APMIXED_MAINPLL>;
 @@ -178,6 +180,7 @@
  			compatible = "arm,cortex-a57";
  			reg = <0x100>;
  			enable-method = "psci";
 +			next-level-cache = <&L2_1>;
- 			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
+ 			power-domains = <&CPU_PD2>;
  			clocks = <&infracfg CLK_INFRA_CA57SEL>,
- 				 <&apmixedsys CLK_APMIXED_MAINPLL>;
+ 					<&apmixedsys CLK_APMIXED_MAINPLL>;
 @@ -190,6 +193,7 @@
  			compatible = "arm,cortex-a57";
  			reg = <0x101>;
  			enable-method = "psci";
 +			next-level-cache = <&L2_1>;
- 			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
+ 			power-domains = <&CPU_PD3>;
  			clocks = <&infracfg CLK_INFRA_CA57SEL>,
- 				 <&apmixedsys CLK_APMIXED_MAINPLL>;
+ 					<&apmixedsys CLK_APMIXED_MAINPLL>;
 @@ -197,6 +201,14 @@
  			operating-points-v2 = <&cluster1_opp>;
  		};

@@ -1,4 +1,4 @@
-From 2abb58511219a9449cea522f47691ca69f576303 Mon Sep 17 00:00:00 2001
+From ee5f8a76264afe7b8c26f5a8b7aa5c9ef8ed3d61 Mon Sep 17 00:00:00 2001
 From: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
 Date: Sat, 5 Dec 2015 16:09:44 +0800
 Subject: [PATCH] ARM64: dts: mt8173: Add CPU OPP, clock and regulator supply
@@ -45,7 +45,7 @@ index 0ecaad4..0ee23a5 100644
  	status = "okay";
  };
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 1294bb7..843aa0b 100644
+index f6294d9..bb73991 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 @@ -51,6 +51,80 @@
@@ -132,9 +132,9 @@ index 1294bb7..843aa0b 100644
 @@ -81,6 +155,10 @@
  			reg = <0x000>;
  			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
+ 			power-domains = <&CPU_PD0>;
 +			clocks = <&infracfg CLK_INFRA_CA53SEL>,
-+				 <&apmixedsys CLK_APMIXED_MAINPLL>;
++					<&apmixedsys CLK_APMIXED_MAINPLL>;
 +			clock-names = "cpu", "intermediate";
 +			operating-points-v2 = <&cluster0_opp>;
  		};
@@ -143,9 +143,9 @@ index 1294bb7..843aa0b 100644
 @@ -89,6 +167,10 @@
  			reg = <0x001>;
  			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
+ 			power-domains = <&CPU_PD1>;
 +			clocks = <&infracfg CLK_INFRA_CA53SEL>,
-+				 <&apmixedsys CLK_APMIXED_MAINPLL>;
++					<&apmixedsys CLK_APMIXED_MAINPLL>;
 +			clock-names = "cpu", "intermediate";
 +			operating-points-v2 = <&cluster0_opp>;
  		};
@@ -154,9 +154,9 @@ index 1294bb7..843aa0b 100644
 @@ -97,6 +179,10 @@
  			reg = <0x100>;
  			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
+ 			power-domains = <&CPU_PD2>;
 +			clocks = <&infracfg CLK_INFRA_CA57SEL>,
-+				 <&apmixedsys CLK_APMIXED_MAINPLL>;
++					<&apmixedsys CLK_APMIXED_MAINPLL>;
 +			clock-names = "cpu", "intermediate";
 +			operating-points-v2 = <&cluster1_opp>;
  		};
@@ -165,10 +165,10 @@ index 1294bb7..843aa0b 100644
 @@ -105,6 +191,10 @@
  			reg = <0x101>;
  			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
+ 			power-domains = <&CPU_PD3>;
 +			clocks = <&infracfg CLK_INFRA_CA57SEL>,
-+				 <&apmixedsys CLK_APMIXED_MAINPLL>;
-+			lock-names = "cpu", "intermediate";
++					<&apmixedsys CLK_APMIXED_MAINPLL>;
++			clock-names = "cpu", "intermediate";
 +			operating-points-v2 = <&cluster1_opp>;
  		};
  

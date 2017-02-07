@@ -1,0 +1,49 @@
+From 57e856da7e9c84b839c6fcebf2bc92e41c7a94af Mon Sep 17 00:00:00 2001
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Date: Wed, 18 Jan 2017 10:48:24 -0800
+Subject: [PATCH 63/83] cpufreq: intel_pstate: Make HWP limits compatible with
+ legacy
+
+Under HWP the performance limits are calculated using max_perf_pct
+and min_perf_pct using possible performance, not available performance.
+The available performance can be reduced by no_turbo setting. To make
+compatible with legacy mode, use max/min performance percentage with
+respect to available performance.
+
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpufreq/intel_pstate.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+index 735e3e8..9548209 100644
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -875,7 +875,10 @@ static void intel_pstate_hwp_set(struct cpufreq_policy *policy)
+ 
+ 		rdmsrl_on_cpu(cpu, MSR_HWP_CAPABILITIES, &cap);
+ 		hw_min = HWP_LOWEST_PERF(cap);
+-		hw_max = HWP_HIGHEST_PERF(cap);
++		if (limits->no_turbo)
++			hw_max = HWP_GUARANTEED_PERF(cap);
++		else
++			hw_max = HWP_HIGHEST_PERF(cap);
+ 		range = hw_max - hw_min;
+ 
+ 		max_perf_pct = perf_limits->max_perf_pct;
+@@ -889,11 +892,6 @@ static void intel_pstate_hwp_set(struct cpufreq_policy *policy)
+ 
+ 		adj_range = max_perf_pct * range / 100;
+ 		max = hw_min + adj_range;
+-		if (limits->no_turbo) {
+-			hw_max = HWP_GUARANTEED_PERF(cap);
+-			if (hw_max < max)
+-				max = hw_max;
+-		}
+ 
+ 		value &= ~HWP_MAX_PERF(~0L);
+ 		value |= HWP_MAX_PERF(max);
+-- 
+2.7.4
+

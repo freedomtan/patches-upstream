@@ -1,0 +1,63 @@
+From 9908859acaa95640d4a07991a93f7cd5bfc18e02 Mon Sep 17 00:00:00 2001
+From: Alex Shi <alex.shi@linaro.org>
+Date: Thu, 12 Jan 2017 21:27:04 +0800
+Subject: [PATCH 51/83] cpuidle/menu: add per CPU PM QoS resume latency
+ consideration
+
+There may be special requirements on CPU response time, like if a
+interrupt is pinned to a CPU, that CPU should not go into excessively
+deep idle states.  For this reason, add a mechanism for adding
+PM QoS resume latency constraints for individual CPUs and modify the
+menu governor to take them into account.
+
+To that end, extend the device PM QoS pm_qos_resume_latency attribute
+to CPUs, which is possible, because the exit latency for CPUs is
+effectively equivalent to the resume latency for devices.
+
+Signed-off-by: Alex Shi <alex.shi@linaro.org>
+Acked-by: Rik van Riel <riel@redhat.com>
+[ rjw : Subject & changelog ]
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpuidle/governors/menu.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
+index 07e36bb..8d6d25c 100644
+--- a/drivers/cpuidle/governors/menu.c
++++ b/drivers/cpuidle/governors/menu.c
+@@ -19,6 +19,7 @@
+ #include <linux/tick.h>
+ #include <linux/sched.h>
+ #include <linux/math64.h>
++#include <linux/cpu.h>
+ 
+ /*
+  * Please note when changing the tuning values:
+@@ -280,17 +281,23 @@ static unsigned int get_typical_interval(struct menu_device *data)
+ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
+ {
+ 	struct menu_device *data = this_cpu_ptr(&menu_devices);
++	struct device *device = get_cpu_device(dev->cpu);
+ 	int latency_req = pm_qos_request(PM_QOS_CPU_DMA_LATENCY);
+ 	int i;
+ 	unsigned int interactivity_req;
+ 	unsigned int expected_interval;
+ 	unsigned long nr_iowaiters, cpu_load;
++	int resume_latency = dev_pm_qos_read_value(device);
+ 
+ 	if (data->needs_update) {
+ 		menu_update(drv, dev);
+ 		data->needs_update = 0;
+ 	}
+ 
++	/* resume_latency is 0 means no restriction */
++	if (resume_latency && resume_latency < latency_req)
++		latency_req = resume_latency;
++
+ 	/* Special case when user has set very strict latency requirement */
+ 	if (unlikely(latency_req == 0))
+ 		return 0;
+-- 
+2.7.4
+

@@ -1,0 +1,30 @@
+From 0025001cba8ff549bcfd1748077adf7f4cbb45c7 Mon Sep 17 00:00:00 2001
+From: Lina Iyer <lina.iyer@linaro.org>
+Date: Mon, 3 Oct 2016 10:56:58 -0600
+Subject: [PATCH 75/83] PM / Domains: allow platform specific data for genpd
+ states
+
+Allow platforms to save a state specific parameter for the genpd state.
+The parameter would be used to identify the state when the platform is
+called to power off the domain.
+
+Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
+---
+ include/linux/pm_domain.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index 81ece61..baa1783 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -42,6 +42,7 @@ struct genpd_power_state {
+ 	s64 power_on_latency_ns;
+ 	s64 residency_ns;
+ 	struct fwnode_handle *fwnode;
++	u32 param;
+ };
+ 
+ struct genpd_lock_ops;
+-- 
+2.7.4
+
