@@ -1,0 +1,173 @@
+From c265f0126a8e4431a46ba2f21f8085b64f4fcc02 Mon Sep 17 00:00:00 2001
+From: Juri Lelli <juri.lelli@arm.com>
+Date: Thu, 19 Nov 2015 16:18:38 +0000
+Subject: [PATCH 05/58] arm64: parse cpu capacity-dmips-mhz from DT
+
+With the introduction of cpu capacity-dmips-mhz bindings, CPU capacities
+can now be calculated from values extracted from DT and information
+coming from cpufreq. Add parsing of DT information at boot time, and
+complement it with cpufreq information. Also, store such information
+using per CPU variables, as we do for arm.
+
+Caveat: the information provided by this patch will start to be used in
+the future. We need to #define arch_scale_cpu_capacity to something
+provided in arch, so that scheduler's default implementation (which gets
+used if arch_scale_cpu_capacity is not defined) is overwritten.
+
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Juri Lelli <juri.lelli@arm.com>
+---
+ arch/arm64/kernel/topology.c | 80 +-------------------------------------------
+ 1 file changed, 1 insertion(+), 79 deletions(-)
+
+diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+index 655e65f..a58faaa 100644
+--- a/arch/arm64/kernel/topology.c
++++ b/arch/arm64/kernel/topology.c
+@@ -21,7 +21,6 @@
+ #include <linux/of.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+-#include <linux/string.h>
+ #include <linux/cpufreq.h>
+ 
+ #include <asm/cpu.h>
+@@ -29,7 +28,6 @@
+ #include <asm/topology.h>
+ 
+ static DEFINE_PER_CPU(unsigned long, cpu_scale) = SCHED_CAPACITY_SCALE;
+-static DEFINE_MUTEX(cpu_scale_mutex);
+ 
+ unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)
+ {
+@@ -41,65 +39,6 @@ static void set_capacity_scale(unsigned int cpu, unsigned long capacity)
+ 	per_cpu(cpu_scale, cpu) = capacity;
+ }
+ 
+-#ifdef CONFIG_PROC_SYSCTL
+-static ssize_t cpu_capacity_show(struct device *dev,
+-				 struct device_attribute *attr,
+-				 char *buf)
+-{
+-	struct cpu *cpu = container_of(dev, struct cpu, dev);
+-
+-	return sprintf(buf, "%lu\n",
+-			arch_scale_cpu_capacity(NULL, cpu->dev.id));
+-}
+-
+-static ssize_t cpu_capacity_store(struct device *dev,
+-				  struct device_attribute *attr,
+-				  const char *buf,
+-				  size_t count)
+-{
+-	struct cpu *cpu = container_of(dev, struct cpu, dev);
+-	int this_cpu = cpu->dev.id, i;
+-	unsigned long new_capacity;
+-	ssize_t ret;
+-
+-	if (count) {
+-		ret = kstrtoul(buf, 0, &new_capacity);
+-		if (ret)
+-			return ret;
+-		if (new_capacity > SCHED_CAPACITY_SCALE)
+-			return -EINVAL;
+-
+-		mutex_lock(&cpu_scale_mutex);
+-		for_each_cpu(i, &cpu_topology[this_cpu].core_sibling)
+-			set_capacity_scale(i, new_capacity);
+-		mutex_unlock(&cpu_scale_mutex);
+-	}
+-
+-	return count;
+-}
+-
+-static DEVICE_ATTR_RW(cpu_capacity);
+-
+-static int register_cpu_capacity_sysctl(void)
+-{
+-	int i;
+-	struct device *cpu;
+-
+-	for_each_possible_cpu(i) {
+-		cpu = get_cpu_device(i);
+-		if (!cpu) {
+-			pr_err("%s: too early to get CPU%d device!\n",
+-			       __func__, i);
+-			continue;
+-		}
+-		device_create_file(cpu, &dev_attr_cpu_capacity);
+-	}
+-
+-	return 0;
+-}
+-subsys_initcall(register_cpu_capacity_sysctl);
+-#endif
+-
+ static u32 capacity_scale;
+ static u32 *raw_capacity;
+ static bool cap_parsing_failed;
+@@ -150,7 +89,6 @@ static void normalize_cpu_capacity(void)
+ 		return;
+ 
+ 	pr_debug("cpu_capacity: capacity_scale=%u\n", capacity_scale);
+-	mutex_lock(&cpu_scale_mutex);
+ 	for_each_possible_cpu(cpu) {
+ 		pr_debug("cpu_capacity: cpu=%d raw_capacity=%u\n",
+ 			 cpu, raw_capacity[cpu]);
+@@ -160,14 +98,11 @@ static void normalize_cpu_capacity(void)
+ 		pr_debug("cpu_capacity: CPU%d cpu_capacity=%lu\n",
+ 			cpu, arch_scale_cpu_capacity(NULL, cpu));
+ 	}
+-	mutex_unlock(&cpu_scale_mutex);
+ }
+ 
+ #ifdef CONFIG_CPU_FREQ
+ static cpumask_var_t cpus_to_visit;
+ static bool cap_parsing_done;
+-static void parsing_done_workfn(struct work_struct *work);
+-static DECLARE_WORK(parsing_done_work, parsing_done_workfn);
+ 
+ static int
+ init_cpu_capacity_callback(struct notifier_block *nb,
+@@ -198,7 +133,6 @@ init_cpu_capacity_callback(struct notifier_block *nb,
+ 			kfree(raw_capacity);
+ 			pr_debug("cpu_capacity: parsing done\n");
+ 			cap_parsing_done = true;
+-			schedule_work(&parsing_done_work);
+ 		}
+ 	}
+ 	return 0;
+@@ -210,12 +144,7 @@ static struct notifier_block init_cpu_capacity_notifier = {
+ 
+ static int __init register_cpufreq_notifier(void)
+ {
+-	/*
+-	 * on ACPI-based systems we need to use the default cpu capacity
+-	 * until we have the necessary code to parse the cpu capacity, so
+-	 * skip registering cpufreq notifier.
+-	 */
+-	if (!acpi_disabled || cap_parsing_failed)
++	if (cap_parsing_failed)
+ 		return -EINVAL;
+ 
+ 	if (!alloc_cpumask_var(&cpus_to_visit, GFP_KERNEL)) {
+@@ -228,13 +157,6 @@ static int __init register_cpufreq_notifier(void)
+ 					 CPUFREQ_POLICY_NOTIFIER);
+ }
+ core_initcall(register_cpufreq_notifier);
+-
+-static void parsing_done_workfn(struct work_struct *work)
+-{
+-	cpufreq_unregister_notifier(&init_cpu_capacity_notifier,
+-					 CPUFREQ_POLICY_NOTIFIER);
+-}
+-
+ #else
+ static int __init free_raw_capacity(void)
+ {
+-- 
+2.7.4
+

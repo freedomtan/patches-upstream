@@ -1,0 +1,102 @@
+From ca3a3c9f49f382af3fd51eba0537dda61235c932 Mon Sep 17 00:00:00 2001
+From: Juri Lelli <juri.lelli@arm.com>
+Date: Thu, 15 Oct 2015 13:53:37 +0100
+Subject: [PATCH 07/58] arm: add sysfs cpu_capacity attribute
+
+Add a sysfs cpu_capacity attribute with which it is possible to read and
+write (thus over-writing default values) CPUs capacity. This might be
+useful in situations where values needs changing after boot.
+
+The new attribute shows up as:
+
+ /sys/devices/system/cpu/cpu*/cpu_capacity
+
+Cc: Russell King <linux@arm.linux.org.uk>
+Signed-off-by: Juri Lelli <juri.lelli@arm.com>
+---
+ arch/arm/kernel/topology.c | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm/kernel/topology.c b/arch/arm/kernel/topology.c
+index 0610d83..5c07ef7 100644
+--- a/arch/arm/kernel/topology.c
++++ b/arch/arm/kernel/topology.c
+@@ -57,17 +57,23 @@ static void set_capacity_scale(unsigned int cpu, unsigned long capacity)
+ }
+ 
+ #ifdef CONFIG_PROC_SYSCTL
+-static ssize_t cpu_capacity_show(struct device *dev,
++#include <asm/cpu.h>
++#include <linux/string.h>
++static ssize_t show_cpu_capacity(struct device *dev,
+ 				 struct device_attribute *attr,
+ 				 char *buf)
+ {
+ 	struct cpu *cpu = container_of(dev, struct cpu, dev);
++	ssize_t rc;
++	int cpunum = cpu->dev.id;
++	unsigned long capacity = arch_scale_cpu_capacity(NULL, cpunum);
+ 
+-	return sprintf(buf, "%lu\n",
+-			arch_scale_cpu_capacity(NULL, cpu->dev.id));
++	rc = sprintf(buf, "%lu\n", capacity);
++
++	return rc;
+ }
+ 
+-static ssize_t cpu_capacity_store(struct device *dev,
++static ssize_t store_cpu_capacity(struct device *dev,
+ 				  struct device_attribute *attr,
+ 				  const char *buf,
+ 				  size_t count)
+@@ -78,7 +84,9 @@ static ssize_t cpu_capacity_store(struct device *dev,
+ 	ssize_t ret;
+ 
+ 	if (count) {
+-		ret = kstrtoul(buf, 0, &new_capacity);
++		char *p = (char *) buf;
++
++		ret = kstrtoul(p, 0, &new_capacity);
+ 		if (ret)
+ 			return ret;
+ 		if (new_capacity > SCHED_CAPACITY_SCALE)
+@@ -93,7 +101,10 @@ static ssize_t cpu_capacity_store(struct device *dev,
+ 	return count;
+ }
+ 
+-static DEVICE_ATTR_RW(cpu_capacity);
++static DEVICE_ATTR(cpu_capacity,
++		   0644,
++		   show_cpu_capacity,
++		   store_cpu_capacity);
+ 
+ static int register_cpu_capacity_sysctl(void)
+ {
+@@ -112,7 +123,7 @@ static int register_cpu_capacity_sysctl(void)
+ 
+ 	return 0;
+ }
+-subsys_initcall(register_cpu_capacity_sysctl);
++late_initcall(register_cpu_capacity_sysctl);
+ #endif
+ 
+ #ifdef CONFIG_OF
+@@ -194,6 +205,7 @@ static void normalize_cpu_capacity(void)
+ 		return;
+ 
+ 	pr_debug("cpu_capacity: capacity_scale=%u\n", capacity_scale);
++	mutex_lock(&cpu_scale_mutex);
+ 	for_each_possible_cpu(cpu) {
+ 		capacity = (raw_capacity[cpu] << SCHED_CAPACITY_SHIFT)
+ 			/ capacity_scale;
+@@ -201,6 +213,7 @@ static void normalize_cpu_capacity(void)
+ 		pr_debug("cpu_capacity: CPU%d cpu_capacity=%lu\n",
+ 			cpu, arch_scale_cpu_capacity(NULL, cpu));
+ 	}
++	mutex_unlock(&cpu_scale_mutex);
+ }
+ 
+ #ifdef CONFIG_CPU_FREQ
+-- 
+2.7.4
+
