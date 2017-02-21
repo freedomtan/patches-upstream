@@ -1,14 +1,14 @@
-From 9bd869a3e9eaccb2a540920a984eb845c0b8761d Mon Sep 17 00:00:00 2001
+From 84f89c89004153953822fe73a16770dae4cc941d Mon Sep 17 00:00:00 2001
 From: Koan-Sin Tan <freedom.tan@mediatek.com>
 Date: Fri, 3 Jun 2016 17:08:16 +0800
-Subject: [PATCH 2/3] enable /dev/mmcblk0* on rev5
+Subject: [PATCH 2/2] enable /dev/mmcblk0* on rev5
 
 ---
  arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi | 4 ++++
  1 file changed, 4 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi b/arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi
-index 071f7c3..dec0e9d 100644
+index 57fb52e..c18f111 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi
 @@ -310,10 +310,14 @@
