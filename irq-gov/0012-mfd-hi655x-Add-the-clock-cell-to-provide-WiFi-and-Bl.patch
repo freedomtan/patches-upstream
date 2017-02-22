@@ -1,0 +1,33 @@
+From a774fa125aec7004463603dbcb7c09036e5216d1 Mon Sep 17 00:00:00 2001
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Date: Sun, 22 Jan 2017 10:55:24 +0100
+Subject: [PATCH 12/20] mfd: hi655x: Add the clock cell to provide WiFi and
+ Bluetooth
+
+The hi655x is a PMIC with regulator but also provides a clock for the WiFi
+and the bluetooth which is missing in the current implementation.
+
+Add the clock cell so it can be used in the next patch via the dts.
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ drivers/mfd/hi655x-pmic.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/hi655x-pmic.c b/drivers/mfd/hi655x-pmic.c
+index ba706ad..c37ccbf 100644
+--- a/drivers/mfd/hi655x-pmic.c
++++ b/drivers/mfd/hi655x-pmic.c
+@@ -77,7 +77,8 @@ static const struct mfd_cell hi655x_pmic_devs[] = {
+ 		.num_resources	= ARRAY_SIZE(pwrkey_resources),
+ 		.resources	= &pwrkey_resources[0],
+ 	},
+-	{	.name		= "hi655x-regulator", },
++	{	.name		= "hi655x-regulator",	},
++	{	.name		= "hi655x-clk",		},
+ };
+ 
+ static void hi655x_local_irq_clear(struct regmap *map)
+-- 
+2.7.4
+

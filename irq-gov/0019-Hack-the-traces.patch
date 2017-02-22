@@ -1,0 +1,53 @@
+From 7e1417f724fe4822668e93539e70dd43f47bea3e Mon Sep 17 00:00:00 2001
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Date: Wed, 15 Feb 2017 10:18:16 +0100
+Subject: [PATCH 19/20] Hack the traces
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ include/trace/events/power.h | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/include/trace/events/power.h b/include/trace/events/power.h
+index cac4a7f..37b4284 100644
+--- a/include/trace/events/power.h
++++ b/include/trace/events/power.h
+@@ -40,24 +40,31 @@ DEFINE_EVENT(cpu, cpu_idle,
+ 
+ TRACE_EVENT(cpu_idle_prediction,
+ 
+-        TP_PROTO(s64 prediction, const char *event, unsigned int cpu_id),
++        TP_PROTO(s64 irq, s64 timer, s64 ipi, s64 prediction, const char *event, unsigned int cpu_id),
+ 
+-        TP_ARGS(prediction, event, cpu_id),
++        TP_ARGS(irq, timer, ipi, prediction, event, cpu_id),
+ 
+         TP_STRUCT__entry(
++		__field(	s64,		irq		)
++		__field(	s64,		timer		)
++		__field(	s64,		ipi		)
+ 		__field(	s64,		prediction	)
+ 		__string(	event, 		event		)
+ 		__field(	u32,		cpu_id		)
+ 	),
+ 
+         TP_fast_assign(
++		__entry->irq = irq;
++		__entry->timer = timer;
++		__entry->ipi = ipi;
+ 		__entry->prediction = prediction;
+ 		__assign_str(event, event);
+ 		__entry->cpu_id	  = cpu_id;
+ 	),
+ 
+-	TP_printk("prediction=%lld event=%s cpu_id=%lu", __entry->prediction,
+-		  __get_str(event), (unsigned long)__entry->cpu_id)
++	TP_printk("irq=%lld timer=%lld ipi=%lld prediction=%lld event=%s cpu_id=%lu",
++		  __entry->irq == S64_MAX ? 0 : __entry->irq, __entry->timer, __entry->ipi,
++		  __entry->prediction, __get_str(event), (unsigned long)__entry->cpu_id)
+ );
+ 
+ TRACE_EVENT(cpu_idle_duration,
+-- 
+2.7.4
+

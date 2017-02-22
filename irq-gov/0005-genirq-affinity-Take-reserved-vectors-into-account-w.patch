@@ -1,0 +1,69 @@
+From 6d68c22f65671ca07275e30e1b9f70074b229a93 Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Tue, 15 Nov 2016 10:12:58 +0100
+Subject: [PATCH 05/20] genirq/affinity: Take reserved vectors into account
+ when spreading irqs
+
+The recent addition of reserved vectors at the beginning or the end of the
+vector space did not take the reserved vectors at the beginning into
+account for the various loop exit conditions. As a consequence the last
+vectors of the spread area are not included into the spread algorithm and
+are treated like the reserved vectors at the end of the vector space and
+get the default affinity mask assigned.
+
+Sum up the affinity vectors and the reserved vectors at the beginning and
+use the sum as exit condition.
+
+[ tglx: Fixed all conditions instead of only one and massaged changelog ]
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Link: http://lkml.kernel.org/r/1479201178-29604-2-git-send-email-hch@lst.de
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ kernel/irq/affinity.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
+index 665a47f..0fb323e 100644
+--- a/kernel/irq/affinity.c
++++ b/kernel/irq/affinity.c
+@@ -61,7 +61,7 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ {
+ 	int n, nodes, vecs_per_node, cpus_per_vec, extra_vecs, curvec;
+ 	int affv = nvecs - affd->pre_vectors - affd->post_vectors;
+-
++	int last_affv = affv + affd->pre_vectors;
+ 	nodemask_t nodemsk = NODE_MASK_NONE;
+ 	struct cpumask *masks;
+ 	cpumask_var_t nmsk;
+@@ -88,7 +88,7 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ 	if (affv <= nodes) {
+ 		for_each_node_mask(n, nodemsk) {
+ 			cpumask_copy(masks + curvec, cpumask_of_node(n));
+-			if (++curvec == affv)
++			if (++curvec == last_affv)
+ 				break;
+ 		}
+ 		goto done;
+@@ -108,7 +108,8 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ 		/* Calculate the number of cpus per vector */
+ 		ncpus = cpumask_weight(nmsk);
+ 
+-		for (v = 0; curvec < affv && v < vecs_to_assign; curvec++, v++) {
++		for (v = 0; curvec < last_affv && v < vecs_to_assign;
++		     curvec++, v++) {
+ 			cpus_per_vec = ncpus / vecs_to_assign;
+ 
+ 			/* Account for extra vectors to compensate rounding errors */
+@@ -120,7 +121,7 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ 			irq_spread_init_one(masks + curvec, nmsk, cpus_per_vec);
+ 		}
+ 
+-		if (curvec >= affv)
++		if (curvec >= last_affv)
+ 			break;
+ 	}
+ 
+-- 
+2.7.4
+

@@ -1,0 +1,189 @@
+From e78b4be9cdb842231a96fd6bca3973e31776fa75 Mon Sep 17 00:00:00 2001
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Date: Sat, 4 Feb 2017 21:12:11 +0100
+Subject: [PATCH 16/20] Add traces - debug
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+
+Conflicts:
+	drivers/cpuidle/cpuidle.c
+---
+ drivers/cpuidle/cpuidle.c       |  1 +
+ drivers/cpuidle/governors/irq.c | 68 ++++++++++++++++++++++++++++++++++++++++-
+ include/trace/events/power.h    | 42 +++++++++++++++++++++++++
+ 3 files changed, 110 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
+index eeac45a..61fcdaf 100644
+--- a/drivers/cpuidle/cpuidle.c
++++ b/drivers/cpuidle/cpuidle.c
+@@ -219,6 +219,7 @@ int cpuidle_enter_state(struct cpuidle_device *dev, struct cpuidle_driver *drv,
+ 	start_critical_timings();
+ 
+ 	time_end = ns_to_ktime(local_clock());
++
+ 	trace_cpu_idle_rcuidle(PWR_EVENT_EXIT, dev->cpu);
+ 
+ 	/* The cpu is no longer idle or about to enter idle. */
+diff --git a/drivers/cpuidle/governors/irq.c b/drivers/cpuidle/governors/irq.c
+index a5a322f..8e0298b 100644
+--- a/drivers/cpuidle/governors/irq.c
++++ b/drivers/cpuidle/governors/irq.c
+@@ -14,9 +14,54 @@
+ #include <linux/pm_qos.h>
+ #include <linux/sched.h>
+ #include <linux/tick.h>
++#include <trace/events/power.h>
+ 
+ #include "../cpuidle.h"
+ 
++#define IPI_TIMINGS_SHIFT	3
++#define IPI_TIMINGS_SIZE	(1 << IPI_TIMINGS_SHIFT)
++#define IPI_TIMINGS_MASK	(IPI_TIMINGS_SIZE - 1)
++
++struct ipi_timings {
++	int values[IPI_TIMINGS_SIZE];
++	unsigned int count;
++};
++
++static DEFINE_PER_CPU(struct ipi_timings, ipi_timings);
++
++static void irq_reflect(struct cpuidle_device *dev, int index)
++{
++	struct ipi_timings *timings = this_cpu_ptr(&ipi_timings);
++	unsigned int idx = timings->count & IPI_TIMINGS_MASK;
++
++	timings->values[idx] = dev->last_residency;
++	timings->count++;
++
++	trace_cpu_idle_duration(dev->last_residency, dev->cpu);
++}
++
++static s64 irq_ipi_average(void)
++{
++	struct ipi_timings *timings = this_cpu_ptr(&ipi_timings);
++
++	int i, count;
++	unsigned int index;
++	s64 avg = 0;
++
++	if (timings->count >= IPI_TIMINGS_SIZE) {
++		count = IPI_TIMINGS_SIZE;
++		index = timings->count & IPI_TIMINGS_MASK;
++	} else {
++		count = timings->count;
++		index = 0;
++	}
++
++	for (i = 0; i < count; i++)
++		avg = avg + div_s64((avg - timings->values[i]), i + 1);
++
++	return avg;
++}
++
+ static int irq_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
+ {
+ 	int latency_req = pm_qos_request(PM_QOS_CPU_DMA_LATENCY);
+@@ -26,6 +71,9 @@ static int irq_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
+ 	s64 next_event;
+ 	s64 diff = S64_MAX;
+ 	int i, state = CPUIDLE_DRIVER_STATE_START;
++	unsigned long nr_iowaiters, cpu_load;
++
++        get_iowait_load(&nr_iowaiters, &cpu_load);
+ 
+ 	/*
+ 	 * If there are no interrupt supposed to happen on this CPU,
+@@ -55,10 +103,27 @@ static int irq_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
+ 		 * is enough precise for our purpose.
+ 		 */
+ 		diff >>= 10;
++	} 
++# if 0
++	else if (nr_iowaiters) {
++		/*
++		 * There is no interrupt on this CPU but there are
++		 * blocked tasks waiting for an IO, so there is a high
++		 * probability we will be wakeup by a rescheduling IPI
++		 * In this case, stick to the idle duration time as an
++		 * alternative. We can do better for the moment until
++		 * we are able to discriminate rescheduling coming
++		 * from an IO or a task migration.
++		 */
++		diff = irq_ipi_average();
+ 	}
+-
++#endif
+ 	next_event = min(next_timer_event, diff);
+ 
++	trace_cpu_idle_prediction(next_event,
++				  next_event == next_timer_event ?
++				  "timer" : "irq", dev->cpu);
++
+ 	/*
+ 	 * Find the idle state with the lowest power while satisfying
+ 	 * our constraints. Never, never, default to the polling state
+@@ -104,6 +169,7 @@ static struct cpuidle_governor irq_governor = {
+ 	.select = irq_select,
+ 	.enable = irq_enable,
+ 	.disable = irq_disable,
++	.reflect = irq_reflect,
+ };
+ 
+ static int __init irq_init(void)
+diff --git a/include/trace/events/power.h b/include/trace/events/power.h
+index 54e3aad..cac4a7f 100644
+--- a/include/trace/events/power.h
++++ b/include/trace/events/power.h
+@@ -38,6 +38,48 @@ DEFINE_EVENT(cpu, cpu_idle,
+ 	TP_ARGS(state, cpu_id)
+ );
+ 
++TRACE_EVENT(cpu_idle_prediction,
++
++        TP_PROTO(s64 prediction, const char *event, unsigned int cpu_id),
++
++        TP_ARGS(prediction, event, cpu_id),
++
++        TP_STRUCT__entry(
++		__field(	s64,		prediction	)
++		__string(	event, 		event		)
++		__field(	u32,		cpu_id		)
++	),
++
++        TP_fast_assign(
++		__entry->prediction = prediction;
++		__assign_str(event, event);
++		__entry->cpu_id	  = cpu_id;
++	),
++
++	TP_printk("prediction=%lld event=%s cpu_id=%lu", __entry->prediction,
++		  __get_str(event), (unsigned long)__entry->cpu_id)
++);
++
++TRACE_EVENT(cpu_idle_duration,
++
++	TP_PROTO(int duration, unsigned int cpu_id),
++
++        TP_ARGS(duration, cpu_id),
++
++        TP_STRUCT__entry(
++		__field(	int,		duration)
++		__field(	u32,		cpu_id		)
++	),
++
++        TP_fast_assign(
++		__entry->duration = duration;
++		__entry->cpu_id	  = cpu_id;
++	),
++
++	TP_printk("duration=%d cpu_id=%lu", __entry->duration,
++		  (unsigned long)__entry->cpu_id)
++);
++
+ TRACE_EVENT(powernv_throttle,
+ 
+ 	TP_PROTO(int chip_id, const char *reason, int pmax),
+-- 
+2.7.4
+

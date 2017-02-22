@@ -1,0 +1,115 @@
+From 0e4fce4954f5ba6a9ecc8a5914f1d321bc90fc20 Mon Sep 17 00:00:00 2001
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Date: Mon, 5 Dec 2016 10:29:42 +0100
+Subject: [PATCH 14/20] cpuidle: Move governor's private structure to the
+ drivers/cpuidle dir
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ drivers/cpuidle/cpuidle.h          | 26 ++++++++++++++++++++++++++
+ drivers/cpuidle/governors/ladder.c |  2 ++
+ drivers/cpuidle/governors/menu.c   |  2 ++
+ include/linux/cpuidle.h            | 26 --------------------------
+ 4 files changed, 30 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/cpuidle/cpuidle.h b/drivers/cpuidle/cpuidle.h
+index f87f399..eeb8fd1 100644
+--- a/drivers/cpuidle/cpuidle.h
++++ b/drivers/cpuidle/cpuidle.h
+@@ -68,4 +68,30 @@ static inline void cpuidle_coupled_unregister_device(struct cpuidle_device *dev)
+ }
+ #endif
+ 
++/******************************
++ * CPUIDLE GOVERNOR INTERFACE *
++ ******************************/
++
++struct cpuidle_governor {
++	char			name[CPUIDLE_NAME_LEN];
++	struct list_head 	governor_list;
++	unsigned int		rating;
++
++	int  (*enable)		(struct cpuidle_driver *drv,
++					struct cpuidle_device *dev);
++	void (*disable)		(struct cpuidle_driver *drv,
++					struct cpuidle_device *dev);
++
++	int  (*select)		(struct cpuidle_driver *drv,
++					struct cpuidle_device *dev);
++	void (*reflect)		(struct cpuidle_device *dev, int index);
++};
++
++#ifdef CONFIG_CPU_IDLE
++extern int cpuidle_register_governor(struct cpuidle_governor *gov);
++#else
++static inline int cpuidle_register_governor(struct cpuidle_governor *gov)
++{return 0;}
++#endif
++
+ #endif /* __DRIVER_CPUIDLE_H */
+diff --git a/drivers/cpuidle/governors/ladder.c b/drivers/cpuidle/governors/ladder.c
+index ac321f0..ee20b55 100644
+--- a/drivers/cpuidle/governors/ladder.c
++++ b/drivers/cpuidle/governors/ladder.c
+@@ -21,6 +21,8 @@
+ #include <asm/io.h>
+ #include <linux/uaccess.h>
+ 
++#include "../cpuidle.h"
++
+ #define PROMOTION_COUNT 4
+ #define DEMOTION_COUNT 1
+ 
+diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
+index d9b5b93..bba3c2af 100644
+--- a/drivers/cpuidle/governors/menu.c
++++ b/drivers/cpuidle/governors/menu.c
+@@ -20,6 +20,8 @@
+ #include <linux/sched.h>
+ #include <linux/math64.h>
+ 
++#include "../cpuidle.h"
++
+ /*
+  * Please note when changing the tuning values:
+  * If (MAX_INTERESTING-1) * RESOLUTION > UINT_MAX, the result of
+diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
+index 0a1b716..138fe82 100644
+--- a/include/linux/cpuidle.h
++++ b/include/linux/cpuidle.h
+@@ -223,32 +223,6 @@ static inline void cpuidle_coupled_parallel_barrier(struct cpuidle_device *dev,
+ }
+ #endif
+ 
+-/******************************
+- * CPUIDLE GOVERNOR INTERFACE *
+- ******************************/
+-
+-struct cpuidle_governor {
+-	char			name[CPUIDLE_NAME_LEN];
+-	struct list_head 	governor_list;
+-	unsigned int		rating;
+-
+-	int  (*enable)		(struct cpuidle_driver *drv,
+-					struct cpuidle_device *dev);
+-	void (*disable)		(struct cpuidle_driver *drv,
+-					struct cpuidle_device *dev);
+-
+-	int  (*select)		(struct cpuidle_driver *drv,
+-					struct cpuidle_device *dev);
+-	void (*reflect)		(struct cpuidle_device *dev, int index);
+-};
+-
+-#ifdef CONFIG_CPU_IDLE
+-extern int cpuidle_register_governor(struct cpuidle_governor *gov);
+-#else
+-static inline int cpuidle_register_governor(struct cpuidle_governor *gov)
+-{return 0;}
+-#endif
+-
+ #ifdef CONFIG_ARCH_HAS_CPU_RELAX
+ #define CPUIDLE_DRIVER_STATE_START	1
+ #else
+-- 
+2.7.4
+

@@ -1,0 +1,232 @@
+From bffc42aecc7a2e2a2748bfe18590cf80c21605e3 Mon Sep 17 00:00:00 2001
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Date: Tue, 26 Jan 2016 23:36:48 +0100
+Subject: [PATCH 07/20] irq: Track the interrupt timings
+
+The interrupt framework gives a lot of information about each interrupt.
+
+It does not keep track of when those interrupts occur though.
+
+This patch provides a mean to record the timestamp for each interrupt
+occurrences in a per-CPU circular buffer to help with the prediction
+of the next occurrence using a statistical model.
+
+Each CPU can store IRQ_TIMINGS_SIZE events <irq, timestamp>, the current
+value of IRQ_TIMINGS_SIZE is 32.
+
+A static key is introduced so when the irq prediction is switched off at
+runtime, we can reduce the overhead near to zero. The irq timings is
+supposed to be potentially used by different sub-systems and for this reason
+the static key is a ref counter, so when the last use releases the irq
+timings that will result on the effective deactivation of the irq measurement.
+
+It results in most of the code in internals.h for inline reason and a very
+few in the new file timings.c. The latter will contain more in the next patch
+which will provide the statistical model for the next event prediction.
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Acked-by: Nicolas Pitre <nicolas.pitre@linaro.org>
+---
+ include/linux/interrupt.h |  5 ++++
+ kernel/irq/Kconfig        |  3 +++
+ kernel/irq/Makefile       |  1 +
+ kernel/irq/handle.c       |  2 ++
+ kernel/irq/internals.h    | 66 +++++++++++++++++++++++++++++++++++++++++++++++
+ kernel/irq/manage.c       |  3 +++
+ kernel/irq/timings.c      | 30 +++++++++++++++++++++
+ 7 files changed, 110 insertions(+)
+ create mode 100644 kernel/irq/timings.c
+
+diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+index 53144e7..2694dcd 100644
+--- a/include/linux/interrupt.h
++++ b/include/linux/interrupt.h
+@@ -703,6 +703,11 @@ static inline void init_irq_proc(void)
+ }
+ #endif
+ 
++#ifdef CONFIG_IRQ_TIMINGS
++void irq_timings_enable(void);
++void irq_timings_disable(void);
++#endif
++
+ struct seq_file;
+ int show_interrupts(struct seq_file *p, void *v);
+ int arch_show_interrupts(struct seq_file *p, int prec);
+diff --git a/kernel/irq/Kconfig b/kernel/irq/Kconfig
+index 3bbfd6a..38e551d 100644
+--- a/kernel/irq/Kconfig
++++ b/kernel/irq/Kconfig
+@@ -81,6 +81,9 @@ config GENERIC_MSI_IRQ_DOMAIN
+ config HANDLE_DOMAIN_IRQ
+ 	bool
+ 
++config IRQ_TIMINGS
++	bool
++
+ config IRQ_DOMAIN_DEBUG
+ 	bool "Expose hardware/virtual IRQ mapping via debugfs"
+ 	depends on IRQ_DOMAIN && DEBUG_FS
+diff --git a/kernel/irq/Makefile b/kernel/irq/Makefile
+index 1d3ee31..efb5f14 100644
+--- a/kernel/irq/Makefile
++++ b/kernel/irq/Makefile
+@@ -10,3 +10,4 @@ obj-$(CONFIG_PM_SLEEP) += pm.o
+ obj-$(CONFIG_GENERIC_MSI_IRQ) += msi.o
+ obj-$(CONFIG_GENERIC_IRQ_IPI) += ipi.o
+ obj-$(CONFIG_SMP) += affinity.o
++obj-$(CONFIG_IRQ_TIMINGS) += timings.o
+diff --git a/kernel/irq/handle.c b/kernel/irq/handle.c
+index d3f2490..eb4d3e8 100644
+--- a/kernel/irq/handle.c
++++ b/kernel/irq/handle.c
+@@ -138,6 +138,8 @@ irqreturn_t __handle_irq_event_percpu(struct irq_desc *desc, unsigned int *flags
+ 	unsigned int irq = desc->irq_data.irq;
+ 	struct irqaction *action;
+ 
++	record_irq_time(desc);
++
+ 	for_each_action_of_desc(desc, action) {
+ 		irqreturn_t res;
+ 
+diff --git a/kernel/irq/internals.h b/kernel/irq/internals.h
+index bc226e7..9ce33f3 100644
+--- a/kernel/irq/internals.h
++++ b/kernel/irq/internals.h
+@@ -57,6 +57,7 @@ enum {
+ 	IRQS_WAITING		= 0x00000080,
+ 	IRQS_PENDING		= 0x00000200,
+ 	IRQS_SUSPENDED		= 0x00000800,
++	IRQS_TIMINGS		= 0x00001000,
+ };
+ 
+ #include "debug.h"
+@@ -226,3 +227,68 @@ irq_pm_install_action(struct irq_desc *desc, struct irqaction *action) { }
+ static inline void
+ irq_pm_remove_action(struct irq_desc *desc, struct irqaction *action) { }
+ #endif
++
++#ifdef CONFIG_IRQ_TIMINGS
++
++#define IRQ_TIMINGS_SHIFT	5
++#define IRQ_TIMINGS_SIZE	(1 << IRQ_TIMINGS_SHIFT)
++#define IRQ_TIMINGS_MASK	(IRQ_TIMINGS_SIZE - 1)
++
++struct irq_timing {
++	u32 irq;
++	u64 ts;
++};
++
++struct irq_timings {
++	struct irq_timing values[IRQ_TIMINGS_SIZE]; /* our circular buffer */
++	unsigned int count; /* Number of interruptions since last inspection */
++};
++
++DECLARE_PER_CPU(struct irq_timings, irq_timings);
++
++static inline void remove_timings(struct irq_desc *desc)
++{
++	desc->istate &= ~IRQS_TIMINGS;
++}
++
++static inline void setup_timings(struct irq_desc *desc, struct irqaction *act)
++{
++	/*
++	 * We don't need the measurement because the idle code already
++	 * knows the next expiry event.
++	 */
++	if (act->flags & __IRQF_TIMER)
++		return;
++
++	desc->istate |= IRQS_TIMINGS;
++}
++
++extern struct static_key_false irq_timing_enabled;
++
++/*
++ * The function record_irq_time is only called in one place in the
++ * interrupts handler. We want this function always inline so the code
++ * inside is embedded in the function and the static key branching
++ * code can act at the higher level. Without the explicit
++ * __always_inline we can end up with a function call and a small
++ * overhead in the hotpath for nothing.
++ */
++static __always_inline void record_irq_time(struct irq_desc *desc)
++{
++	if (static_key_enabled(&irq_timing_enabled)) {
++		if (desc->istate & IRQS_TIMINGS) {
++			struct irq_timings *timings = this_cpu_ptr(&irq_timings);
++			unsigned int index = timings->count & IRQ_TIMINGS_MASK;
++
++			timings->values[index].ts = local_clock();
++			timings->values[index].irq = irq_desc_get_irq(desc);
++			timings->count++;
++		}
++	}
++}
++#else
++static inline void remove_timings(struct irq_desc *desc) {}
++static inline void setup_timings(struct irq_desc *desc,
++				 struct irqaction *act) {};
++static inline void record_irq_time(struct irq_desc *desc) {}
++#endif /* CONFIG_IRQ_TIMINGS */
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index 6b66959..6fce7d2 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -1366,6 +1366,8 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
+ 		__enable_irq(desc);
+ 	}
+ 
++	setup_timings(desc, new);
++
+ 	raw_spin_unlock_irqrestore(&desc->lock, flags);
+ 
+ 	/*
+@@ -1496,6 +1498,7 @@ static struct irqaction *__free_irq(unsigned int irq, void *dev_id)
+ 		irq_settings_clr_disable_unlazy(desc);
+ 		irq_shutdown(desc);
+ 		irq_release_resources(desc);
++		remove_timings(desc);
+ 	}
+ 
+ #ifdef CONFIG_SMP
+diff --git a/kernel/irq/timings.c b/kernel/irq/timings.c
+new file mode 100644
+index 0000000..21ceca8
+--- /dev/null
++++ b/kernel/irq/timings.c
+@@ -0,0 +1,30 @@
++/*
++ * linux/kernel/irq/timings.c
++ *
++ * Copyright (C) 2016, Linaro Ltd - Daniel Lezcano <daniel.lezcano@linaro.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++#include <linux/percpu.h>
++#include <linux/static_key.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++
++#include "internals.h"
++
++DEFINE_STATIC_KEY_FALSE(irq_timing_enabled);
++
++DEFINE_PER_CPU(struct irq_timings, irq_timings);
++
++void irq_timings_enable(void)
++{
++	static_branch_inc(&irq_timing_enabled);
++}
++
++void irq_timings_disable(void)
++{
++	static_branch_dec(&irq_timing_enabled);
++}
+-- 
+2.7.4
+

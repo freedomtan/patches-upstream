@@ -1,0 +1,52 @@
+From de5387d8677578f0d40fea5f3fefb9d16dc9d9ab Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Tue, 8 Nov 2016 17:15:05 -0800
+Subject: [PATCH 04/20] PCI/MSI: Provide pci_alloc_irq_vectors_affinity()
+
+This is a variant of pci_alloc_irq_vectors() that allows passing a struct
+irq_affinity to provide fine-grained IRQ affinity control.
+
+For now this means being able to exclude vectors at the beginning or end of
+the MSI vector space, but it could also be used for any other quirks needed
+in the future (e.g. more vectors than CPUs, or excluding CPUs from the
+spreading).
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Acked-by: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org
+Cc: linux-pci@vger.kernel.org
+Link: http://lkml.kernel.org/r/1478654107-7384-6-git-send-email-hch@lst.de
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ drivers/pci/msi.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
+index bc4e045..50c5003 100644
+--- a/drivers/pci/msi.c
++++ b/drivers/pci/msi.c
+@@ -1201,11 +1201,15 @@ int pci_alloc_irq_vectors_affinity(struct pci_dev *dev, unsigned int min_vecs,
+ 				   const struct irq_affinity *affd)
+ {
+ 	static const struct irq_affinity msi_default_affd;
+-	const struct irq_affinity *affd = NULL;
+ 	int vecs = -ENOSPC;
+ 
+-	if (flags & PCI_IRQ_AFFINITY)
+-		affd = &msi_default_affd;
++	if (flags & PCI_IRQ_AFFINITY) {
++		if (!affd)
++			affd = &msi_default_affd;
++	} else {
++		if (WARN_ON(affd))
++			affd = NULL;
++	}
+ 
+ 	if (flags & PCI_IRQ_MSIX) {
+ 		vecs = __pci_enable_msix_range(dev, NULL, min_vecs, max_vecs,
+-- 
+2.7.4
+

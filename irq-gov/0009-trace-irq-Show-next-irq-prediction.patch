@@ -1,0 +1,44 @@
+From d750d91861a96798059e30c4c4662986a51d0e02 Mon Sep 17 00:00:00 2001
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Date: Fri, 9 Dec 2016 16:55:01 +0100
+Subject: [PATCH 09/20] trace: irq: Show next irq prediction
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ include/trace/events/irq.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/include/trace/events/irq.h b/include/trace/events/irq.h
+index 1c41b74..e0a2d78 100644
+--- a/include/trace/events/irq.h
++++ b/include/trace/events/irq.h
+@@ -99,6 +99,26 @@ TRACE_EVENT(irq_handler_exit,
+ 		  __entry->irq, __entry->ret ? "handled" : "unhandled")
+ );
+ 
++TRACE_EVENT(irq_next_event,
++
++        TP_PROTO(int irq, u64 next_event),
++
++	TP_ARGS(irq, next_event),
++
++        TP_STRUCT__entry(
++		__field(	int,	irq)
++		__field(	u64,	next_event)
++	),
++
++        TP_fast_assign(
++		__entry->irq		= irq;
++		__entry->next_event 	= next_event;
++	),
++
++	TP_printk("irq=%d next_event=%llu",
++		  __entry->irq, __entry->next_event)
++);
++
+ DECLARE_EVENT_CLASS(softirq,
+ 
+ 	TP_PROTO(unsigned int vec_nr),
+-- 
+2.7.4
+

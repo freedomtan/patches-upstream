@@ -1,0 +1,334 @@
+From 1f18eac8a9e75100a025f75f8e69d34d848654af Mon Sep 17 00:00:00 2001
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Date: Mon, 6 Feb 2017 12:12:50 +0100
+Subject: [PATCH 17/20] irq: Add flags to request_percpu_irq function
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ arch/arc/kernel/perf_event.c              | 2 +-
+ arch/arc/kernel/smp.c                     | 2 +-
+ arch/arm/kernel/smp_twd.c                 | 2 +-
+ arch/arm/xen/enlighten.c                  | 2 +-
+ arch/arm64/boot/dts/hisilicon/hi6220.dtsi | 4 ++--
+ drivers/clocksource/arc_timer.c           | 2 +-
+ drivers/clocksource/arm_arch_timer.c      | 8 ++++----
+ drivers/clocksource/arm_global_timer.c    | 2 +-
+ drivers/clocksource/exynos_mct.c          | 2 +-
+ drivers/clocksource/qcom-timer.c          | 2 +-
+ drivers/clocksource/time-armada-370-xp.c  | 2 +-
+ drivers/clocksource/timer-nps.c           | 2 +-
+ drivers/cpuidle/governors/irq.c           | 7 ++++---
+ drivers/net/ethernet/marvell/mvneta.c     | 2 +-
+ drivers/perf/arm_pmu.c                    | 2 +-
+ include/linux/interrupt.h                 | 5 +++--
+ kernel/irq/manage.c                       | 7 ++++---
+ virt/kvm/arm/arch_timer.c                 | 2 +-
+ virt/kvm/arm/vgic/vgic-init.c             | 2 +-
+ 19 files changed, 31 insertions(+), 28 deletions(-)
+
+diff --git a/arch/arc/kernel/perf_event.c b/arch/arc/kernel/perf_event.c
+index 2ce24e7..2a90c7a 100644
+--- a/arch/arc/kernel/perf_event.c
++++ b/arch/arc/kernel/perf_event.c
+@@ -525,7 +525,7 @@ static int arc_pmu_device_probe(struct platform_device *pdev)
+ 		arc_pmu->irq = irq;
+ 
+ 		/* intc map function ensures irq_set_percpu_devid() called */
+-		request_percpu_irq(irq, arc_pmu_intr, "ARC perf counters",
++		request_percpu_irq(irq, 0, arc_pmu_intr, "ARC perf counters",
+ 				   this_cpu_ptr(&arc_pmu_cpu));
+ 
+ 		on_each_cpu(arc_cpu_pmu_irq_init, &irq, 1);
+diff --git a/arch/arc/kernel/smp.c b/arch/arc/kernel/smp.c
+index 2afbafa..8fd7e72 100644
+--- a/arch/arc/kernel/smp.c
++++ b/arch/arc/kernel/smp.c
+@@ -381,7 +381,7 @@ int smp_ipi_irq_setup(int cpu, irq_hw_number_t hwirq)
+ 	if (!cpu) {
+ 		int rc;
+ 
+-		rc = request_percpu_irq(virq, do_IPI, "IPI Interrupt", dev);
++		rc = request_percpu_irq(virq, 0, do_IPI, "IPI Interrupt", dev);
+ 		if (rc)
+ 			panic("Percpu IRQ request failed for %u\n", virq);
+ 	}
+diff --git a/arch/arm/kernel/smp_twd.c b/arch/arm/kernel/smp_twd.c
+index 895ae51..dcb4cbb 100644
+--- a/arch/arm/kernel/smp_twd.c
++++ b/arch/arm/kernel/smp_twd.c
+@@ -332,7 +332,7 @@ static int __init twd_local_timer_common_register(struct device_node *np)
+ 		goto out_free;
+ 	}
+ 
+-	err = request_percpu_irq(twd_ppi, twd_handler, "twd", twd_evt);
++	err = request_percpu_irq(twd_ppi, 0, twd_handler, "twd", twd_evt);
+ 	if (err) {
+ 		pr_err("twd: can't register interrupt %d (%d)\n", twd_ppi, err);
+ 		goto out_free;
+diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
+index 11d9f28..774f0ce 100644
+--- a/arch/arm/xen/enlighten.c
++++ b/arch/arm/xen/enlighten.c
+@@ -400,7 +400,7 @@ static int __init xen_guest_init(void)
+ 
+ 	xen_init_IRQ();
+ 
+-	if (request_percpu_irq(xen_events_irq, xen_arm_callback,
++	if (request_percpu_irq(xen_events_irq, 0, xen_arm_callback,
+ 			       "events", &xen_vcpu)) {
+ 		pr_err("Error request IRQ %d\n", xen_events_irq);
+ 		return -EINVAL;
+diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+index cd05574..7990bef 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+@@ -749,7 +749,7 @@
+ 			phy-supply = <&fixed_5v_hub>;
+ 			hisilicon,peripheral-syscon = <&sys_ctrl>;
+ 		};
+-
++/*
+ 		usb: usb@f72c0000 {
+ 			compatible = "hisilicon,hi6220-usb";
+ 			reg = <0x0 0xf72c0000 0x0 0x40000>;
+@@ -763,7 +763,7 @@
+ 			g-tx-fifo-size = <128 128 128 128 128 128>;
+ 			interrupts = <0 77 0x4>;
+ 		};
+-
++*/
+ 		mailbox: mailbox@f7510000 {
+ 			compatible = "hisilicon,hi6220-mbox";
+ 			reg = <0x0 0xf7510000 0x0 0x1000>, /* IPC_S */
+diff --git a/drivers/clocksource/arc_timer.c b/drivers/clocksource/arc_timer.c
+index 7517f95..262fb79 100644
+--- a/drivers/clocksource/arc_timer.c
++++ b/drivers/clocksource/arc_timer.c
+@@ -301,7 +301,7 @@ static int __init arc_clockevent_setup(struct device_node *node)
+ 	}
+ 
+ 	/* Needs apriori irq_set_percpu_devid() done in intc map function */
+-	ret = request_percpu_irq(arc_timer_irq, timer_irq_handler,
++	ret = request_percpu_irq(arc_timer_irq, 0, timer_irq_handler,
+ 				 "Timer0 (per-cpu-tick)", evt);
+ 	if (ret) {
+ 		pr_err("clockevent: unable to request irq\n");
+diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
+index 4c8c3fb..1e358a6 100644
+--- a/drivers/clocksource/arm_arch_timer.c
++++ b/drivers/clocksource/arm_arch_timer.c
+@@ -701,16 +701,16 @@ static int __init arch_timer_register(void)
+ 	ppi = arch_timer_ppi[arch_timer_uses_ppi];
+ 	switch (arch_timer_uses_ppi) {
+ 	case VIRT_PPI:
+-		err = request_percpu_irq(ppi, arch_timer_handler_virt,
++		err = request_percpu_irq(ppi, 0, arch_timer_handler_virt,
+ 					 "arch_timer", arch_timer_evt);
+ 		break;
+ 	case PHYS_SECURE_PPI:
+ 	case PHYS_NONSECURE_PPI:
+-		err = request_percpu_irq(ppi, arch_timer_handler_phys,
++		err = request_percpu_irq(ppi, 0, arch_timer_handler_phys,
+ 					 "arch_timer", arch_timer_evt);
+ 		if (!err && arch_timer_ppi[PHYS_NONSECURE_PPI]) {
+ 			ppi = arch_timer_ppi[PHYS_NONSECURE_PPI];
+-			err = request_percpu_irq(ppi, arch_timer_handler_phys,
++			err = request_percpu_irq(ppi, 0, arch_timer_handler_phys,
+ 						 "arch_timer", arch_timer_evt);
+ 			if (err)
+ 				free_percpu_irq(arch_timer_ppi[PHYS_SECURE_PPI],
+@@ -718,7 +718,7 @@ static int __init arch_timer_register(void)
+ 		}
+ 		break;
+ 	case HYP_PPI:
+-		err = request_percpu_irq(ppi, arch_timer_handler_phys,
++		err = request_percpu_irq(ppi, 0, arch_timer_handler_phys,
+ 					 "arch_timer", arch_timer_evt);
+ 		break;
+ 	default:
+diff --git a/drivers/clocksource/arm_global_timer.c b/drivers/clocksource/arm_global_timer.c
+index 123ed20..abf7aee 100644
+--- a/drivers/clocksource/arm_global_timer.c
++++ b/drivers/clocksource/arm_global_timer.c
+@@ -302,7 +302,7 @@ static int __init global_timer_of_register(struct device_node *np)
+ 		goto out_clk;
+ 	}
+ 
+-	err = request_percpu_irq(gt_ppi, gt_clockevent_interrupt,
++	err = request_percpu_irq(gt_ppi, 0, gt_clockevent_interrupt,
+ 				 "gt", gt_evt);
+ 	if (err) {
+ 		pr_warn("global-timer: can't register interrupt %d (%d)\n",
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 670ff0f..3720014 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -524,7 +524,7 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
+ 
+ 	if (mct_int_type == MCT_INT_PPI) {
+ 
+-		err = request_percpu_irq(mct_irqs[MCT_L0_IRQ],
++		err = request_percpu_irq(mct_irqs[MCT_L0_IRQ], 0,
+ 					 exynos4_mct_tick_isr, "MCT",
+ 					 &percpu_mct_tick);
+ 		WARN(err, "MCT: can't request IRQ %d (%d)\n",
+diff --git a/drivers/clocksource/qcom-timer.c b/drivers/clocksource/qcom-timer.c
+index ee358cd..ed74f1a 100644
+--- a/drivers/clocksource/qcom-timer.c
++++ b/drivers/clocksource/qcom-timer.c
+@@ -174,7 +174,7 @@ static int __init msm_timer_init(u32 dgt_hz, int sched_bits, int irq,
+ 	}
+ 
+ 	if (percpu)
+-		res = request_percpu_irq(irq, msm_timer_interrupt,
++		res = request_percpu_irq(irq, 0, msm_timer_interrupt,
+ 					 "gp_timer", msm_evt);
+ 
+ 	if (res) {
+diff --git a/drivers/clocksource/time-armada-370-xp.c b/drivers/clocksource/time-armada-370-xp.c
+index 4440aef..0822413b 100644
+--- a/drivers/clocksource/time-armada-370-xp.c
++++ b/drivers/clocksource/time-armada-370-xp.c
+@@ -309,7 +309,7 @@ static int __init armada_370_xp_timer_common_init(struct device_node *np)
+ 	/*
+ 	 * Setup clockevent timer (interrupt-driven).
+ 	 */
+-	res = request_percpu_irq(armada_370_xp_clkevt_irq,
++	res = request_percpu_irq(armada_370_xp_clkevt_irq, 0,
+ 				armada_370_xp_timer_interrupt,
+ 				"armada_370_xp_per_cpu_tick",
+ 				armada_370_xp_evt);
+diff --git a/drivers/clocksource/timer-nps.c b/drivers/clocksource/timer-nps.c
+index da1f798..12da53f 100644
+--- a/drivers/clocksource/timer-nps.c
++++ b/drivers/clocksource/timer-nps.c
+@@ -256,7 +256,7 @@ static int __init nps_setup_clockevent(struct device_node *node)
+ 		return ret;
+ 
+ 	/* Needs apriori irq_set_percpu_devid() done in intc map function */
+-	ret = request_percpu_irq(nps_timer0_irq, timer_irq_handler,
++	ret = request_percpu_irq(nps_timer0_irq, timer_irq_handler, 0,
+ 				 "Timer0 (per-cpu-tick)",
+ 				 &nps_clockevent_device);
+ 	if (ret) {
+diff --git a/drivers/cpuidle/governors/irq.c b/drivers/cpuidle/governors/irq.c
+index 8e0298b..7b46f95 100644
+--- a/drivers/cpuidle/governors/irq.c
++++ b/drivers/cpuidle/governors/irq.c
+@@ -104,8 +104,9 @@ static int irq_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
+ 		 */
+ 		diff >>= 10;
+ 	} 
+-# if 0
+-	else if (nr_iowaiters) {
++//# if 0
++	// else if (nr_iowaiters) {
++	else {
+ 		/*
+ 		 * There is no interrupt on this CPU but there are
+ 		 * blocked tasks waiting for an IO, so there is a high
+@@ -117,7 +118,7 @@ static int irq_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
+ 		 */
+ 		diff = irq_ipi_average();
+ 	}
+-#endif
++// #endif
+ 	next_event = min(next_timer_event, diff);
+ 
+ 	trace_cpu_idle_prediction(next_event,
+diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
+index e05e227..c6bcb1a 100644
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -3497,7 +3497,7 @@ static int mvneta_open(struct net_device *dev)
+ 		ret = request_irq(pp->dev->irq, mvneta_isr, 0,
+ 				  dev->name, pp);
+ 	else
+-		ret = request_percpu_irq(pp->dev->irq, mvneta_percpu_isr,
++		ret = request_percpu_irq(pp->dev->irq, 0, mvneta_percpu_isr,
+ 					 dev->name, pp->ports);
+ 	if (ret) {
+ 		netdev_err(pp->dev, "cannot request irq %d\n", pp->dev->irq);
+diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
+index 6d93358..21e7eb7 100644
+--- a/drivers/perf/arm_pmu.c
++++ b/drivers/perf/arm_pmu.c
+@@ -660,7 +660,7 @@ static int cpu_pmu_request_irq(struct arm_pmu *cpu_pmu, irq_handler_t handler)
+ 
+ 	irq = platform_get_irq(pmu_device, 0);
+ 	if (irq > 0 && irq_is_percpu(irq)) {
+-		err = request_percpu_irq(irq, handler, "arm-pmu",
++		err = request_percpu_irq(irq, 0, handler, "arm-pmu",
+ 					 &hw_events->percpu_pmu);
+ 		if (err) {
+ 			pr_err("unable to request IRQ%d for ARM PMU counters\n",
+diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+index 8d40238..62bb0c9 100644
+--- a/include/linux/interrupt.h
++++ b/include/linux/interrupt.h
+@@ -152,8 +152,9 @@ request_any_context_irq(unsigned int irq, irq_handler_t handler,
+ 			unsigned long flags, const char *name, void *dev_id);
+ 
+ extern int __must_check
+-request_percpu_irq(unsigned int irq, irq_handler_t handler,
+-		   const char *devname, void __percpu *percpu_dev_id);
++request_percpu_irq(unsigned int irq, unsigned long flags,
++		   irq_handler_t handler,  const char *devname,
++		   void __percpu *percpu_dev_id);
+ 
+ extern void free_irq(unsigned int, void *);
+ extern void free_percpu_irq(unsigned int, void __percpu *);
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index 9433f49..0be4c2f 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -1965,8 +1965,9 @@ int setup_percpu_irq(unsigned int irq, struct irqaction *act)
+  *	the handler gets called with the interrupted CPU's instance of
+  *	that variable.
+  */
+-int request_percpu_irq(unsigned int irq, irq_handler_t handler,
+-		       const char *devname, void __percpu *dev_id)
++int request_percpu_irq(unsigned int irq, unsigned long flags,
++		       irq_handler_t handler, const char *devname,
++		       void __percpu *dev_id)
+ {
+ 	struct irqaction *action;
+ 	struct irq_desc *desc;
+@@ -1985,7 +1986,7 @@ int request_percpu_irq(unsigned int irq, irq_handler_t handler,
+ 		return -ENOMEM;
+ 
+ 	action->handler = handler;
+-	action->flags = IRQF_PERCPU | IRQF_NO_SUSPEND;
++	action->flags = flags | IRQF_PERCPU | IRQF_NO_SUSPEND;
+ 	action->name = devname;
+ 	action->percpu_dev_id = dev_id;
+ 
+diff --git a/virt/kvm/arm/arch_timer.c b/virt/kvm/arm/arch_timer.c
+index 6a084cd..1a5d2c6 100644
+--- a/virt/kvm/arm/arch_timer.c
++++ b/virt/kvm/arm/arch_timer.c
+@@ -443,7 +443,7 @@ int kvm_timer_hyp_init(void)
+ 		host_vtimer_irq_flags = IRQF_TRIGGER_LOW;
+ 	}
+ 
+-	err = request_percpu_irq(host_vtimer_irq, kvm_arch_timer_handler,
++	err = request_percpu_irq(host_vtimer_irq, 0, kvm_arch_timer_handler,
+ 				 "kvm guest timer", kvm_get_running_vcpus());
+ 	if (err) {
+ 		kvm_err("kvm_arch_timer: can't request interrupt %d (%d)\n",
+diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
+index c737ea0..57034a9 100644
+--- a/virt/kvm/arm/vgic/vgic-init.c
++++ b/virt/kvm/arm/vgic/vgic-init.c
+@@ -426,7 +426,7 @@ int kvm_vgic_hyp_init(void)
+ 		return ret;
+ 
+ 	kvm_vgic_global_state.maint_irq = gic_kvm_info->maint_irq;
+-	ret = request_percpu_irq(kvm_vgic_global_state.maint_irq,
++	ret = request_percpu_irq(kvm_vgic_global_state.maint_irq, 0,
+ 				 vgic_maintenance_handler,
+ 				 "vgic", kvm_get_running_vcpus());
+ 	if (ret) {
+-- 
+2.7.4
+

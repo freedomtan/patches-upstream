@@ -1,0 +1,160 @@
+From 8413cc2cc535d5b38be9a4bddaf0db15609f15b3 Mon Sep 17 00:00:00 2001
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Date: Mon, 12 Sep 2016 10:31:03 +0200
+Subject: [PATCH 15/20] cpuidle: irq: Add a new irq based governor
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ drivers/cpuidle/Kconfig            |   4 ++
+ drivers/cpuidle/governors/Makefile |   1 +
+ drivers/cpuidle/governors/irq.c    | 114 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 119 insertions(+)
+ create mode 100644 drivers/cpuidle/governors/irq.c
+
+diff --git a/drivers/cpuidle/Kconfig b/drivers/cpuidle/Kconfig
+index 7e48eb5..bc47b81 100644
+--- a/drivers/cpuidle/Kconfig
++++ b/drivers/cpuidle/Kconfig
+@@ -23,6 +23,10 @@ config CPU_IDLE_GOV_LADDER
+ config CPU_IDLE_GOV_MENU
+ 	bool "Menu governor (for tickless system)"
+ 
++config CPU_IDLE_GOV_IRQ
++	bool "Irq governor (for tickless system)"
++	select IRQ_TIMINGS
++
+ config DT_IDLE_STATES
+ 	bool
+ 
+diff --git a/drivers/cpuidle/governors/Makefile b/drivers/cpuidle/governors/Makefile
+index 1b51272..8804ee2 100644
+--- a/drivers/cpuidle/governors/Makefile
++++ b/drivers/cpuidle/governors/Makefile
+@@ -4,3 +4,4 @@
+ 
+ obj-$(CONFIG_CPU_IDLE_GOV_LADDER) += ladder.o
+ obj-$(CONFIG_CPU_IDLE_GOV_MENU) += menu.o
++obj-$(CONFIG_CPU_IDLE_GOV_IRQ) += irq.o
+diff --git a/drivers/cpuidle/governors/irq.c b/drivers/cpuidle/governors/irq.c
+new file mode 100644
+index 0000000..a5a322f
+--- /dev/null
++++ b/drivers/cpuidle/governors/irq.c
+@@ -0,0 +1,114 @@
++/*
++ * drivers/cpuidle/governors/irq.c - the irq governor
++ *
++ * Copyright (C) 2016, Linaro Ltd - Daniel Lezcano <daniel.lezcano@linaro.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++#include <linux/cpuidle.h>
++#include <linux/interrupt.h>
++#include <linux/ktime.h>
++#include <linux/pm_qos.h>
++#include <linux/sched.h>
++#include <linux/tick.h>
++
++#include "../cpuidle.h"
++
++static int irq_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
++{
++	int latency_req = pm_qos_request(PM_QOS_CPU_DMA_LATENCY);
++	u64 now = local_clock();
++	u64 next_irq_event = irq_timings_next_event(now);
++	s64 next_timer_event = ktime_to_us(tick_nohz_get_sleep_length());
++	s64 next_event;
++	s64 diff = S64_MAX;
++	int i, state = CPUIDLE_DRIVER_STATE_START;
++
++	/*
++	 * If there are no interrupt supposed to happen on this CPU,
++	 * then we rely on the timer expiration.
++	 *
++	 * Otherwise, irqt_get_next_prediction() returns when is
++	 * supposed to happen the next event in absolute time, so we
++	 * have to substract the current time to have the duration of
++	 * the sleep and convert it in usec.
++	 */
++	if (next_irq_event != U64_MAX) {
++
++		diff = next_irq_event - now;
++
++		/*
++		 * The event already happen, we can't fail to select a
++		 * state because the returned value is used as an
++		 * index. Return the shallowest state and let the
++		 * cpuidle code to check a need_resched() before
++		 * entering idle.
++		 */
++		if (diff < 0)
++			return CPUIDLE_DRIVER_STATE_START;
++
++		/*
++		 * Convert into microsecond, shifting by 10 (div by 1024)
++		 * is enough precise for our purpose.
++		 */
++		diff >>= 10;
++	}
++
++	next_event = min(next_timer_event, diff);
++
++	/*
++	 * Find the idle state with the lowest power while satisfying
++	 * our constraints. Never, never, default to the polling state
++	 * (x86 specific), the shallowest state's exit latency is
++	 * small enough to give fast response. The polling state must
++	 * be selected before based on deterministic information
++	 * (timer expiration or high irq rate).
++	 */
++	for (i = CPUIDLE_DRIVER_STATE_START; i < drv->state_count; i++) {
++		struct cpuidle_state *s = &drv->states[i];
++		struct cpuidle_state_usage *su = &dev->states_usage[i];
++
++		if (s->disabled || su->disable)
++			continue;
++		if (s->target_residency > next_event)
++			continue;
++		if (s->exit_latency > latency_req)
++			continue;
++
++		state = i;
++	}
++
++	return state;
++}
++
++static int irq_enable(struct cpuidle_driver *drv,
++		      struct cpuidle_device *dev)
++{
++	irq_timings_enable();
++
++	return 0;
++}
++
++static void irq_disable(struct cpuidle_driver *drv,
++			struct cpuidle_device *dev)
++{
++	irq_timings_disable();
++}
++
++static struct cpuidle_governor irq_governor = {
++	.name   = "irq",
++	.rating = 10,
++	.select = irq_select,
++	.enable = irq_enable,
++	.disable = irq_disable,
++};
++
++static int __init irq_init(void)
++{
++	return cpuidle_register_governor(&irq_governor);
++}
++
++postcore_initcall(irq_init);
+-- 
+2.7.4
+

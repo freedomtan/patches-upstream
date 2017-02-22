@@ -1,0 +1,55 @@
+From 97b18f8da1552289b718aae90f597066d6b9d478 Mon Sep 17 00:00:00 2001
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Date: Sun, 22 Jan 2017 10:57:20 +0100
+Subject: [PATCH 13/20] dts: hi6220-hikey: Add mmc power sequence for Bluetooth
+ and WiFi
+
+Add a simple power sequence entry for the mmc in order to have the
+sdio to be correctly initialized and enabling the WiFi and the Bluetooth.
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
+index dba3c13..9af68ac 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
++++ b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
+@@ -256,7 +256,7 @@
+ 			non-removable;
+ 			/* WL_EN */
+ 			vmmc-supply = <&wlan_en_reg>;
+-
++			mmc-pwrseq = <&sdio_pwrseq>;
+ 			#address-cells = <0x1>;
+ 			#size-cells = <0x0>;
+ 			wlcore: wlcore@2 {
+@@ -325,9 +325,11 @@
+ 	pmic: pmic@f8000000 {
+ 		compatible = "hisilicon,hi655x-pmic";
+ 		reg = <0x0 0xf8000000 0x0 0x1000>;
++		clock-output-names = "hi655x-clk";
+ 		interrupt-controller;
+ 		#interrupt-cells = <2>;
+ 		pmic-gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
++		#clock-cells = <0>;
+ 
+ 		regulators {
+ 			ldo2: LDO2 {
+@@ -406,6 +408,12 @@
+ 			};
+ 		};
+ 	};
++
++        sdio_pwrseq: sdio-pwrseq {
++                compatible = "mmc-pwrseq-simple";
++                clocks = <&pmic>;
++                clock-names = "ext_clock";
++        };
+ };
+ 
+ &uart2 {
+-- 
+2.7.4
+

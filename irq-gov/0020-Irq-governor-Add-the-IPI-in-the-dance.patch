@@ -1,0 +1,78 @@
+From 8bf804a7b80ff87809d519fa97ce4cef640cbc61 Mon Sep 17 00:00:00 2001
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Date: Wed, 15 Feb 2017 10:18:35 +0100
+Subject: [PATCH 20/20] Irq governor: Add the IPI in the dance
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ drivers/cpuidle/governors/irq.c | 28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/cpuidle/governors/irq.c b/drivers/cpuidle/governors/irq.c
+index 7b46f95..c032240 100644
+--- a/drivers/cpuidle/governors/irq.c
++++ b/drivers/cpuidle/governors/irq.c
+@@ -68,6 +68,7 @@ static int irq_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
+ 	u64 now = local_clock();
+ 	u64 next_irq_event = irq_timings_next_event(now);
+ 	s64 next_timer_event = ktime_to_us(tick_nohz_get_sleep_length());
++	s64 next_ipi_event = S64_MAX;
+ 	s64 next_event;
+ 	s64 diff = S64_MAX;
+ 	int i, state = CPUIDLE_DRIVER_STATE_START;
+@@ -86,8 +87,17 @@ static int irq_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
+ 	 */
+ 	if (next_irq_event != U64_MAX) {
+ 
++		/*
++		 * Compute the remaining time
++		 */
+ 		diff = next_irq_event - now;
+ 
++                /*
++                 * Convert into microsecond, shifting by 10 (div by 1024)
++                 * is enough precise for our purpose.
++                 */
++                diff >>= 10;
++
+ 		/*
+ 		 * The event already happen, we can't fail to select a
+ 		 * state because the returned value is used as an
+@@ -97,16 +107,7 @@ static int irq_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
+ 		 */
+ 		if (diff < 0)
+ 			return CPUIDLE_DRIVER_STATE_START;
+-
+-		/*
+-		 * Convert into microsecond, shifting by 10 (div by 1024)
+-		 * is enough precise for our purpose.
+-		 */
+-		diff >>= 10;
+-	} 
+-//# if 0
+-	// else if (nr_iowaiters) {
+-	else {
++	} else {
+ 		/*
+ 		 * There is no interrupt on this CPU but there are
+ 		 * blocked tasks waiting for an IO, so there is a high
+@@ -116,12 +117,13 @@ static int irq_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
+ 		 * we are able to discriminate rescheduling coming
+ 		 * from an IO or a task migration.
+ 		 */
+-		diff = irq_ipi_average();
++		next_ipi_event = irq_ipi_average();
+ 	}
+-// #endif
++
+ 	next_event = min(next_timer_event, diff);
++	next_event = min(next_event, next_ipi_event);
+ 
+-	trace_cpu_idle_prediction(next_event,
++	trace_cpu_idle_prediction(diff, next_timer_event, next_ipi_event, next_event,
+ 				  next_event == next_timer_event ?
+ 				  "timer" : "irq", dev->cpu);
+ 
+-- 
+2.7.4
+
