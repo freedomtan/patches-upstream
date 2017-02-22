@@ -1,0 +1,95 @@
+From 70240f25ecac17d8b9eac5337f83989db6ec794d Mon Sep 17 00:00:00 2001
+From: Koan-Sin Tan <koansin.tan@gmail.com>
+Date: Tue, 21 Feb 2017 14:34:16 +0800
+Subject: [PATCH 2/2] new usb dts
+
+Signed-off-by: Koan-Sin Tan <koansin.tan@gmail.com>
+---
+ arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi | 55 +++++++++++++++++++++++++++-
+ 1 file changed, 53 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi b/arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi
+index 57fb52e..d051511 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi
+@@ -164,6 +164,29 @@
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&aud_i2s2>;
+ 	};
++
++	extcon_usb: extcon_iddig {
++		compatible = "linux,extcon-usb-gpio";
++		id-gpio = <&pio 16 GPIO_ACTIVE_HIGH>;
++	};
++
++	usb_p1_vbus: regulator@0 {
++		compatible = "regulator-fixed";
++		regulator-name = "usb_vbus";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		gpio = <&pio 130 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
++	usb_p0_vbus: regulator@1 {
++		compatible = "regulator-fixed";
++		regulator-name = "vbus";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		gpio = <&pio 9 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
+ };
+ 
+ &cec {
+@@ -677,6 +700,20 @@
+ 			bias-disable;
+ 		};
+ 	};
++
++	usb_id_pins_float: usb_iddig_pull_up {
++		pins_iddig {
++			pinmux = <MT8173_PIN_16_IDDIG__FUNC_IDDIG>;
++			bias-pull-up;
++		};
++	};
++
++	usb_id_pins_ground: usb_iddig_pull_down {
++		pins_iddig {
++			pinmux = <MT8173_PIN_16_IDDIG__FUNC_IDDIG>;
++			bias-pull-down;
++		};
++	};
+ };
+ 
+ &pwm0 {
+@@ -945,10 +982,24 @@
+ };
+ 
+ &ssusb {
++	vusb33-supply = <&mt6397_vusb_reg>;
++	vbus-supply = <&usb_p0_vbus>;
++	extcon = <&extcon_usb>;
++	dr_mode = "otg";
++	mediatek,enable-wakeup;
++	pinctrl-names = "default", "id_float", "id_ground";
++	pinctrl-0 = <&usb_id_pins_float>;
++	pinctrl-1 = <&usb_id_pins_float>;
++	pinctrl-2 = <&usb_id_pins_ground>;
++	status = "okay";
++};
++
++&usb_host {
++	vusb33-supply = <&mt6397_vusb_reg>;
++	vbus-supply = <&usb_p1_vbus>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&usb_pins>;
+-	vusb33-supply = <&mt6397_vusb_reg>;
+-	mediatek,wakeup-src = <1>;
++	status = "okay";
+ };
+ 
+ #include "../../../../arm/boot/dts/cros-ec-keyboard.dtsi"
+-- 
+2.7.4
+
