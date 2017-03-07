@@ -1,14 +1,14 @@
-From fbca5d3c8b52440916b67c7292ddcbad947560a6 Mon Sep 17 00:00:00 2001
+From b4a735cafb8e9a064ff7548b07dfd00b41949415 Mon Sep 17 00:00:00 2001
 From: "freedom.tan" <freedom.tan@mediatek.com>
 Date: Wed, 27 Jan 2016 15:56:01 +0800
 Subject: [PATCH 2/4] add 4 thermal zones for MT8173
 
 ---
- arch/arm64/boot/dts/mediatek/mt8173.dtsi | 95 ++++++++++++++++++++++++++++++--
- 1 file changed, 91 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi | 99 ++++++++++++++++++++++++++++++--
+ 1 file changed, 93 insertions(+), 6 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index b51e8ee..0120c30 100644
+index 90ac7ae..c17abb7 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 @@ -293,12 +293,12 @@
@@ -27,10 +27,13 @@ index b51e8ee..0120c30 100644
  
  			trips {
  				threshold: trip-point@0 {
-@@ -326,13 +326,100 @@
+@@ -324,12 +324,99 @@
+ 				map@0 {
+ 					trip = <&target>;
  					cooling-device = <&cpu0 0 0>;
- 					contribution = <1024>;
- 				};
+-					contribution = <3072>;
++					contribution = <1024>;
++				};
 +			};
 +		};
 +
@@ -74,7 +77,7 @@ index b51e8ee..0120c30 100644
 +					temperature = <68000>;
 +					hysteresis = <2000>;
 +					type = "passive";
-+				};
+ 				};
 +
 +				target2: trip-point@1 {
 +					temperature = <85000>;
@@ -94,10 +97,11 @@ index b51e8ee..0120c30 100644
 -					trip = <&target>;
 +					trip = <&target2>;
  					cooling-device = <&cpu2 0 0>;
- 					contribution = <2048>;
- 				};
- 			};
- 		};
+-					contribution = <1024>;
++					contribution = <2048>;
++				};
++			};
++		};
 +
 +		cpu_thermal3: cpu_thermal3 {
 +			polling-delay-passive = <1000>; /* milliseconds */
@@ -123,12 +127,9 @@ index b51e8ee..0120c30 100644
 +					temperature = <115000>;
 +					hysteresis = <2000>;
 +					type = "critical";
-+				};
-+			};
-+		};
- 	};
- 
- 	reserved-memory {
+ 				};
+ 			};
+ 		};
 -- 
 2.7.4
 

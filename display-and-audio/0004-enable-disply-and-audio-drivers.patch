@@ -1,0 +1,166 @@
+From d5599597508a2fd43e053443e0bd1dba52fdf8b9 Mon Sep 17 00:00:00 2001
+From: Koan-Sin Tan <koansin.tan@gmail.com>
+Date: Tue, 7 Mar 2017 11:02:02 +0800
+Subject: [PATCH 4/4] enable disply and audio drivers
+
+enable SND_SOC_MT8173_RT5650 and display drivers
+
+Signed-off-by: Koan-Sin Tan <koansin.tan@gmail.com>
+---
+ arch/arm64/boot/dts/mediatek/mt8173-oak-rev5.dts |  6 +-
+ arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi     | 85 +++++++++++++++++++++++-
+ 2 files changed, 87 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt8173-oak-rev5.dts b/arch/arm64/boot/dts/mediatek/mt8173-oak-rev5.dts
+index 4bc095f..55c7c44 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8173-oak-rev5.dts
++++ b/arch/arm64/boot/dts/mediatek/mt8173-oak-rev5.dts
+@@ -36,10 +36,10 @@
+ /delete-node/&rt5514_irq;
+ 
+ &rt5650 {
+-	 realtek,dmic1-data-pin = <2>;
++	realtek,dmic1-data-pin = <2>;
+ };
+ 
+ &sound {
+ 	compatible = "mediatek,mt8173-rt5650";
+-	mediatek,audio-codec = <&rt5650>;
+-};
+\ No newline at end of file
++	mediatek,audio-codec = <&rt5650 &hdmi0>;
++};
+diff --git a/arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi b/arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi
+index 6c598f1..3a27722 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8173-oak.dtsi
+@@ -187,6 +187,16 @@
+ 		gpio = <&pio 9 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 	};
++
++	dvdd10: regulator@3 {
++                compatible = "regulator-fixed";
++                regulator-name = "dvdd10";
++                regulator-min-microvolt = <10000000>;
++                regulator-max-microvolt = <10000000>;
++                gpio =  <&pio 35 GPIO_ACTIVE_HIGH>;
++                enable-active-high;
++        };
++
+ };
+ 
+ &cec {
+@@ -211,6 +221,45 @@
+ 	sram-supply = <&mt6397_vsramca7_reg>;
+ };
+ 
++&dsi0 {
++	status = "okay";
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@1 {
++			reg = <1>;
++
++			dsi0_out: endpoint {
++				remote-endpoint = <&ps8640_in>;
++			};
++		};
++	};
++};
++
++&dpi0 {
++	status = "okay";
++};
++
++&hdmi0 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			reg = <1>;
++
++			hdmi0_out: endpoint {
++				remote-endpoint = <&anx7814_in>;
++			};
++		};
++	};
++};
++
++&hdmi_phy {
++	status = "okay";
++	mediatek,ibias = <0x3f>;
++};
++
+ &i2c0 {
+ 	status = "okay";
+ 
+@@ -286,6 +335,28 @@
+ 		interrupt-parent = <&pio>;
+ 		interrupts = <88 IRQ_TYPE_EDGE_FALLING>;
+ 	};
++
++	anx7814: anx7814@72 {
++		compatible = "analogix,anx7814";
++		status = "okay";
++		reg = <0x72>;
++		interrupt-parent = <&pio>;
++		interrupts = <99 IRQ_TYPE_LEVEL_LOW>;   /* INTP */
++		hpd-gpios = <&pio 36 GPIO_ACTIVE_HIGH>;
++		pd-gpios = <&pio 33 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&pio 83 GPIO_ACTIVE_LOW>;
++		dvdd10-supply = <&dvdd10>;
++		v10-gpios = <&pio 35 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&anx7814_pins>;
++		ddc-i2c-bus = <&hdmiddc0>;
++
++		port {
++			anx7814_in: endpoint {
++				remote-endpoint = <&hdmi0_out>;
++			};
++		};
++	};
+ };
+ 
+ &i2c4 {
+@@ -315,6 +386,14 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
++		port@0 {
++			reg = <0>;
++
++			ps8640_in: endpoint {
++				remote-endpoint = <&dsi0_out>;
++			};
++		};
++
+ 		port@1 {
+ 			reg = <1>;
+ 
+@@ -325,6 +404,10 @@
+ 	};
+ };
+ 
++&mipi_tx0 {
++	status = "okay";
++};
++
+ &mmc0 {
+ 	status = "okay";
+ 	pinctrl-names = "default", "state_uhs";
+@@ -350,7 +433,7 @@
+ 	pinctrl-0 = <&mmc1_pins_default>;
+ 	pinctrl-1 = <&mmc1_pins_uhs>;
+ 	bus-width = <4>;
+-	max-frequency = <200000000>;
++	max-frequency = <100000000>;
+ 	cap-sd-highspeed;
+ 	sd-uhs-sdr50;
+ 	sd-uhs-sdr104;
+-- 
+2.7.4
+
