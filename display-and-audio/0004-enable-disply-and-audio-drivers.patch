@@ -1,4 +1,4 @@
-From d5599597508a2fd43e053443e0bd1dba52fdf8b9 Mon Sep 17 00:00:00 2001
+From b29ca2a9704dd8f0ab6ceb71b525372d0d69db37 Mon Sep 17 00:00:00 2001
 From: Koan-Sin Tan <koansin.tan@gmail.com>
 Date: Tue, 7 Mar 2017 11:02:02 +0800
 Subject: [PATCH 4/4] enable disply and audio drivers

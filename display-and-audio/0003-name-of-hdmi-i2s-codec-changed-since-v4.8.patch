@@ -1,4 +1,4 @@
-From e37027ea7b315a0a35560708c1fd34521e58ed97 Mon Sep 17 00:00:00 2001
+From 38d59cbf6d96a80b07f319f019929efa70d04fdd Mon Sep 17 00:00:00 2001
 From: Koan-Sin Tan <koansin.tan@gmail.com>
 Date: Tue, 7 Mar 2017 10:59:58 +0800
 Subject: [PATCH 3/4] name of hdmi i2s codec changed since v4.8
@@ -9,7 +9,7 @@ Subject: [PATCH 3/4] name of hdmi i2s codec changed since v4.8
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c b/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c
-index 1b8b2a7..37753df 100644
+index fed1f15..b010f41 100644
 --- a/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c
 +++ b/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c
 @@ -193,7 +193,7 @@ static struct snd_soc_dai_link mt8173_rt5650_rt5676_dais[] = {
@@ -22,7 +22,7 @@ index 1b8b2a7..37753df 100644
  	},
  	/* rt5676 <-> rt5650 intercodec link: Sets rt5676 I2S2 as master */
 diff --git a/sound/soc/mediatek/mt8173/mt8173-rt5650.c b/sound/soc/mediatek/mt8173/mt8173-rt5650.c
-index ba65f41..69ade27 100644
+index a784708..09c65d3 100644
 --- a/sound/soc/mediatek/mt8173/mt8173-rt5650.c
 +++ b/sound/soc/mediatek/mt8173/mt8173-rt5650.c
 @@ -226,7 +226,7 @@ static struct snd_soc_dai_link mt8173_rt5650_dais[] = {

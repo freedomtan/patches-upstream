@@ -1,4 +1,4 @@
-From ea5c4c340a90d541d58bf1c703f1b2f133c09ef4 Mon Sep 17 00:00:00 2001
+From f10f1d8e4d0c0ea6945790889bf0882018c52545 Mon Sep 17 00:00:00 2001
 From: Jitao Shi <jitao.shi@mediatek.com>
 Date: Mon, 14 Nov 2016 21:41:48 +0800
 Subject: [PATCH 2/4] drm/bridge: Add I2C based driver for ps8640 bridge
@@ -16,10 +16,10 @@ Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
  create mode 100644 drivers/gpu/drm/bridge/parade-ps8640.c
 
 diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index eb8688e..a5fd151 100644
+index f6968d3..fe70488 100644
 --- a/drivers/gpu/drm/bridge/Kconfig
 +++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -73,6 +73,18 @@ config DRM_SIL_SII8620
+@@ -69,6 +69,18 @@ config DRM_SIL_SII8620
  	help
  	  Silicon Image SII8620 HDMI/MHL bridge chip driver.
  
@@ -39,11 +39,11 @@ index eb8688e..a5fd151 100644
  	tristate "Silicon Image sii902x RGB/HDMI bridge"
  	depends on OF
 diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
-index 2e83a785..3cffa6a 100644
+index 3fe2226..dc9b841 100644
 --- a/drivers/gpu/drm/bridge/Makefile
 +++ b/drivers/gpu/drm/bridge/Makefile
-@@ -7,6 +7,7 @@ obj-$(CONFIG_DRM_DW_HDMI_AHB_AUDIO) += dw-hdmi-ahb-audio.o
- obj-$(CONFIG_DRM_DW_HDMI_I2S_AUDIO) += dw-hdmi-i2s-audio.o
+@@ -6,6 +6,7 @@ obj-$(CONFIG_DRM_LVDS_ENCODER) += lvds-encoder.o
+ obj-$(CONFIG_DRM_MEGACHIPS_STDPXXXX_GE_B850V3_FW) += megachips-stdpxxxx-ge-b850v3-fw.o
  obj-$(CONFIG_DRM_NXP_PTN3460) += nxp-ptn3460.o
  obj-$(CONFIG_DRM_PARADE_PS8622) += parade-ps8622.o
 +obj-$(CONFIG_DRM_PARADE_PS8640) += parade-ps8640.o
